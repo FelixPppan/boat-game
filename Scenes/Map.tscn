@@ -39,18 +39,18 @@ radius = 22.165527
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03758596, -0.011861771, 0.02192682)
 
 [node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8925123, 0, 9.464733)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
 script = ExtResource("2_5t7yc")
 
 [node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.24850619, 0.016310334, 3.0386271)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335446, -0.42266667, 0.06617212)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Boat" unique_id=1178132166]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2322588, 0.4023742, 3.0583801)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0.0859251)
 shape = SubResource("CapsuleShape3D_3ytfl")
 
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
-transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0.69740677, 10.106083, 6.15839)
+transform = Transform3D(1, 0, 0, 0, 0.31301922, 0.9497965, 0, -0.9497965, 0.31301922, 0, 9.667106, 3.185935)
 keep_aspect = 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1491661626]
