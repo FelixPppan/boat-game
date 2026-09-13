@@ -30,24 +30,25 @@ extends Node
 ##      so the pose is a point on the unit sphere and both the angles and the
 ##      rates come out clean.
 ##
-## --- 2. Thrust is continuous, not one impulse per stroke -----------------
-## The blade pushes for as long as it is moving through the water, so the force
-## is proportional to how fast the oar is sweeping -- not fired off by a
-## once-per-stroke trigger. Sweep slowly and the push is gentle but unbroken;
-## sweep hard and it is a single strong shove. Fast rowing is one hard burst of
-## speed, slow rowing a steady slow push.
+## --- 2. The four phases of a real single-oar stroke ----------------------
+##   catch  ->  drive  ->  release  ->  recovery
+## Only the drive has the blade in the water pushing aft, so only the drive
+## produces thrust; the recovery is the empty return trip.
 ##
-## The two sweep directions are NOT equal. Sweeping aft the blade is buried and
-## grips the water (DRIVE_GRIP); sweeping forward it is feathered and travelling
-## back to the catch, so it grips far less (RECOVERY_GRIP). That asymmetry is
-## what lets a stroke cycle make headway -- grip equally both ways and the two
-## halves cancel out and the boat sits still. It also means the return stroke
-## pushes back a little instead of the boat free-coasting on, which is what
-## keeps the motion tied to the oar rather than running on until the next stroke.
+## The criterion is therefore "s_back is rising" -- the blade is sweeping aft.
+## Whenever s_back falls, the oar is on its way back to the catch and produces
+## nothing at all. Without that gate the recovery reads as reverse rowing and
+## the boat twitches back and forth on the spot.
+##
+## Thrust is continuous, not one impulse per stroke: the blade pushes for as
+## long as it is moving through the water, so the force is proportional to how
+## fast the oar is sweeping rather than fired off by a once-per-stroke trigger.
+## Sweep slowly and the push is gentle but unbroken; sweep hard and it is a
+## single strong shove.
 ##
 ## --- 3. Splitting the force ----------------------------------------------
-##   forward: sweep rate x grip x how vertical the oar is (the more upright the
-##            oar, the more of the force points straight ahead)
+##   forward: sweep rate x how vertical the oar is (the more upright the oar,
+##            the more of the force points straight ahead)
 ##   lateral: rate of sideways sweep (sweeping the blade left pushes the
 ##            boat right)
 ##   yaw:     a left-side stroke pushes at the blade, which sits left of the
@@ -64,12 +65,6 @@ const FILTER_TAU := 0.025
 ## is deliberately duller than the filter above.
 ## 变化率(角速度)的滤波时间常数。微分会放大噪声,所以这里压得更钝。
 const RATE_TAU := 0.04
-## Which sweep direction grips the water. +1 = sweeping aft (s_back rising) is
-## the power stroke, -1 = the other way about. Flip this single value if the
-## power stroke turns out mirrored on the real hardware.
-## 哪个方向算「抓水」的动力行程。+1 = 向后扫(s_back 增大)是动力行程,
-## -1 则相反。如果实机上动力行程正好反了,只改这一个值。
-const SWEEP_SIGN := 1.0
 ## Sweep rate, per second, that counts as a full-power stroke. The response is
 ## linear up to here rather than clipped at it, so a slow sweep gets a
 ## proportionally gentle push instead of being cut off.
@@ -83,16 +78,8 @@ const FULL_DRIVE_RATE := 2.6
 ## well below a deliberate slow stroke, or slow rowing stops moving the boat.
 ## 扫速死区(每秒)。低于它的一律当手抖丢掉,桨放着不动时船不会自己跑。
 ## 必须明显小于「故意慢划」的速度,否则慢划就推不动船了。
-const DRIVE_DEADBAND := 0.06
-## How hard the blade bites on the power stroke, and on the return. The return
-## value is small but not zero: a feathered blade still drags a little, so the
-## boat slows instead of drifting on. Set it to 0.0 and the return stroke
-## produces nothing at all, leaving the boat to coast.
-## 动力行程 / 回桨行程各抓多少水。回桨给一个小值但不给 0:
-## 桨叶平着回去也还是有一点阻力,船会慢下来,而不是一路干滑。
-## 改成 0.0 则回桨完全不产生力,船就纯靠惯性滑。
-const DRIVE_GRIP := 1.0
-const RECOVERY_GRIP := 0.3
+## 0.15 是实测手感正常的那一版用的值;调小会让桨一有动静就出力。
+const DRIVE_DEADBAND := 0.15
 ## The oar lies nearly flat at both ends of the sweep (x -> 0 in the measured
 ## calibration), which would otherwise pinch the push down to nothing exactly
 ## where the stroke starts and ends. Clamping the verticality factor to this
@@ -100,7 +87,8 @@ const RECOVERY_GRIP := 0.3
 ## the middle.
 ## 扫到两端时桨几乎是平躺的(实测标定里 x → 0),不兜底的话正好在
 ## 一桨的头尾把推力掐到接近零、中间鼓起来。给个下限,全程就平顺了。
-const MIN_VERTICAL := 0.45
+## 0.15 是实测手感正常的那一版用的值。
+const MIN_VERTICAL := 0.15
 ## Dead band on the lateral rate, same idea.
 ## 侧向速率的死区,同理。
 const LATERAL_DEADBAND := 0.15
@@ -108,6 +96,18 @@ const LATERAL_DEADBAND := 0.15
 ## hard, so this stays small.
 ## 侧向力增益。横向扫桨对船的推力本来就不大,给个小系数。
 const LATERAL_GAIN := 0.55
+## How fore/aft a sweep has to be before its sideways component counts at full
+## strength. The weight is the fore/aft share of the oar's motion, ramped 0..1
+## and saturating here. Below it the sweep is mostly a sideways reposition --
+## swapping the paddle from one hand to the other is almost pure lateral motion
+## -- so the sideways push is scaled down in proportion; at or above it the
+## sweep is an ordinary stroke and steering is untouched.
+## 一次扫桨要有多「前后向」,它的侧向分量才算满力。权重 = 前后扫占整体运动的
+## 比例,从 0 线性升到 1、到这里饱和。低于它说明这次主要是横向挪桨(换手),
+## 侧向力按比例缩小;达到它就是正常划水,转向完全不受影响。
+## 实测:正常划水的前后占比中位 0.71、5% 分位 0.39;换手动作最高只有 0.20 左右,
+## 两边分得开,所以 0.6 这个门槛压得住换手、又几乎不动正常划水。
+const LATERAL_FWD_SHARE := 0.6
 ## Lateral offset of the blade from the boat's centreline, in metres. Sets how
 ## much yaw torque a given amount of thrust produces.
 ## 桨叶到船中线的侧向距离(米)。决定同样大的推力能产生多大的转向力矩,
@@ -248,29 +248,19 @@ func update(delta: float) -> void:
 	_w_lat = lerp(_w_lat, raw_w_lat, b)
 	_w_fa = lerp(_w_fa, raw_w_fa, b)
 
-	# --- 4. Continuous thrust, proportional to sweep speed ----------------
-	# Signed sweep rate: positive is the power stroke (sweeping aft by default),
-	# negative is the return. SWEEP_SIGN flips that convention.
-	var sweep := _w_fa * SWEEP_SIGN
-	# Subtract the dead band: standing still the tremor collapses to zero, while
-	# a real stroke barely notices the loss.
-	if absf(sweep) < DRIVE_DEADBAND:
-		sweep = 0.0
-	else:
-		sweep -= signf(sweep) * DRIVE_DEADBAND
-
-	# The blade bites hard one way and barely at all coming back.
-	var grip := RECOVERY_GRIP if sweep < 0.0 else DRIVE_GRIP
+	# --- 4. Stroke gate: thrust only while the blade sweeps aft -----------
+	# Clamp at zero rather than taking the magnitude: a rising s_back is the
+	# blade driving aft through the water, a falling one is the return. The
+	# subtraction is the dead band, so an idle oar's tremor collapses to
+	# nothing while a real stroke barely notices the loss.
+	var drive_rate := maxf(0.0, _w_fa - DRIVE_DEADBAND)
 	# Deliberately no saturation: the force stays proportional to sweep speed,
 	# so a slow stroke is a long gentle push and a fast one a short hard shove.
 	# The more upright the oar, the more of that force points straight ahead.
-	forward_power = clampf(
-		sweep * grip / FULL_DRIVE_RATE * maxf(absf(s_vert), MIN_VERTICAL),
-		-1.5, 1.5)
-
-	# Only the positive part: this is what the overlay calls "power" and what the
-	# stroke counter tallies, so the return stroke does not count as a stroke.
-	drive_power = maxf(forward_power, 0.0)
+	drive_power = drive_rate / FULL_DRIVE_RATE * maxf(absf(s_vert), MIN_VERTICAL)
+	# One-directional by construction, so this can never go negative: the
+	# recovery contributes exactly nothing instead of pushing the boat back.
+	forward_power = drive_power
 
 	# Lateral: sweeping left (s_left growing) pushes the boat right, hence +.
 	var lat_rate := _w_lat
@@ -278,7 +268,19 @@ func update(delta: float) -> void:
 		lat_rate = 0.0
 	else:
 		lat_rate -= signf(lat_rate) * LATERAL_DEADBAND
-	side_power = lat_rate * LATERAL_GAIN
+
+	# Weight the sideways push by how much of the sweep is fore/aft. Swapping the
+	# paddle from one side of the body to the other swings s_left a long way with
+	# no fore/aft sweep to go with it, and that must not shove the boat sideways.
+	# The share is deliberately scale-invariant: it does not matter how fast or
+	# how wide the swap is, only that it has no fore/aft component. A real stroke
+	# is fore/aft-dominated, so the weight sits at 1 and steering is unaffected.
+	var total_rate := absf(_w_fa) + absf(lat_rate)
+	var fwd_share := 0.0
+	if total_rate > 0.0:
+		fwd_share = absf(_w_fa) / total_rate
+	side_power = lat_rate * LATERAL_GAIN * clampf(
+		fwd_share / LATERAL_FWD_SHARE, 0.0, 1.0)
 
 	_update_stroke_stats()
 
@@ -306,8 +308,8 @@ func _update_stroke_stats() -> void:
 
 # --------------------------------------------------------- Boat interface --
 ## Thrust in the boat's own frame: x = right, z = back.
-## Note Godot points the bow along -Z, so forward thrust is negative z. A
-## negative forward_power is the return stroke, and pushes the boat backwards.
+## Note Godot points the bow along -Z, so forward thrust is negative z.
+## forward_power is gated to >= 0, so the return stroke never pushes back.
 func thrust_local() -> Vector3:
 	return Vector3(side_power, 0.0, -forward_power)
 
@@ -315,8 +317,8 @@ func thrust_local() -> Vector3:
 ## Yaw torque coefficient about Y: positive turns the bow left, negative right.
 ## A left-side stroke (side > 0) pushes left of the centreline, giving a
 ## negative torque and a bow that swings right, exactly like a real boat.
-## Driven by the power phase only, so the feathered return does not swing the
-## bow back the other way and undo the turn.
+## Driven by drive_power, which is already zero on the return, so the recovery
+## does not swing the bow back the other way and undo the turn.
 func yaw_torque() -> float:
 	return -drive_power * OARLOCK_OFFSET * side
 
