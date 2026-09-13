@@ -20,6 +20,9 @@ sky_material = SubResource("ProceduralSkyMaterial_a2mn1")
 background_mode = 2
 sky = SubResource("Sky_8q6pl")
 ambient_light_source = 3
+fog_enabled = true
+fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
+fog_density = 0.0758
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_8q6pl"]
 height = 3.493164

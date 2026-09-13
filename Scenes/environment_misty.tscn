@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://k0u1mye8is8s"]
+
+[ext_resource type="PackedScene" uid="uid://bopnrnt34f76d" path="res://Scenes/WaterPlane.tscn" id="1_d04rp"]
+[ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scenes/boat.gd" id="2_yj2r7"]
+[ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_unba8"]
+[ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="4_c3voh"]
+[ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="5_pdb7t"]
+[ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="6_sp26i"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
+radius = 0.47613525
+height = 1.0556946
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a2mn1"]
+
+[sub_resource type="Sky" id="Sky_8q6pl"]
+sky_material = SubResource("ProceduralSkyMaterial_a2mn1")
+
+[sub_resource type="Environment" id="Environment_d04rp"]
+background_mode = 2
+sky = SubResource("Sky_8q6pl")
+ambient_light_source = 3
+fog_enabled = true
+fog_light_color = Color(0.7121043, 0.6938214, 0.81325895, 1)
+fog_density = 0.0741
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8q6pl"]
+height = 3.493164
+radius = 1.4848633
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_a2mn1"]
+height = 2.6542969
+radius = 0.69970703
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_4vjv7"]
+height = 33.30359
+radius = 22.165527
+
+[node name="Map" type="Node3D" unique_id=1130590225]
+
+[node name="WaterPlane" parent="." unique_id=1136176607 instance=ExtResource("1_d04rp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03758596, -0.011861771, 0.02192682)
+
+[node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
+script = ExtResource("2_yj2r7")
+
+[node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_unba8")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335446, -0.42266667, 0.06617212)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boat" unique_id=1178132166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0.0859251)
+shape = SubResource("CapsuleShape3D_3ytfl")
+
+[node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
+transform = Transform3D(1, 0, 0, 0, 0.31301922, 0.9497965, 0, -0.9497965, 0.31301922, 0, 9.667106, 3.185935)
+keep_aspect = 0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1491661626]
+environment = SubResource("Environment_d04rp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1902198615]
+transform = Transform3D(1, 0, 0, 0, -0.54062665, 0.84126276, 0, -0.84126276, -0.54062665, 0, 10.071228, 0)
+
+[node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.2088985)
+
+[node name="Rock Forms 2" parent="Rock1" unique_id=278137896 instance=ExtResource("4_c3voh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4589539, 0.7876282, -7.6241455)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1" unique_id=1364764406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
+shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="Rock2" type="StaticBody3D" parent="." unique_id=1901283999]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5300884, 0, 10.41245)
+
+[node name="Rock Forms 3" parent="Rock2" unique_id=1756967937 instance=ExtResource("5_pdb7t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9130373, 0.28616726, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock2" unique_id=523567949]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.87265015, -0.45898438, 0)
+shape = SubResource("CylinderShape3D_a2mn1")
+
+[node name="Island" type="StaticBody3D" parent="." unique_id=1165908882]
+
+[node name="Island" parent="Island" unique_id=878118820 instance=ExtResource("6_sp26i")]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.9978027, 0.24405193, 5.7730713)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Island" unique_id=390665870]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.9003677, -0.3325252, 5.5262375)
+shape = SubResource("CylinderShape3D_4vjv7")
+
+[node name="Rock3" type="StaticBody3D" parent="." unique_id=1858213698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.630615, 0, 12.955883)
+
+[node name="Rock Forms 2" parent="Rock3" unique_id=1113625769 instance=ExtResource("4_c3voh")]
+transform = Transform3D(0.43276986, 0, 0.90150446, 0, 1, 0, -0.90150446, 0, 0.43276986, -1.4589539, 0.7876282, -7.6241455)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock3" unique_id=2106690819]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
+shape = SubResource("CylinderShape3D_8q6pl")

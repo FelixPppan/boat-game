@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c3u5ykotljjl8"]
+
+[ext_resource type="Shader" uid="uid://b28ec3d1orm7q" path="res://ghost/cartoon_fur.gdshader" id="1_nyrdk"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jre5i"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_nyrdk")
+shader_parameter/fur_color = Color(0.48, 0.4, 0.34, 1)
+shader_parameter/fur_noise = SubResource("NoiseTexture2D_jre5i")
+shader_parameter/texture_scale = 3.0
+shader_parameter/color_variation = 0.12

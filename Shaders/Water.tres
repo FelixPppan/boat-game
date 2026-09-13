@@ -25,7 +25,7 @@ bump_strength = 4.3
 [resource]
 render_priority = 0
 shader = ExtResource("1_08pfp")
-shader_parameter/albedo = Color(6.8345666e-06, 0.519402, 0.6868924, 1)
+shader_parameter/albedo = Color(0.41869488, 0.46028042, 0.72929335, 1)
 shader_parameter/metallic = 0.0
 shader_parameter/roughness = 0.0
 shader_parameter/texture_normal = SubResource("NoiseTexture2D_mclji")
