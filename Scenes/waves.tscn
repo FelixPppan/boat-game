@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dfalxdw5p502x"]
+
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/waves.gdshader" id="1_rqboq"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0eb53"]
+subdivide_width = 32
+subdivide_depth = 32
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0eb53"]
+render_priority = 0
+shader = ExtResource("1_rqboq")
+shader_parameter/albedo = Color(0, 0.5176471, 0.6862745, 1)
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 0.0
+
+[node name="Node3D" type="Node3D" unique_id=1617840124]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1802568254]
+mesh = SubResource("PlaneMesh_0eb53")
+surface_material_override/0 = SubResource("ShaderMaterial_0eb53")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=284176597]
+transform = Transform3D(1, 0, 0, 0, 0.8371222, 0.54701596, 0, -0.54701596, 0.8371222, 0, 1.7724017, 2.9354239)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=960337287]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 1.5, 0.4, 1.5)
