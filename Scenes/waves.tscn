@@ -12,6 +12,9 @@ shader = ExtResource("1_rqboq")
 shader_parameter/albedo = Color(0, 0.5176471, 0.6862745, 1)
 shader_parameter/metallic = 0.0
 shader_parameter/roughness = 0.0
+shader_parameter/speed = 2.0
+shader_parameter/ampl = 0.05
+shader_parameter/ang = 3.0
 
 [node name="Node3D" type="Node3D" unique_id=1617840124]
 
@@ -23,4 +26,4 @@ surface_material_override/0 = SubResource("ShaderMaterial_0eb53")
 transform = Transform3D(1, 0, 0, 0, 0.8371222, 0.54701596, 0, -0.54701596, 0.8371222, 0, 1.7724017, 2.9354239)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=960337287]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 1.5, 0.4, 1.5)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 1.4279807, 0.34784785, 1.5718095)
