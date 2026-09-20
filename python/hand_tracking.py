@@ -36,6 +36,8 @@ HAND_CONNECTIONS = [
     (0, 17), (13, 17), (17, 18), (18, 19), (19, 20),  # Pinky
 ]
 
+OPPOSITE_SIDE = {"left": "right", "right": "left"}
+
 
 def ensure_model() -> None:
     print("Downloading hand landmarker model...")
@@ -68,13 +70,13 @@ def extract_left_right_hand_coords(result) -> dict:
     best_scores = {"left": 0.0, "right": 0.0}
 
     for landmarks, handedness in zip(result.hand_landmarks, result.handedness):
-        label = handedness[0].category_name.lower()
+        label = OPPOSITE_SIDE[handedness[0].category_name.lower()]
         score = handedness[0].score
 
         if score > 0.5 and score > best_scores[label]:
             best_scores[label] = score
             hand_coords[label] = [[landmark.x, landmark.y, landmark.z] for landmark in landmarks]
-            print(hand_coords)
+            #print(hand_coords)
 
     return hand_coords
 
