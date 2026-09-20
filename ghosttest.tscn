@@ -2,6 +2,9 @@
 
 [ext_resource type="Shader" uid="uid://4l7l54juft62" path="res://ghost/ghost.gdshader" id="1_td1rf"]
 [ext_resource type="Material" uid="uid://c3u5ykotljjl8" path="res://Shaders/character/cartoon_fur_material.tres" id="2_td1rf"]
+[ext_resource type="Script" uid="uid://cp3njg8dkogbv" path="res://Scripts/memory_preview.gd" id="3_ubufe"]
+[ext_resource type="Shader" uid="uid://chbboahvyd03b" path="res://Shaders/memory_fog.gdshader" id="4_hfc7h"]
+[ext_resource type="Script" uid="uid://cn2suljucxo2n" path="res://Scripts/foreground.gd" id="4_sbaxh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8jovo"]
 render_priority = 0
@@ -26,14 +29,70 @@ top_radius = 0.0
 bottom_radius = 0.04
 height = 0.12
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8jovo"]
+shading_mode = 0
+albedo_color = Color(0.45751315, 0.67554414, 0.7681233, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_bjqgx"]
+size = Vector2(4, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1xlpn"]
+shading_mode = 0
+albedo_color = Color(0.9607843, 0.9764706, 0.5254902, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_8jovo"]
+material = SubResource("StandardMaterial3D_1xlpn")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jre5i"]
+shading_mode = 0
+albedo_color = Color(0.6392157, 0.6901961, 1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_1xlpn"]
+material = SubResource("StandardMaterial3D_jre5i")
+size = Vector2(1.5, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bjqgx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ubufe"]
+render_priority = 0
+shader = ExtResource("4_hfc7h")
+shader_parameter/fog_color = Color(0.65, 0.76, 0.92, 1)
+shader_parameter/density = 1.15
+shader_parameter/flow_speed = 0.07
+shader_parameter/detail_scale = 3.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_jre5i"]
+size = Vector2(3, 3.2)
+
+[sub_resource type="Gradient" id="Gradient_td1rf"]
+colors = PackedColorArray(0.42898795, 0.57078284, 0.7561325, 1, 0.91764706, 0.79607844, 0.9529412, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xxo5k"]
+gradient = SubResource("Gradient_td1rf")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uqv50"]
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("GradientTexture2D_xxo5k")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ex8gk"]
+size = Vector3(2.6, 2.6, 0.2)
+
 [node name="Ghosttest" type="Node3D" unique_id=1862862787]
 
 [node name="Ghostbody" type="MeshInstance3D" parent="." unique_id=2071682887]
+visible = false
 material_override = SubResource("ShaderMaterial_8jovo")
 mesh = SubResource("CapsuleMesh_bjqgx")
 
 [node name="FurBody" type="MeshInstance3D" parent="." unique_id=1306833926]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2595637, 0, 0)
+visible = false
 mesh = SubResource("SphereMesh_bjqgx")
 surface_material_override/0 = ExtResource("2_td1rf")
 
@@ -41,3 +100,43 @@ surface_material_override/0 = ExtResource("2_td1rf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.550917, 0)
 mesh = SubResource("CylinderMesh_bjqgx")
 surface_material_override/0 = ExtResource("2_td1rf")
+
+[node name="MemoryPreview" type="Node3D" parent="." unique_id=22012717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+script = ExtResource("3_ubufe")
+
+[node name="Memorylayers" type="Node3D" parent="MemoryPreview" unique_id=898854581]
+
+[node name="Background" type="MeshInstance3D" parent="MemoryPreview/Memorylayers" unique_id=115029221]
+transform = Transform3D(0.9999814, -0.0058055567, 0.0018815746, 0.0058073606, 0.9999827, -0.0009555103, -0.0018759979, 0.0009664133, 0.9999978, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_8jovo")
+mesh = SubResource("QuadMesh_bjqgx")
+
+[node name="HiddenClue" type="MeshInstance3D" parent="MemoryPreview/Memorylayers" unique_id=1904831600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
+mesh = SubResource("QuadMesh_8jovo")
+
+[node name="Foreground" type="MeshInstance3D" parent="MemoryPreview/Memorylayers" unique_id=1289811682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+mesh = SubResource("QuadMesh_1xlpn")
+script = ExtResource("4_sbaxh")
+
+[node name="HoverArea" type="Area3D" parent="MemoryPreview/Memorylayers/Foreground" unique_id=1394651143]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryPreview/Memorylayers/Foreground/HoverArea" unique_id=336534418]
+shape = SubResource("BoxShape3D_bjqgx")
+
+[node name="Camera3D" type="Camera3D" parent="MemoryPreview" unique_id=630399523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+current = true
+
+[node name="MemoryFog" type="Area3D" parent="MemoryPreview" unique_id=1527946841]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.3)
+
+[node name="FogVisual" type="MeshInstance3D" parent="MemoryPreview/MemoryFog" unique_id=2086973023]
+material_override = SubResource("ShaderMaterial_ubufe")
+mesh = SubResource("QuadMesh_jre5i")
+surface_material_override/0 = SubResource("StandardMaterial3D_uqv50")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryPreview/MemoryFog" unique_id=832201903]
+shape = SubResource("BoxShape3D_ex8gk")
