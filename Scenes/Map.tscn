@@ -2,8 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://bopnrnt34f76d" path="res://Scenes/WaterPlane.tscn" id="1_00287"]
 [ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scenes/boat.gd" id="2_5t7yc"]
+[ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/water.gd" id="2_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_ngcqm"]
+[ext_resource type="VoxelGIData" uid="uid://jvku1bifihxq" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
+[ext_resource type="Script" uid="uid://cidxk26urt58y" path="res://Scenes/buoyancy.gd" id="5_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
 
@@ -11,18 +14,24 @@
 radius = 0.47613525
 height = 1.0556946
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a2mn1"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_ngcqm"]
 
-[sub_resource type="Sky" id="Sky_8q6pl"]
-sky_material = SubResource("ProceduralSkyMaterial_a2mn1")
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_umuii"]
+sky_top_color = Color(3.272891e-06, 0.5757627, 0.8311559, 1)
+
+[sub_resource type="Sky" id="Sky_mgsmc"]
+sky_material = SubResource("ProceduralSkyMaterial_umuii")
 
 [sub_resource type="Environment" id="Environment_3ytfl"]
 background_mode = 2
-sky = SubResource("Sky_8q6pl")
+sky = SubResource("Sky_mgsmc")
 ambient_light_source = 3
 fog_enabled = true
-fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
-fog_density = 0.0758
+fog_mode = 1
+fog_light_color = Color(0.45625693, 0.67601097, 0.85588694, 1)
+fog_sun_scatter = 0.2
+fog_density = 1.0
+fog_depth_curve = 0.26794425
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_8q6pl"]
 height = 3.493164
@@ -38,29 +47,47 @@ radius = 22.165527
 
 [node name="Map" type="Node3D" unique_id=1130590225]
 
+[node name="VoxelGI" type="VoxelGI" parent="." unique_id=826415132]
+subdiv = 2
+size = Vector3(100, 20, 100)
+data = ExtResource("3_ws1hi")
+
 [node name="WaterPlane" parent="." unique_id=1136176607 instance=ExtResource("1_00287")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03758596, -0.011861771, 0.02192682)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("2_ngcqm")
 
 [node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
 script = ExtResource("2_5t7yc")
 
-[node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335446, -0.42266667, 0.06617212)
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Boat" unique_id=1178132166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0.0859251)
 shape = SubResource("CapsuleShape3D_3ytfl")
 
+[node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335445, -0.42266667, 0.0661726)
+
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
-transform = Transform3D(1, 0, 0, 0, 0.31301922, 0.9497965, 0, -0.9497965, 0.31301922, 0, 9.667106, 3.185935)
+transform = Transform3D(1, 0, 0, 0, 0.97268647, 0.23212299, 0, -0.23212299, 0.97268647, 0, 1.616128, 4.0289736)
 keep_aspect = 0
+
+[node name="Buoyancy Boat" type="RigidBody3D" parent="." unique_id=2098697709]
+transform = Transform3D(-0.75194573, 0, -0.65922505, 0, 1, 0, 0.65922505, 0, -0.75194573, -1.6336703, 0.43897676, 6.6186295)
+script = ExtResource("5_ngcqm")
+float_force = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buoyancy Boat" unique_id=2098058324]
+shape = SubResource("SphereShape3D_ngcqm")
+
+[node name="Sail Boat" parent="Buoyancy Boat" unique_id=1389022062 instance=ExtResource("3_ngcqm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335445, -0.42266667, 0.0661726)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1491661626]
 environment = SubResource("Environment_3ytfl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1902198615]
-transform = Transform3D(1, 0, 0, 0, -0.54062665, 0.84126276, 0, -0.84126276, -0.54062665, 0, 10.071228, 0)
+transform = Transform3D(1, 0, 0, 0, -0.9268225, 0.37549984, 0, -0.3754998, -0.92682236, 0, 10.071228, 0)
+light_angular_distance = 15.0
 
 [node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.2088985)
