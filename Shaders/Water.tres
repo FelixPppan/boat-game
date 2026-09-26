@@ -9,6 +9,13 @@ frequency = 0.15
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5t7yc"]
 noise = SubResource("FastNoiseLite_5t7yc")
 
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.42, 0.72, 1)
+colors = PackedColorArray(0.99999994, 0.7012559, 0.06396211, 1, 0, 0.8199626, 0.8564243, 1, 0.5996321, 0.95101243, 0.99999994, 1, 0.85, 0.55, 0.9, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_trail"]
+gradient = SubResource("Gradient_trail")
+
 [resource]
 render_priority = 0
 shader = ExtResource("1_08pfp")
@@ -22,3 +29,16 @@ shader_parameter/noise = SubResource("NoiseTexture2D_5t7yc")
 shader_parameter/noise_intensity = 0.400000019
 shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
 shader_parameter/time = 0.0
+shader_parameter/trail_world_center = Vector2(0, 0)
+shader_parameter/trail_world_size = 100.0
+shader_parameter/trail_gradient = SubResource("GradientTexture1D_trail")
+shader_parameter/trail_layer_u = Vector3(0.18, 0.45, 0.9)
+shader_parameter/trail_strength = 1.0000000475
+shader_parameter/trail_softness = 2.0
+shader_parameter/trail_flow = 1.0
+shader_parameter/trail_flow_scale = 0.01500000071248
+shader_parameter/trail_warp = 1.0000000475
+shader_parameter/trail_edge_min = 0.30000001425
+shader_parameter/trail_edge_max = 0.78
+shader_parameter/trail_halo = 0.50000002375
+shader_parameter/trail_core_boost = 1.80000006175

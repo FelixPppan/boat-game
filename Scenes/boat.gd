@@ -74,7 +74,7 @@ extends CharacterBody3D
 # once the editor has scanned it into the .godot cache, whereas this path
 # always resolves.
 const OarControllerScript := preload("res://Scripts/oar_controller.gd")
-const TrailDotsScript := preload("res://Scripts/trail_dots.gd")
+const TrailScript := preload("res://Scripts/trail.gd")
 
 @onready var camera: Camera3D = $Camera3D
 @onready var _water: Node = get_node_or_null("/root/Map/WaterPlane")
@@ -101,11 +101,9 @@ func _ready() -> void:
 	_oar.name = "OarController"
 	add_child(_oar)
 
-	# Ticker-tape trail: a green dot every fixed interval, so the spacing
-	# between dots reads as speed and the chain reads as the path. Parented to
-	# the boat (so it can find it), but the dots themselves stay in the world.
-	_trail = TrailDotsScript.new()
-	_trail.name = "TrailDots"
+	# Stern trail history → aurora mist in waves.gdshader.
+	_trail = TrailScript.new()
+	_trail.name = "Trail"
 	add_child(_trail)
 	_trail.setup(self)
 
@@ -184,6 +182,9 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera_tilt(delta)
 	_stabilize_camera_height()
+
+	if _trail != null:
+		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
 
 
 func _follow_wave_height(delta: float) -> void:

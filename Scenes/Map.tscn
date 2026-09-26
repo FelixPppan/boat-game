@@ -2,12 +2,12 @@
 
 [ext_resource type="PackedScene" uid="uid://bopnrnt34f76d" path="res://Scenes/WaterPlane.tscn" id="1_00287"]
 [ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scenes/boat.gd" id="2_5t7yc"]
-[ext_resource type="Script" path="res://Scripts/water.gd" id="2_ngcqm"]
+[ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/water.gd" id="2_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_ngcqm"]
-[ext_resource type="VoxelGIData" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
+[ext_resource type="VoxelGIData" uid="uid://jvku1bifihxq" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
 [ext_resource type="Script" uid="uid://b87b21y60o3i5" path="res://Scripts/fog_controller.gd" id="4_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
-[ext_resource type="Script" path="res://Scenes/buoyancy.gd" id="5_ngcqm"]
+[ext_resource type="Script" uid="uid://cidxk26urt58y" path="res://Scenes/buoyancy.gd" id="5_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
 [ext_resource type="Shader" uid="uid://chbboahvyd03b" path="res://Shaders/memory_fog.gdshader" id="6_ws1hi"]
@@ -33,6 +33,11 @@ sky_material = SubResource("ProceduralSkyMaterial_umuii")
 background_mode = 2
 sky = SubResource("Sky_mgsmc")
 ambient_light_source = 3
+glow_enabled = true
+glow_intensity = 0.35
+glow_strength = 0.7
+glow_bloom = 0.06
+glow_hdr_threshold = 0.85
 fog_enabled = true
 fog_mode = 1
 fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
@@ -108,7 +113,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("2_ngcqm")
 
 [node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.63267565, 12.437188)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.31988573, 12.437188)
 script = ExtResource("2_5t7yc")
 
 [node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
@@ -119,7 +124,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0
 shape = SubResource("CapsuleShape3D_3ytfl")
 
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
-transform = Transform3D(1, 0, 0, 0, 0.9251595, 0.37957862, 0, -0.37957862, 0.9251595, 0, 3.2896342, 5.274989)
+transform = Transform3D(1, 0, 0, 0, 0.9251595, 0.37957862, 0, -0.37957862, 0.9251595, 0, 3.1473308, 7.023223)
 keep_aspect = 0
 
 [node name="FogController" type="Node3D" parent="Boat" unique_id=1609239132 node_paths=PackedStringArray("water_fog_volume")]
