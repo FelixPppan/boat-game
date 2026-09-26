@@ -96,7 +96,7 @@ void fragment() {
 	ALBEDO = albedo_mix;
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
-	RIM = 3.0;
+	RIM = 0.5;
 }
 
 void light() {

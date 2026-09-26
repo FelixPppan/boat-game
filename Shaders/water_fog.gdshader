@@ -27,5 +27,5 @@ void fog() {
     
     DENSITY = pow(base_density * height_factor * boat_mask * noise_val, 1.2);
     ALBEDO = fog_color;
-    EMISSION = fog_color * 0.8; // Self-luminous 自发光80%
+    EMISSION = fog_color * 0.4; // Self-luminous 自发光40%
 }

@@ -12,12 +12,12 @@ noise = SubResource("FastNoiseLite_5t7yc")
 [resource]
 render_priority = 0
 shader = ExtResource("1_08pfp")
-shader_parameter/albedo = Color(5.7756904e-07, 0.395851, 0.46551222, 1)
-shader_parameter/albedo_high = Color(0, 0.6537808, 0.7062451, 1)
+shader_parameter/albedo = Color(0.41869488, 0.46028042, 0.72929335, 1)
+shader_parameter/albedo_high = Color(0.7137255, 0.69411767, 0.8117647, 1)
 shader_parameter/blend_from = -0.24399996409
 shader_parameter/blend_to = 0.73600003496
 shader_parameter/metallic = 0.0
-shader_parameter/roughness = 0.0
+shader_parameter/roughness = 0.15
 shader_parameter/noise = SubResource("NoiseTexture2D_5t7yc")
 shader_parameter/noise_intensity = 0.400000019
 shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
