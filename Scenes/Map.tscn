@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
+[ext_resource type="PackedScene" uid="uid://dtuxf1ipcgiih" path="res://model/ghost.glb" id="7_ws1hi"]
+[ext_resource type="Material" path="res://Shaders/ghost_inner_dark.tres" id="8_xicox"]
+[ext_resource type="Material" uid="uid://dnjy3hkncmgd" path="res://ghost_material.tres" id="9_bjq7f"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -100,3 +103,20 @@ transform = Transform3D(0.43276986, 0, 0.90150446, 0, 1, 0, -0.90150446, 0, 0.43
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Rock3" unique_id=2106690819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="ghost" parent="." unique_id=171061276 instance=ExtResource("7_ws1hi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7145686, 0.2854569, 3.841257)
+
+[node name="black_body" parent="ghost" index="0" unique_id=1676378527]
+material_override = ExtResource("8_xicox")
+
+[node name="white_body" parent="ghost" index="1" unique_id=1473653954]
+material_override = ExtResource("9_bjq7f")
+
+[node name="right_hand" parent="ghost" index="2" unique_id=1162381310]
+material_override = ExtResource("9_bjq7f")
+
+[node name="left_hand" parent="ghost" index="3" unique_id=927929326]
+material_override = ExtResource("9_bjq7f")
+
+[editable path="ghost"]
