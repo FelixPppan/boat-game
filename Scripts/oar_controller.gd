@@ -944,7 +944,8 @@ var stroke_cool := 0.0
 
 var _overlay: CanvasLayer
 var _label: Label
-var _overlay_visible := true
+## Start hidden so the play view matches a clean local build; F2 toggles.
+var _overlay_visible := false
 ## Seconds left on the "the bar just moved" marker. Tuning a knob with no feedback
 ## is indistinguishable from a key that does not work, so for a moment after any
 ## change both the readout line and the panel mark the value that moved.
@@ -1009,6 +1010,8 @@ func _ready() -> void:
 	# Draw once up front, so the panel shows the shipped bar for the frames before
 	# the first update() rather than an empty box.
 	_refresh_overlay()
+	if _overlay != null:
+		_overlay.visible = _overlay_visible
 
 
 ## Live threshold tuning, in game and at any moment. Two ways in, because the two
