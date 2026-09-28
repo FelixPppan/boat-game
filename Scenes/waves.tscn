@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://dfalxdw5p502x"]
+
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/waves.gdshader" id="1_rqboq"]
+[ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/water.gd" id="2_5a5lk"]
+[ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="2_umuii"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0eb53"]
+size = Vector2(100, 100)
+subdivide_width = 1024
+subdivide_depth = 1024
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rqboq"]
+noise_type = 2
+frequency = 0.15
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rqboq"]
+noise = SubResource("FastNoiseLite_rqboq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0eb53"]
+render_priority = 0
+shader = ExtResource("1_rqboq")
+shader_parameter/albedo = Color(1.2513996e-06, 0.39635438, 0.49064684, 1)
+shader_parameter/albedo_high = Color(0, 0.626782, 0.77046657, 1)
+shader_parameter/blend_from = -0.31799996760500004
+shader_parameter/blend_to = 0.91200004332
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 0.010000000475
+shader_parameter/noise = SubResource("NoiseTexture2D_rqboq")
+shader_parameter/noise_intensity = 0.250000011875
+shader_parameter/gerstner_wave = Vector4(8.905, 0.655, 1, 1)
+shader_parameter/time = 0.0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_umuii"]
+sky_top_color = Color(3.272891e-06, 0.5757627, 0.8311559, 1)
+
+[sub_resource type="Sky" id="Sky_mgsmc"]
+sky_material = SubResource("ProceduralSkyMaterial_umuii")
+
+[sub_resource type="Environment" id="Environment_08pfp"]
+background_mode = 2
+sky = SubResource("Sky_mgsmc")
+ambient_light_source = 3
+ambient_light_color = Color(0.8217887, 0.82178867, 0.82178867, 1)
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.45625693, 0.67601097, 0.85588694, 1)
+fog_sun_scatter = 0.2
+fog_density = 1.0
+
+[node name="Node3D" type="Node3D" unique_id=1617840124]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1802568254]
+mesh = SubResource("PlaneMesh_0eb53")
+surface_material_override/0 = SubResource("ShaderMaterial_0eb53")
+script = ExtResource("2_5a5lk")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=960337287]
+transform = Transform3D(-1, 0, -8.742278e-08, -2.1620743e-08, 0.9689358, 0.24731247, 8.4707054e-08, 0.24731247, -0.9689358, 0, 1.4621065, -2.2803364)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1584362137]
+environment = SubResource("Environment_08pfp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=279328567]
+transform = Transform3D(1, 0, 0, 0, 0.7745205, 0.6325488, 0, -0.6325488, 0.7745205, 0, 2.2020974, 6.915177)
+
+[node name="Sail Boat" parent="." unique_id=1389022062 instance=ExtResource("2_umuii")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.134, 0)
+visible = false

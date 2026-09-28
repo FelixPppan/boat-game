@@ -1,35 +1,44 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://cipaepuetlh6q"]
 
-[ext_resource type="Shader" uid="uid://cr75xh6l2skwk" path="res://Shaders/Water.gdshader" id="1_08pfp"]
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/waves.gdshader" id="1_08pfp"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_cy6w2"]
-noise_type = 3
-fractal_type = 2
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5t7yc"]
+noise_type = 4
+frequency = 0.15
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mclji"]
-noise = SubResource("FastNoiseLite_cy6w2")
-seamless = true
-as_normal_map = true
-bump_strength = 10.0
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5t7yc"]
+noise = SubResource("FastNoiseLite_5t7yc")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wiijv"]
-noise_type = 3
-fractal_type = 2
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.42, 0.72, 1)
+colors = PackedColorArray(0.99999994, 0.7012559, 0.06396211, 1, 0, 0.8199626, 0.8564243, 1, 0.5996321, 0.95101243, 0.99999994, 1, 0.85, 0.55, 0.9, 1)
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ufjy"]
-noise = SubResource("FastNoiseLite_wiijv")
-seamless = true
-as_normal_map = true
-bump_strength = 4.3
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_trail"]
+gradient = SubResource("Gradient_trail")
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_08pfp")
 shader_parameter/albedo = Color(0.41869488, 0.46028042, 0.72929335, 1)
+shader_parameter/albedo_high = Color(0.7137255, 0.69411767, 0.8117647, 1)
+shader_parameter/blend_from = -0.24399996409
+shader_parameter/blend_to = 0.73600003496
 shader_parameter/metallic = 0.0
-shader_parameter/roughness = 0.0
-shader_parameter/texture_normal = SubResource("NoiseTexture2D_mclji")
-shader_parameter/texture_normal2 = SubResource("NoiseTexture2D_2ufjy")
-shader_parameter/wave_direction = Vector2(2, 0)
-shader_parameter/wave_direction2 = Vector2(0, 1)
-shader_parameter/time_scale = 0.025
+shader_parameter/roughness = 0.15
+shader_parameter/noise = SubResource("NoiseTexture2D_5t7yc")
+shader_parameter/noise_intensity = 0.400000019
+shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
+shader_parameter/time = 0.0
+shader_parameter/trail_world_center = Vector2(0, 0)
+shader_parameter/trail_world_size = 100.0
+shader_parameter/trail_gradient = SubResource("GradientTexture1D_trail")
+shader_parameter/trail_layer_u = Vector3(0.18, 0.45, 0.9)
+shader_parameter/trail_strength = 1.0000000475
+shader_parameter/trail_softness = 2.0
+shader_parameter/trail_flow = 1.0
+shader_parameter/trail_flow_scale = 0.01500000071248
+shader_parameter/trail_warp = 1.0000000475
+shader_parameter/trail_edge_min = 0.30000001425
+shader_parameter/trail_edge_max = 0.78
+shader_parameter/trail_halo = 0.50000002375
+shader_parameter/trail_core_boost = 1.80000006175

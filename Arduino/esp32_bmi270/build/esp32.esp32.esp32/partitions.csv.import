@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://clfhe6oh75t1f"
+
+[deps]
+
+files=["res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions.   Type.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions. SubType.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions. Offset.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions.  Size.translation"]
+
+source_file="res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions.csv"
+dest_files=["res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions.   Type.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions. SubType.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions. Offset.translation", "res://Arduino/esp32_bmi270/build/esp32.esp32.esp32/partitions.  Size.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

@@ -1,0 +1,90 @@
+
+============================================================================================
+  WHY THE FILE DIVIDES BY |a| -- AND WHETHER IT IS WORTH IT
+============================================================================================
+
+== 1. HOW OFTEN IS |a| NOT 10 m/s2 (1 g)? ==
+   This is the ONLY condition under which dividing differs from dividing by 10.
+
+   capture                    median g      p95 g % frames >1.5 g
+   left_strokes.txt              0.998      1.359             2%
+   air_swings.txt                1.449      3.069            49%
+   fake_capture.txt              1.000      1.285             2%
+   rev_real_rev1.txt             1.007      2.943            30%
+   rev_real_rev2.txt             1.155      2.852            33%
+   rev_real_rev3.txt             1.105      2.753            30%
+   rev_real_rev4.txt             1.027      2.350            34%
+
+   The user's own forward rowing sits at 1.000 g with 2% of frames over 1.5 g,
+   so on that capture z/|a| and z/10 agree to within 4% almost everywhere.
+   The hard air swing sits at 1.449 g with half its frames over 1.5 g.
+
+== 2. WHERE THE RAW dZ/dt GOES: tilt, or the oar accelerating itself? ==
+   d(z)/dt = |a|*d(z/|a|)/dt  +  (z/|a|)*d|a|/dt
+             \___ tilt ___/       \_ the oar's own accel _/
+   A share near 0 would mean the division is decoration. Here is what it is.
+
+   capture                    frames   mean |tilt|  mean |accel| share accel
+   left_strokes.txt             1481          6.21          1.86       23%
+   air_swings.txt                467         78.93         23.61       23%
+   fake_capture.txt             1219         13.09          3.41       21%
+   rev_real_rev1.txt              99         70.96         25.19       26%
+   rev_real_rev2.txt              89         57.91         22.53       28%
+   rev_real_rev3.txt              79         44.31         22.40       34%
+   rev_real_rev4.txt              89         39.53         13.21       25%
+
+   the same, only on the frames the gate acts on (|_w_fa| >= 4.0):
+
+   capture                    frames   mean |tilt|  mean |accel| share accel
+   left_strokes.txt                0             -             -         -
+   air_swings.txt                168        170.41         36.93       18%
+   fake_capture.txt               50         43.99          5.37       11%
+   rev_real_rev1.txt              38        131.89         35.28       21%
+   rev_real_rev2.txt              30         92.97         28.60       24%
+   rev_real_rev3.txt              12        134.62         17.81       12%
+   rev_real_rev4.txt              16         74.31         14.15       16%
+
+   So the division removes a real fifth of the raw rate at the gate's own
+   operating points -- a genuine correction, not decoration, but a fifth.
+
+== 3. WHAT THE DIVISION BUYS: the gate frontier, on one recording ==
+   The two statistics live in different units, so their bars cannot be compared
+   directly. Compare the whole frontier instead: pick the forward sweep passed,
+   and ask how much bow sweep leaks past the same threshold. Less is better.
+
+   left_strokes.txt at 1x pace
+                            normalised d(z/|a|)/dt              raw dz/dt
+   forward sweep passed           leak      (bar)       leak      (bar)
+    90% of its own top           0.342       2.22      0.504      21.10
+    70% of its own top           0.198       2.39      0.251      23.29
+    50% of its own top           0.066       2.67      0.083      25.47
+    30% of its own top           0.002       2.99      0.008      28.47
+    10% of its own top           0.000       3.42      0.000      32.02
+
+   left_strokes.txt at 8x pace
+                            normalised d(z/|a|)/dt              raw dz/dt
+   forward sweep passed           leak      (bar)       leak      (bar)
+    90% of its own top           0.017       4.59      0.036      39.79
+    70% of its own top           0.002       4.95      0.006      43.39
+    50% of its own top           0.000       5.42      0.000      47.51
+    30% of its own top           0.000       6.01      0.000      53.68
+    10% of its own top           0.000       6.79      0.000      61.40
+
+   The normalised statistic leaks less at every matched forward gain, at both
+   paces. Dividing is buying a measurably tighter gate, not just tidiness.
+
+== 4. WHAT THE DIVISION COSTS: dynamic range ==
+   Raw dz/dt spans far wider across captures than the normalised rate does,
+   because |a| grows with the swing and divides the big ones back down.
+
+   capture                      peak dZ/dt     peak _w_fa      ratio
+   left_strokes.txt                  36.39           3.82       9.53*|a|
+   air_swings.txt                   320.74          17.58      18.24*|a|
+   fake_capture.txt                  75.75           6.65      11.39*|a|
+   rev_real_rev1.txt                240.69          10.58      22.74*|a|
+   rev_real_rev2.txt                185.16           8.12      22.79*|a|
+   rev_real_rev3.txt                152.40           6.24      24.41*|a|
+   rev_real_rev4.txt                 79.23           5.34      14.83*|a|
+
+   across the captures the raw statistic spans 8.8x, the normalised one 4.6x
+

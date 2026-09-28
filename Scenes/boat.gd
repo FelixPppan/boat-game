@@ -57,41 +57,69 @@ extends CharacterBody3D
 ## How fast the bank follows (larger = snappier).
 ## 倾斜跟随的快慢(越大越跟手)。
 @export var camera_tilt_smoothing: float = 6.0
+## If true, the camera follows the boat on XZ/yaw but stays at calm-water
+## height so wave bobbing does not bounce the view.
+## 开启后镜头仍跟随船的平移和转向,但高度锁在平静水面,不随浪上下晃。
+@export var camera_ignore_waves: bool = true
+
+@export_group("Wave following")
+## Rest height of the boat origin above calm water (y = 0).
+## 平静水面(y=0)上船原点的基准高度。
+@export var float_height: float = 0.44
+## How quickly the hull tracks the wave height (larger = snappier).
+## 船体跟随浪高的快慢(越大越跟手)。
+@export var wave_follow_smoothing: float = 8.0
 
 # preload rather than the bare class name: a class name is only recognised
 # once the editor has scanned it into the .godot cache, whereas this path
 # always resolves.
 const OarControllerScript := preload("res://Scripts/oar_controller.gd")
 const TrailDotsScript := preload("res://Scripts/trail_dots.gd")
+const StrokeRecorderScript := preload("res://Scripts/stroke_recorder.gd")
+const TrailScript := preload("res://Scripts/trail.gd")
 
 @onready var camera: Camera3D = $Camera3D
+@onready var _water: Node = get_node_or_null("/root/Map/WaterPlane")
 
 ## Planar velocity in world space (only x/z are used).
 var _vel := Vector3.ZERO
 ## Current yaw rate (rad/s); positive turns left.
 var _yaw_rate := 0.0
 var _camera_tilt := 0.0
+## Camera local Y from the scene, used to cancel wave bob on the view.
+var _camera_rest_local_y: float = 0.0
 var _oar
 var _trail
+var _recorder
 
 
 func _ready() -> void:
 	# The boat floats: there is no notion of ground, so use floating mode
 	# (no gravity, no snapping to a floor).
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
+	_camera_rest_local_y = camera.position.y
 
 	# The controller is created in code so the scene file needs no edits.
 	_oar = OarControllerScript.new()
 	_oar.name = "OarController"
 	add_child(_oar)
 
-	# Ticker-tape trail: a green dot every fixed interval, so the spacing
-	# between dots reads as speed and the chain reads as the path. Parented to
-	# the boat (so it can find it), but the dots themselves stay in the world.
-	_trail = TrailDotsScript.new()
-	_trail.name = "TrailDots"
+	# Stern trail history → aurora mist in waves.gdshader.
+	_trail = TrailScript.new()
+	_trail.name = "Trail"
 	add_child(_trail)
 	_trail.setup(self)
+
+	# Records the raw oar stream and what the controller decided about it, for
+	# offline scoring -- see Scripts/stroke_recorder.gd. Inert until R is
+	# pressed, and it must be added AFTER the controller so it can be told about
+	# it.
+	# 录下原始桨数据和控制器对它的判定,供离线打分 —— 见 Scripts/stroke_recorder.gd。
+	# 不按 R 就完全不动,而且必须排在控制器之后添加,才能把控制器交给它。
+	_recorder = StrokeRecorderScript.new()
+	_recorder.name = "StrokeRecorder"
+	add_child(_recorder)
+	_recorder.setup(_oar)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -162,7 +190,33 @@ func _physics_process(delta: float) -> void:
 	_vel = velocity
 	_vel.y = 0.0
 
+	# --- 6. Ride the Gerstner surface ------
+	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
+	_follow_wave_height(delta)
+
 	_update_camera_tilt(delta)
+	_stabilize_camera_height()
+
+	if _trail != null:
+		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
+
+
+func _follow_wave_height(delta: float) -> void:
+	if _water == null or not _water.has_method("get_height"):
+		return
+	var target_y := float_height + float(_water.get_height(global_position))
+	var t := 1.0 - exp(-wave_follow_smoothing * delta)
+	global_position.y = lerpf(global_position.y, target_y, t)
+
+
+## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
+## the wave offset on its local Y so the view does not bob.
+func _stabilize_camera_height() -> void:
+	if not camera_ignore_waves:
+		camera.position.y = _camera_rest_local_y
+		return
+	# global_y = boat.y + local_y  (boat only yaws) → lock to calm height.
+	camera.position.y = _camera_rest_local_y + float_height - global_position.y
 
 
 func _update_camera_tilt(delta: float) -> void:
