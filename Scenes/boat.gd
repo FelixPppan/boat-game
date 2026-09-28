@@ -63,6 +63,7 @@ extends CharacterBody3D
 # always resolves.
 const OarControllerScript := preload("res://Scripts/oar_controller.gd")
 const TrailDotsScript := preload("res://Scripts/trail_dots.gd")
+const StrokeRecorderScript := preload("res://Scripts/stroke_recorder.gd")
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -73,6 +74,7 @@ var _yaw_rate := 0.0
 var _camera_tilt := 0.0
 var _oar
 var _trail
+var _recorder
 
 
 func _ready() -> void:
@@ -92,6 +94,17 @@ func _ready() -> void:
 	_trail.name = "TrailDots"
 	add_child(_trail)
 	_trail.setup(self)
+
+	# Records the raw oar stream and what the controller decided about it, for
+	# offline scoring -- see Scripts/stroke_recorder.gd. Inert until R is
+	# pressed, and it must be added AFTER the controller so it can be told about
+	# it.
+	# 录下原始桨数据和控制器对它的判定,供离线打分 —— 见 Scripts/stroke_recorder.gd。
+	# 不按 R 就完全不动,而且必须排在控制器之后添加,才能把控制器交给它。
+	_recorder = StrokeRecorderScript.new()
+	_recorder.name = "StrokeRecorder"
+	add_child(_recorder)
+	_recorder.setup(_oar)
 
 
 func _unhandled_input(event: InputEvent) -> void:

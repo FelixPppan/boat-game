@@ -1,0 +1,482 @@
+  ok   the prefix-sum table answers exactly what the gate function answers 44 cells x 5 pairs, worst disagreement none
+====================================================================================================
+THE MODEL IN THE FILE
+====================================================================================================
+
+  two bars, 40.00 / 55.00 by default, each movable over 0.0 .. 200.0
+    sweep <= -40.00   thrust FORWARD, force = climb(-sweep)   (the fwd bar)
+    sweep >= +55.00   thrust ASTERN,  force = climb( sweep)   (the back bar)
+    in between       a RECOVERY, nothing happens
+  moved by [ ] and , . (1), - = (5), 0 (reset both), or by dragging the
+  panel -- left of centre for the forward bar, right for the backstroke one
+
+====================================================================================================
+1. THE FILE IS COHERENT
+====================================================================================================
+
+  ok   SWEEP_NEED_RESET is gone                                         0 reference(s)
+  ok   SWEEP_TUNE_STEP is gone                                          0 reference(s)
+  ok   AFT_TUNE_STEP is gone                                            0 reference(s)
+  ok   FWD_TUNE_STEP is gone                                            0 reference(s)
+  ok   AFT_TUNE_MIN is gone                                             0 reference(s)
+  ok   AFT_TUNE_MAX is gone                                             0 reference(s)
+  ok   FWD_TUNE_MIN is gone                                             0 reference(s)
+  ok   FWD_TUNE_MAX is gone                                             0 reference(s)
+  ok   _tuned_aft is gone                                               0 reference(s)
+  ok   _tuned_fwd is gone                                               0 reference(s)
+  ok   _knob_hint is gone                                               0 reference(s)
+  ok   _verdict is gone                                                 0 reference(s)
+  ok   REVERSE_BAR is gone                                              0 reference(s)
+  ok   REVERSE_ARM is gone                                              0 reference(s)
+  ok   REVERSE_SUSTAIN is gone                                          0 reference(s)
+  ok   REVERSE_RELEASE is gone                                          0 reference(s)
+  ok   REVERSE_MEMORY is gone                                           0 reference(s)
+  ok   REVERSE_CYCLE_MAX is gone                                        0 reference(s)
+  ok   REVERSE_RETURN_SHARE is gone                                     0 reference(s)
+  ok   REVERSE_WINDOW is gone                                           0 reference(s)
+  ok   _reverse_ref is gone                                             0 reference(s)
+  ok   _reverse_latch is gone                                           0 reference(s)
+  ok   _sb_hist is gone                                                 0 reference(s)
+  ok   _net_forward_rate is gone                                        0 reference(s)
+  ok   no bare sweep_need survives -- there is no single threshold left 0 bare reference(s)
+
+  ok   sweep_need_aft is a var, so it can be moved at run time          var
+  ok     ...and its shipped value is written down in exactly one place  sweep_need_aft := SWEEP_NEED_AFT_RESET
+  ok   sweep_need_fwd is a var, so it can be moved at run time          var
+  ok     ...and its shipped value is written down in exactly one place  sweep_need_fwd := SWEEP_NEED_FWD_RESET
+  ok   and there is no THIRD threshold variable: only the two bars are ever compared against the rate every comparison against the rate names one of sweep_need_aft, sweep_need_fwd -- so no other name in the file has to be a bar
+  ok   each bar is compared against the rate in the direction it governs the forward bar is read off -sweep and the backstroke bar off +sweep
+  ok   the two bars share one range and one pair of steps, not two of each 
+  ok   the range has both defaults inside it                            40.00 and 55.00 in [0.00, 200.00]
+  ok   the fine step can reach every value the coarse step produces     5 / 1 = 5.0000
+
+  ok   F2 still toggles the overlay                                     
+  ok   F2 survives being held down                                      
+  ok   KEY_BRACKETLEFT moves the forward bar by the fine step, -        _tune_aft(sweep_need_aft - step, echo)
+  ok   KEY_BRACKETRIGHT moves the forward bar by the fine step, +       _tune_aft(sweep_need_aft + step, echo)
+  ok   KEY_COLON moves the backstroke bar by the fine step, +           _tune_fwd(sweep_need_fwd + step, echo)
+  ok   KEY_COMMA moves the backstroke bar by the fine step, -           _tune_fwd(sweep_need_fwd - step, echo)
+  ok   KEY_PERIOD moves the backstroke bar by the fine step, +          _tune_fwd(sweep_need_fwd + step, echo)
+  ok   KEY_SEMICOLON moves the backstroke bar by the fine step, -       _tune_fwd(sweep_need_fwd - step, echo)
+  ok   every tuning arm but the reset one moves a bar                   7 arms, 6 of them setters
+  ok   the coarse arms move the FORWARD bar and pass the coarse step    - and = keep working as the old coarse pair
+  ok   nothing but _tune_aft ever writes sweep_need_aft                 written by _tune_aft
+  ok   nothing but _tune_fwd ever writes sweep_need_fwd                 written by _tune_fwd
+  ok   so the two bars cannot move each other                           the writer sets are disjoint
+  ok   0 puts BOTH bars back to the shipped pair                        one key, both setters, one shipped value each
+  ok   every key in the tuning chain accepts either keyboard reading    the ones matched by character also match by position
+  ok   minus, equals and the reset key are matched on the character alone 
+  ok   the event is read through a local cast to its real class         an InputEvent has no keycode the analyzer can type
+  ok   no `:=` infers a type from a property of a parameter or a Variant none
+  ok   the keys cannot write either bar without passing the clamp       0 clamp(s) in _input
+  ok   no `:=` infers a type from a Variant-returning maths global      none
+
+  ok   both setters clamp into the range                                
+  ok   both setters flag that a bar moved                               
+  ok   and each says WHICH bar it moved                                 the marker names its bar, not just that something moved
+  ok   each setter redraws exactly once                                 
+  ok   each setter reports to the console for when the panel is hidden  
+  ok   and each console line names the bar it moved                     
+  ok   a held key does not print a line per repeat                      
+  ok   the reset writes both bars, and only through the two setters     no assignment of its own to drift from the setters
+  ok   the marker fades before the early returns, so it fades with no sensor at 270, early return at 307
+
+  ok   the aft test is exactly "-sweep >= sweep_need_aft"               sweep_need_aft
+  ok   the bow test is exactly "sweep >= sweep_need_fwd"                sweep_need_fwd
+  ok   THE TWO DIRECTIONS ARE GATED ON TWO DIFFERENT VARIABLES          sweep_need_aft and sweep_need_fwd
+  ok   and each direction reads the bar its own gesture has to clear    an aft sweep reads the forward bar, a bow sweep the backstroke bar
+  ok   the gate derives its rate from _w_fa and nothing else            
+  ok   and the gate and the force are the same one number, not two that agree today the force and both tests are written in terms of `sweep`
+  ok   both powers are zeroed every frame before the tests              
+  ok   the two forces are one law on opposite halves of the same number 
+  ok   and neither force law reads a bar, so a bar is a floor on which frames get paid and not a gain -- raising one deletes the slow start of every push
+  ok   there is no mute, latch, sustain or cycle left in the gate       
+  ok   the readout verdict is the same two comparisons, not a re-derivation 
+
+  ok   the readout draws the live sweep against both bars               
+  ok   each bar is shown as a whole number, next to the live sweep to one decimal the readout line formats %.0f twice and no other width
+  ok     ...and the live number beside them is _f1, the same one the boat reads 
+  ok   the arrow belongs to _verdict_text and is nowhere in the line    
+  ok   the line names the keys that move each bar                       
+  ok   and says which step Modifier makes coarse, rather than which key Shift applies to whichever pair was pressed
+  ok   the line tells the player the panel can be dragged               
+  ok   the tuning line is drawn even with no sensor attached            
+  ok   the readout fits the base viewport, which is 1152 wide           
+
+  ok   the panel is built, and built by _build_overlay                  
+  ok   the panel is pinned to the right-hand edge, opposite the readout 
+  ok   the panel is placed by its own constants, not by numbers retyped there _panel.offset_left = -(PANEL_W + PANEL_MARGIN)
+  ok   the panel fits beside a 1152-wide viewport with room to spare    560 wide, 16 of margin
+  ok   the panel and the readout cannot overlap at the base window height readout top at 470, panel bottom at 206
+
+  ok   the meter is the one thing on the panel that takes the mouse     
+  ok   the panel itself lets clicks through to the game                 
+  ok   every other piece of the panel is transparent to the mouse       4 IGNORE across the builders
+  ok   exactly two things take a click: the meter and the reset button  2 MOUSE_FILTER_STOP in the overlay
+  ok   the reset button is the only other thing that takes a click      
+  ok   and the button cannot steal the keyboard, which F2 and the arrow keys need a Button takes focus by default, and a focused Control eats the keys
+  ok   the meter listens for the mouse, and the handler is the one written 
+  ok   a button released anywhere still ends the drag                   
+  ok   a drag does not print a line per pixel                           
+  ok   nothing on the panel is a Container or a Slider                  every rectangle is placed by _layout_meter
+  ok   the panel is redrawn from the same place the readout is          
+  ok   and the meter is laid out from the same place the panel is       
+  ok   the panel is painted once before the first physics frame         
+
+  ok   each notch is placed from its own bar, on its own side           
+  ok   the two zone bands close on those two edges, not on one width    
+  ok   neither notch is derived from the other, so the gap can be off-centre one read of each bar, so neither can be written as a mirror of the other
+  ok   the needle is the live sweep rate the force is computed from     
+  ok   a bar width is floored at zero, so a zone cannot go inside out   
+  ok   the drag reads the same width and range the drawing writes       
+  ok   and every arrow the verdict can print carries the arrow          3 return strings, all with the arrow on them
+  ok   the verdict names which bar it crossed, and reads the right one  the readout has to say which of the two fired
+  ok   a drag lands on the values the arrow keys produce                snap 0.5, half of the 1 fine step
+
+  ok   the two expressions the meter is built from are still where the audit looks for them meter_x's return, the drag's frac, and its snapped v
+  ok   the drawing and the drag use names for the panel geometry, not numbers copied out of it the literals here are 0.5, 1
+  ok   the drag reads a DISTANCE from the centre, so one formula serves both bars the side you grab picks the bar, the distance sets the value
+  ok   the centre of the meter is a bar of zero                         a drag landing on the middle gives 0.000
+  ok   the ends of the meter are the ends of the range                  both ends clamp to 200.0
+  ok   grabbing a notch and releasing it leaves that bar where it was   401 representable values, worst exact
+  ok   the fine step is a whole number of drag snaps, so keys and mouse agree fine step 1 is 2 drag snaps of 0.5
+  ok   no pair of bars can give a zone or the recovery band a negative width every 1 x 1 step of the range, both bars -- 40401 pairs
+  ok   the forward notch follows the forward bar and ignores the backstroke one the left edge is -sweep_need_aft at every setting of sweep_need_fwd
+  ok   and the backstroke notch follows its own bar the same way        the right edge is +sweep_need_fwd at every setting of sweep_need_aft
+  ok   the recovery band in the middle grows as EITHER bar is raised    strictly, on every 1 step of both bars -- a one-step raise buys 1.33 px
+  ok   a pair of equal bars draws a centred band, and any other pair does not equal bars put the middle of the band on the middle of the panel
+  ok   the shipped pair is visibly OFF centre, which is the point of the change at 40 / 55 the band is 9.98 px off centre, and the miss is linear in the gap between the two bars
+
+  ok   no dangling identifier                                           94 names checked
+  ok   no identifier is a typo of, or a cut-off copy of, a real one     nothing close to a declared name
+  ok   every format string takes exactly the arguments it is given      8 strings balanced
+
+  ok   every block is indented by exactly one tab, and only with tabs   whole file walked
+  ok   every string literal opens and closes on one line                no multi-line strings
+
+====================================================================================================
+2. THE TWO BARS, REPLAYED OVER THE RECORDINGS
+====================================================================================================
+
+  40 arc x pace cells of forward rowing, 4 recorded backstroke takes.
+  The physical ceiling: the forward climb with no gate at all, 39.672.
+  Both directions are gated here, and the gate is all that is on: the
+  cooldown is section 2c, so these are the bars without it.
+
+  aft   fwd    fwd kept     leak       net   the four takes, net astern
+  --------------------------------------------------------------------------------------------
+  5.0   5.0      38.700   45.207    -6.507   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+  5.0   4.0      38.700   45.601    -6.900   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+  --------------------------------------------------------------------------------------------
+  3.0   2.0      39.375   46.155    -6.780   +0.01 +0.00 -0.12 -0.02  (2 of 4 astern)
+  3.0   3.0      39.375   45.927    -6.552   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+  3.0   4.0      39.375   45.601    -6.226   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+  3.0   5.0      39.375   45.207    -5.833   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+
+  4.0   2.0      39.051   46.155    -7.103   +0.01 +0.01 -0.12 -0.02  (2 of 4 astern)
+  4.0   3.0      39.051   45.927    -6.875   +0.01 +0.00 -0.12 -0.02  (2 of 4 astern)
+  4.0   4.0      39.051   45.601    -6.549   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+  4.0   5.0      39.051   45.207    -6.156   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+
+  5.0   2.0      38.700   46.155    -7.454   +0.01 +0.01 -0.12 -0.02  (2 of 4 astern)
+  5.0   3.0      38.700   45.927    -7.226   +0.01 +0.01 -0.12 -0.02  (2 of 4 astern)
+
+  6.0   2.0      38.326   46.155    -7.829   +0.01 +0.01 -0.12 -0.02  (2 of 4 astern)
+  6.0   3.0      38.326   45.927    -7.601   +0.01 +0.01 -0.12 -0.02  (2 of 4 astern)
+  6.0   4.0      38.326   45.601    -7.275   +0.01 +0.01 -0.13 -0.02  (2 of 4 astern)
+  6.0   5.0      38.326   45.207    -6.882   +0.01 +0.00 -0.13 -0.02  (2 of 4 astern)
+
+  the single bar that used to be the whole story, at aft = fwd = bar:
+
+  bar     fwd kept % of max      leak       net   the four takes
+  0.80      39.672     100%    46.198    -6.525   +0.006 +0.005 -0.125 -0.022
+  2.00      39.627     100%    46.155    -6.528   +0.006 +0.005 -0.125 -0.022
+  3.10      39.353      99%    45.896    -6.543   +0.006 +0.004 -0.125 -0.022
+  4.00      39.051      98%    45.601    -6.549   +0.008 +0.004 -0.125 -0.022
+  5.00      38.700      98%    45.207    -6.507   +0.008 +0.003 -0.126 -0.021
+  5.05      38.686      98%    45.180    -6.494   +0.008 +0.003 -0.126 -0.021
+  5.50      38.485      97%    45.001    -6.516   +0.009 +0.002 -0.129 -0.021
+  6.00      38.326      97%    44.778    -6.453   +0.009 +0.001 -0.130 -0.022
+  6.35      38.166      96%    44.620    -6.454   +0.010 -0.001 -0.130 -0.022
+  7.00      37.865      95%    44.311    -6.446   +0.010 -0.004 -0.133 -0.022
+
+  ok   no sweep rate can open both directions at once, at any pair of bars the two zones are [-aft, +fwd]; over 40000 bar pairs of the range that interval is empty every time
+  ok   raising the aft bar never gives more forward thrust              forward monotone in the aft bar alone, over the whole range
+  ok   raising the fwd bar never gives more forward thrust either       and monotone in the fwd bar alone: the two costs add, they do not trade
+  ok   raising the fwd bar never gives more astern thrust               astern monotone in the fwd bar
+  ok   and raising the aft bar never gives more astern thrust           both directions monotone in BOTH bars -- neither knob is free
+
+  ok   no recorded bow sweep reaches the top of the range               the fastest recovery is 143.22, the bar can go to 200.0
+  ok   so at the top of the range the backstroke channel is shut completely astern leak 0.000 at both bars 200.0 -- nothing sweeps forward that fast
+  ok   and the forward channel is still fed there, by the fastest drives only the 0.428 left at the very top comes from drives alone: the recovery range tops out at 143.22, well under the bar
+  ok   in every cell the cell's own drive outruns its own recovery      40 of 40 cells
+  ok   so no one bar sits between the two populations                   the fastest recovery 143.22 is above the slowest drive 36.39, and the doc says exactly this
+
+  ok   THE BIND: the weakest real backstroke push is slower than forward rowing's own recovery the push peaks at 79.23, the recovery at 143.22, so a single bar below the first is above the second and vice versa
+  ok   no single bar both pays the slowest real backstroke and leaves forward rowing clean the push needs a bar at most 80.75, a clean forward rowing needs one above 143.25 -- 801 settings, no overlap
+
+                           pinned by    value   which way it binds
+  --------------------------------------------------------------------------------------------
+  forward bar (sweep_need_aft) fastest ladder drive   232.89   a bar above this pays nothing at all, ever
+                           (no upper bound)            it is also what decides how much of a recovery leaks forward
+  backstroke bar (sweep_need_fwd) rev3 push    79.23   a bar above this never fires the slowest real backstroke
+                           rev3 return   152.40   ...whose return would leak forward at any bar below that
+                           fastest real recovery    46.02   a bar below this pays astern on ordinary forward rowing
+
+  ok   the shipped aft bar is under the fastest real drive              40.0 against 232.89 -- 192.89 of room
+  ok   the shipped back bar is UNDER the slowest real push, so every take still fires 55.0 sits 24.23 under 79.23 -- the slowest of the four recorded backstroke pushes clears it, which is what makes this a BAND and not the old crossing
+  ok   and it sits ABOVE the fastest real recovery, which is what the leak column being zero means 55.0 sits 8.98 above 46.02 -- the player's own return leg cannot reach the backstroke bar at any pace the capture was taken at
+  ok   so the two pins are on opposite sides of the bar, and the band between them is the whole of what the split bought 46.02 < 55.0 < 79.23 -- a band 33.21 wide where the old normalised statistic had the two requirements crossed
+  ok   the two shipped bars are NOT equal, which is the change          40.0 and 55.0
+
+  ok   with the forward bar where it ships, rev3 nets forward at every setting of the back bar over 200 settings of the back bar its closest call is -0.083, at 1.0 -- its return is the faster of its two motions
+  ok   and the forward bar that would refuse rev3's return outright sits above the ladder's median drive rev3's return sweeps aft at 152.40 and the drive in the middle of the 40-cell ladder is 105.51 -- a bar between the two refuses the return and refuses half of ordinary rowing with it
+  ok   no pair of bars turns rev3 around without paying for it in drive rev3 nets astern at 260 of the 1681 pairs swept, the first needing a forward bar of 85.0, and the best of them for the ladder keeps 9.699 of a drive against the shipped pair's 23.303 -- 41.6%
+
+  ok   a pair that pays all four backstroke takes exists                the best of them is aft 178.00 / fwd 78.00 (-4.889)
+  ok   and it is NOT the pair that keeps the most forward thrust        the best net over the whole grid is +39.672 at aft 0.00 / fwd 144.00, and that pair pays only 0 of the four
+
+  ok   raising the back bar one step leaves the drive bit-for-bit alone forward 23.303 either way -- the drive reads the aft bar and nothing else
+  ok   and what it buys is leak, not drive                              leak 12.351 -> 12.097 for one step
+
+  ok   raising the back bar above the forward one leaves the drive bit-for-bit alone kept 23.303 either way -- only the back bar moved, and the drive cannot see it
+  ok   and what it buys is astern leak, which is the net on forward rowing leak 19.909 -> 12.351, net +3.394 -> +10.952, up 7.559 on 40 cells
+
+  ok   both bars at zero pass everything, which is what makes them the ceiling 39.672 forward, 46.198 astern -- and zeroing only the forward bar passes the same 39.672 forward
+  ok   and zeroing the forward bar costs NOTHING, which is its whole account bars 0/55 and 40/55 leak the same 12.351 -- the leak is the back bar's to decide and the drive is the forward bar's, and neither reads the other
+  ok   the shipped pair passes 58.7% of the ceiling                     23.303 of 39.672
+
+  ok   the doc's window-mismatch table is what the two designs actually pay seven cells, four columns: 0.088/0.000/0.088/0.000 0.201/0.000/0.201/0.000 0.335/0.000/0.335/0.000 0.359/0.000/0.359/0.000 0.155/0.013/0.155/0.013 0.393/0.213/0.217/0.037 0.706/0.267/0.476/0.037
+  ok   and the mismatch is all one way -- a duller statistic refuses, it does not invent it pays 0.088 the rate refuses and is refused 1.832 it would have paid
+  ok   lowering the window's bar to 15 reproduces the shipped drive     window 23.306 at a bar of 15 against the shipped 23.303 at 40 -- which is the doc's point: 15 in window units is a sweep speed nowhere else, so it stops being a number the player can feel out with the oar
+  ok   and at that matched drive it does not pay a single backstroke    all four takes net FORWARD under it, -0.452 -0.476 -0.361 -0.226, against +0.003 -0.124 -0.358 -0.210 under the rate -- a cleaner ladder bought by closing the backstroke channel
+  ok   and the window's leak over the ladder is a quarter of the rate's 3.664 against 12.351 -- both ladders are cleaner than the shipped gate, and the one that gets there without a backstroke channel is worth less
+
+====================================================================================================
+2c. THE SILENCE AFTER A STROKE
+====================================================================================================
+
+  ok   the file declares the cooldown as a number a reader can find     0.100 s
+  ok   and the silence is off at zero, so the number is the whole switch no other number switches it on anywhere
+  ok   the cooldown is armed by the stroke CLOSING, not by it opening   armed once, in _update_stroke_stats, on the OFF crossing
+  ok   the bookkeeping reads the power being PAID in either direction, not the forward half only. That one line is the difference between a one-sided
+  ok   and it is taken AFTER section 7, so the silence cannot re-arm itself mute, then read the muted value, then run the state machine
+  ok   a backstroke is counted as a stroke, like the user asked         both crossings open and close a stroke
+  ok   the timer counts down by delta and cannot go negative            
+  ok   the silence covers forward_power                                 
+  ok   the silence covers reverse_power                                 
+  ok   the silence covers side_power                                    
+  ok   the silence covers drive_power                                   
+  ok   the live sweep is NOT muted, only the force                      the readout keeps showing what the oar is doing
+  ok   the mute is outside the gate, not a third comparison inside it   the gate is still exactly two comparisons
+  ok   and it runs after the force is computed and before the bookkeeping which is why a stroke cannot re-open while the silence is on
+
+  ok   with the shipped cooldown, forward thrust does NOT come for free 20.128 against 23.303 without it
+  ok   the silence costs the synthetic ladder 13.6% of its drive        13.6%
+  ok   and buys back more astern leak than that, though not twice as much 44.1% of the leak against 13.6% of the drive
+  ok   on the player's own recording the two-sided rule is free, to the digit the eight paced copies come out bit-identical either way: 1.699 forward and 0.000 astern
+  ok     ...because the fastest bow sweep anywhere in the capture misses the bar the recovery tops out at 44.80 at the top of the ladder, 10.20 under the 55 bar -- so no ordinary forward frame is ever muted by it
+  ok   and the four takes come out three better and one worse, which is what the file says rev1 -0.242 -> +0.287 rev2 -0.079 -> -0.289 rev3 -0.358 -> -0.011 rev4 -0.181 -> -0.015
+  what a longer silence would buy, and what it costs the backstrokes:
+
+    cooldown  forward   astern    net       removed  net gain  rev1 / rev2 / rev3 / rev4
+    --------------------------------------------------------------------------------------------------------
+    0.00      23.303    12.351    +10.952   --       -0.000    +0.003  -0.124  -0.358  -0.210
+    0.05      22.382    10.473    +11.908   15.2%    +0.956    +0.091  -0.159  -0.305  -0.147
+    0.10      20.128    6.901     +13.227   44.1%    +2.275    +0.287  -0.289  -0.011  -0.015
+    0.15      20.242    5.016     +15.226   59.4%    +4.274    +0.312  -0.375  +0.142  +0.096
+    0.20      20.275    3.442     +16.833   72.1%    +5.881    +0.543  -0.350  +0.179  +0.079
+    0.25      19.003    3.271     +15.732   73.5%    +4.780    -0.601  -0.054  +0.179  +0.080
+    0.30      17.802    2.917     +14.885   76.4%    +3.933    -0.355  +0.460  +0.179  +0.112
+    (the last four are each backstroke take's NET -- astern thrust minus the
+     forward it also pays. Positive means the boat really went backwards.)
+
+  ok   every cooldown length leaks less astern than no cooldown         
+  ok   longer is monotonically better for the leak                      
+  ok   and every length costs the drive something, against no silence at all the worst is 17.802 at 0.30 against 23.303 with no silence
+  ok   so the SHIPPED 0.1 s is a net gain on forward rowing             net +13.227 against +10.952
+  ok     ...by 20.8% on top of the net the gate was getting             +20.8%
+  ok   and the file is right that the drive does NOT fall at every step: it is flat from 0.10 to 0.20 20.128 / 20.242 / 20.275, and the middle one is the highest of the three -- "falls at every length shown" is not a sentence this table supports
+  ok     ...and that 0.25 is where the drive finally steps down         19.003 at 0.25 against 20.275 at 0.20
+  ok     ...and that the net peaks at 0.20, not at the shipped 0.10     the peak is +16.833 at 0.20 against +13.227 at the shipped 0.10
+  ok     ...and that 0.15 is where rev1, the best of the four, is at its best rev1 reads +0.312 against -0.375 +0.142 +0.096 for the other three
+  ok     ...and that it is rev1 that flips negative when the drive steps down rev1 +0.312 at 0.15 -> -0.601 at 0.25
+  ok   and the first backstroke, flat at the gate alone, goes properly astern rev1 +0.003 at the gate alone -> +0.287 at the shipped 0.10
+  ok     ...and the second is the one take the silence makes worse      rev2 -0.124 -> -0.289
+  ok     ...and rev3, which the old statistic could not pay at all, goes astern at 0.15 -- the first length that does it rev3 -0.011 at 0.10 -> +0.142 at 0.15
+  ok     ...and the fourth is not hurt at all -- it is helped           -0.210 -> -0.015
+  ok   and even the shortest silence is worth having, which it was not before net +11.908 at 0.05 against +10.952 at zero
+
+  ok   the leak really is a handful of short bursts, not a steady drain 119 bursts, longest 0.15 s
+  ok   and EVERY frame of it is inside a burst under a fifth of a second longest 0.15 s
+  ok   and four fifths of it sits in bursts under a tenth of a second   79.2%
+    burst length   under 0.05 s   29.7%
+                   0.05 .. 0.10   49.4%
+                   0.10 .. 0.15   18.3%
+                   0.15 .. 0.20   2.5%
+
+  how long after the stroke closed each leaky frame falls:
+     0.00 .. 0.05       1.406    11.4%
+     0.05 .. 0.10       4.170    33.8%
+     0.10 .. 0.15       3.414    27.6%
+     0.15 .. 0.20       1.595    12.9%
+     0.20 .. 0.30       1.062     8.6%
+     0.30 .. later      0.703     5.7%
+  ok   a little under half the leak falls within a tenth of a second of a close the file rounds it to 45%, measured 45.2%
+  ok     ...and the tail that runs past the window is small but not nothing the file calls it the last 6%, measured 5.7%
+  ok   what falls inside the window is what the 0.1 s silence takes back 45.2% of the leak is inside it, and the silence removes 44.1%
+  ok     ...but not quite all of it, and the shortfall IS the tail      the silence removes 44.1% where 45.2% is inside it -- the gap and the 5.7% beyond 0.30 s are the same thing, which is what the file says
+  (the player's picture is right about the CAUSE -- a momentary reversal,
+   0.06 to 0.18 s long. The TIMING looks different under the shipped rule
+   because a backstroke is now closed by the leak's own bursts as well,
+   and that pulls 45.2% of the leak into reach of the 0.1 s timer.)
+
+  ok   a real backstroke pays in bursts the same length as the false ones longest real 0.15 s against longest false 0.15 s
+  ok   so "a burst under 0.10 s pays nothing" removes four fifths of the leak 79.2% of it -- against the 44.1% the 0.10 s silence takes, which is the price comparison the file makes
+  ok   and takes the backstrokes with it, which is why it is not the rule here rev1 -0.371 and rev2 -0.234 (from +0.003 and -0.124), where the 0.10 s silence leaves them at +0.287 and -0.289
+
+====================================================================================================
+3. THE NUMBERS IN THE COMMENT BLOCK, AGAINST THE SAME MEASUREMENT
+====================================================================================================
+
+  ok   the English block gives the two per-cell peak ranges             
+  ok     ...the ladder drive median                                     the file says 105.51, measured 105.507
+  ok     ...the ladder drive fastest                                    the file says 232.89, measured 232.889
+  ok     ...the ladder recovery median                                  the file says 62.82, measured 62.819
+  ok     ...the ladder recovery fastest                                 the file says 143.22, measured 143.222
+  ok   the English block states the overlap the way the measurement does it says 40 of 40 cells, the fastest recovery 143.22 over the slowest drive 36.39; measured 40, 143.22, 36.39
+  ok   the Chinese block gives the same two ranges                      identical
+  ok   and the Chinese block states the overlap the same way            it says 143.22 over 36.39; measured 143.22 over 36.39
+  ok   the file counts 40 cells in both languages                       
+
+  ok   the band table carries the superseded statistic's row, in both languages en (3.83, 5.16) zh (3.83, 5.16)
+  ok     ...its slowest genuine push, which the bar had to go under     the file says 3.83, measured 3.834
+  ok     ...its fastest ordinary recovery, which the bar had to go over the file says 5.16, measured 5.158
+  ok     ...and that row really is the CROSSING the split was made to break the push reads 3.83 under the recovery 5.16
+  ok   and the raw row of it is this file's own measurement, in both languages en (79.23, 46.02), measured 79.23 and 46.02
+  ok     ...and reading the raw axis is what turns that crossing into a band (79.23, 46.02) -- the two numbers have changed places
+  ok     ...and the slowest take is not even the same one in the two rows, as the file says the file says rev3 under the old rate, rev4 under this one; measured rev3 under the old rate and rev4 under this one
+  ok   the band's width, and the bar's distance from each end of it, are measured the file says ('33.2', '55', '19.5', '30.6'); measured ('33.21', '55.00', '19.51', '30.58')
+  ok     ...and the Chinese block repeats it to the digit               en ('33.2', '55', '19.5', '30.6') zh ('33.2', '55', '19.5', '30.6')
+  ok   the recovery peak the band paragraph names                       the file says 46.02, measured 46.021
+  ok     ...and it really is at the TOP of the ladder, not somewhere inside it the top pace is 10x and its recovery is the widest of the eight
+  ok     ...and the ladder's own recovery peak, where the file says the band closes the file says 143.22, measured 143.222
+  ok     ...and it does close there, which is the honest limit of the split the ladder reaches 143.22, past the 79.23 that the slowest backstroke pushes at
+
+  ok   the ladder cost table is the measurement, all thirteen numbers of it the file says ('39.67', '40', '55', '23.30', '12.35', '+10.95', '39.67', '46.20', '-6.53', '55', '39.67', '12.35', '+27.32'); measured ('39.67', '40.00', '55.00', '23.30', '12.35', '10.95', '39.67', '46.20', '-6.53', '55.00', '39.67', '12.35', '27.32')
+  ok     ...and the Chinese table is it, number for number              zh ('39.67', '40', '55', '23.30', '12.35', '+10.95', '39.67', '46.20', '-6.53', '55', '39.67', '12.35', '+27.32')
+  ok     ...and zeroing the forward bar alone costs the ladder nothing, as it says every frame the forward bar turns away is a recovery frame, and the backstroke bar was refusing those already
+  ok     ...and the thrust the file says zeroing it would hand back     the file says 16.37, measured 16.370
+
+  ok   the capture-at-pace table is measured, bar pair and all eight rows 8 rows found
+  ok     ...and the Chinese table is the same eight rows                zh bar pair ('40', '55') against en ('40', '55')
+  ok     ...and the file is right that the leak column is zero at every pace the fastest recovery anywhere in the capture is 46.02, 8.98 under the 55 bar
+  ok     ...and right that the capture at its own demo pace does not fire at all 1x peaks 36.39 and is refused; 2x peaks 53.07 and is paid
+
+  ok   the rev1 row of the take table is measured, in both languages    push 136.65, return 240.69, net +0.003; 2 rows found
+  ok   the rev2 row of the take table is measured, in both languages    push 96.29, return 185.16, net -0.124; 2 rows found
+  ok   the rev3 row of the take table is measured, in both languages    push 80.87, return 152.40, net -0.358; 2 rows found
+  ok   the rev4 row of the take table is measured, in both languages    push 79.23, return 76.58, net -0.210; 2 rows found
+  ok   the forward bar's ceiling, as the file records it                the file says 75.69, measured 75.691
+  ok     ...and the Chinese block gives the same ceiling                the file says 75.69, measured 75.691
+  ok   the backstroke bar's band is the two numbers that pin it         the file says ('46.02', '79.23'); measured 46.02 to 79.23
+  ok     ...and the shipped bar sits inside that band, not on either end of it 46.02 < 55 < 79.23
+  ok     ...and the Chinese block gives the same band, to the digit     zh ('46.02', '79.23') en ('46.02', '79.23')
+
+  ok   the push the file says the 55 bar now catches                    the file says 80.87, measured 80.872
+  ok     ...and the same push under the old statistic, which its own bar refused the file says 3.83 against a bar of 4.0; measured 3.83 against 4.0
+  ok     ...and the net it still runs at the gate alone                 the file says -0.358, measured -0.358
+  ok     ...its return against the ladder's median drive, which no bar reaches the file says ('152.40', '105.51'); measured 152.40 against a median drive of 105.51
+  ok     ...and the four pushes it lists, every one of them over the bar the file says ('136.65', '96.29', '80.87', '79.23'); measured ('136.65', '96.29', '80.87', '79.23')
+  ok   the two frame numbers in the rev3 paragraph are the recording's own the file says ('30', '26'); measured frame 30, closed at 26
+  ok     ...and the four forward payments it quotes, with the astern one flat the file says ('0.536', '0.189', '0.037', '0.000', '0.179'); measured ('0.536', '0.189', '0.037', '0.000') with astern ('0.179', '0.179', '0.179', '0.179') at every length
+  ok     ...and the net it first goes astern at, at 0.15 s              the file says 0.142, measured 0.142
+
+  ok   the English mismatch table is the measurement and its own cell list 7 rows found, and the cell list reads (('1.00', '2'), ('1.00', '4'), ('1.00', '8'), ('1.00', '10'), ('1.50', '1'), ('2.00', '1'), ('3.00', '1'))
+  ok   the Chinese mismatch table is the measurement and its own cell list 7 rows found, and the cell list reads (('1.00', '2'), ('1.00', '4'), ('1.00', '8'), ('1.00', '10'), ('1.50', '1'), ('2.00', '1'), ('3.00', '1'))
+  ok   the matched-drive table under the mismatch one is those two runs the file says ('23.303', '12.351', '+0.003', '-0.124', '-0.358', '-0.210', '15', '23.306', '3.664', '-0.452', '-0.476', '-0.361', '-0.226'); measured ('23.303', '12.351', '0.003', '-0.124', '-0.358', '-0.210', '15.000', '23.306', '3.664', '-0.452', '-0.476', '-0.361', '-0.226')
+  ok     ...and it shows the window buying its clean ladder by shutting the backstroke channel its leak is 3.664 against 12.351, and all four takes net forward under it
+
+  ok   the burst table's under 0.05 s share of the leak                 the file says 29.7, measured 29.750
+  ok     ...and the Chinese table's                                     the file says 29.7, measured 29.750
+  ok   the burst table's 0.05-0.10 s share of the leak                  the file says 49.4, measured 49.425
+  ok     ...and the Chinese table's                                     the file says 49.4, measured 49.425
+  ok   the burst table's 0.10-0.15 s share of the leak                  the file says 18.3, measured 18.342
+  ok     ...and the Chinese table's                                     the file says 18.3, measured 18.342
+  ok   the burst table's 0.15-0.20 s share of the leak                  the file says 2.5, measured 2.483
+  ok     ...and the Chinese table's                                     the file says 2.5, measured 2.483
+  ok   the burst table's over 0.20 s share of the leak                  the file says 0.0, measured 0.000
+  ok     ...and the Chinese table's                                     the file says 0.0, measured 0.000
+  ok   the burst count and the impulse it carries are section 2c's own  the file says 12.351 in 119 bursts; measured 12.351 in 119
+  ok     ...and the Chinese block gives the same two                    zh ('12.351', '119') en ('12.351', '119')
+  ok     ...and the file sums the two shortest bands into "four fifths" the two bands read 29.7% and 49.4%
+  ok     ...and every frame of the leak really is inside a burst under a fifth of a second the longest burst is 0.15 s
+  ok   the arming paragraph counts the closes it says it counts, on the right cells the file says ('116', '186', '6', '12'); measured (116, 186, 6, 12)
+  ok     ...and the extra closes really are the backstrokes' own        push_power closes 186 and 12 where drive_power closes 116 and 6
+  ok     ...and the Chinese block counts them the same way              zh ('116', '186', '6', '12') en ('116', '186', '6', '12')
+  ok   the paced-copies table is the measurement, all eighteen numbers of it the file says ('1.699', '1.699', '0.000', '0.000', '-0.242', '-0.079', '-0.358', '-0.181', '+0.287', '-0.289', '-0.011', '-0.015', '21.894', '20.128', '7.827', '6.901', '14.066', '13.227'); measured ('1.699', '1.699', '0.000', '0.000', '-0.242', '-0.079', '-0.358', '-0.181', '0.287', '-0.289', '-0.011', '-0.015', '21.894', '20.128', '7.827', '6.901', '14.066', '13.227')
+  ok     ...and the Chinese table is it, number for number              zh ('1.699', '1.699', '0.000', '0.000', '-0.242', '-0.079', '-0.358', '-0.181', '+0.287', '-0.289', '-0.011', '-0.015', '21.894', '20.128', '7.827', '6.901', '14.066', '13.227')
+  ok     ...and the 8% the file prices the two-sided rule at is the step in it the two ladder columns are 21.894 and 20.128, a step of 8.1%
+  ok   the sentence naming what the two-sided rule buys is those three numbers the file says ('0.287', '-0.011', '-0.015'); measured +0.287 -0.011 -0.015
+  ok     ...and the one take it costs                                   the file says -0.079, measured -0.079
+  ok     ...to what it deepens it to                                    the file says -0.289, measured -0.289
+  ok   the lag table is section 2c's own distribution, all six buckets  the file says ('11.4', '12.9', '33.8', '8.6', '27.6', '5.7'); measured ('11.4', '12.9', '33.8', '8.6', '27.6', '5.7')
+  ok     ...and the Chinese table is the English one, bucket for bucket zh ('11.4', '12.9', '33.8', '8.6', '27.6', '5.7') en ('11.4', '12.9', '33.8', '8.6', '27.6', '5.7')
+  ok     ...and the sentence under it carries both shares               the file says ('45', '73'); measured 45.2% and 72.8%
+  ok     ...and the take-back it quotes below them                      the file says 44.1, measured 44.129
+  ok     ...and the tail that no length of silence reaches              the file says 6.0, measured 5.692
+  ok     ...and the Chinese paragraph carries all of it                 zh 45.0 / 73.0 / 44.1 / 6.0 against 45.2% / 72.8% / 44.1% / 5.7%
+  ok   the astern payment the file says the silence never touches       the file says 0.179, measured 0.179
+  ok     ...and it really is unmoved at every length                    0.179 / 0.179 / 0.179 / 0.179
+  ok   the file's English cooldown table is the harness's own, all seven rows 7 rows found, and these disagree with the run: none
+  ok   the file's Chinese cooldown table is the harness's own, all seven rows 7 rows found, and these disagree with the run: none
+  ok     ...and the Chinese table is the English one, row for row       en 7 rows, zh 7 rows
+  ok   the net gain the file claims for the shipped 0.1 s               the file says 2.275, measured 2.275
+  ok     ...and the 20.8% it puts on top of the gate's own net          the file says 20.8% over +10.952; measured 20.8% over +10.952
+  ok     ...and the Chinese block carries all three                     zh ('2.275', '10.952', '20.8')
+  ok   the drive the file says the 0.1 s gives up                       the file says 13.6, measured 13.626
+  ok     ...and the Chinese block repeats the same cost                 the file says 13.6, measured 13.626
+  ok   the flat-stretch sentence quotes its own cooldown table          the file says ('20.128', '20.242', '20.275'); measured 20.128 / 20.242 / 20.275
+  ok     ...and the Chinese block gives the same three                  zh ('20.128', '20.242', '20.275') en ('20.128', '20.242', '20.275')
+  ok     ...and "three of the four net astern at 0.15 against one at 0.10" is right taking the net astern: 3 at 0.15 and 1 at 0.10
+  ok     ...and the leak really does fall across that stretch, as the file says 6.901 / 5.016 / 3.442, and the Chinese sentence says ('6.901', '5.016', '3.442')
+  ok   the duration rule's own price is measured against the silence's  the rule keeps 20.8% of the leak at 0.10 and 2.5% at 0.15, and leaves 13.367 and 4.423 of the drive against the silence's 20.128
+  ok   and the file prices that rule against the silence with those six numbers the file says ('79.2', '42.6', '44.1', '13.6', '97.5', '81.0'); measured ('79.2', '42.6', '44.1', '13.6', '97.5', '81.0')
+  ok     ...and the Chinese block gives the same ones, in its own order zh ('79.2', '42.6', '13.6', '97.5', '81.0') en ('79.2', '42.6', '44.1', '13.6', '97.5', '81.0')
+  ok     ...and the rule really is the worse trade at both lengths, as it says it leaves 13.367 and 4.423 of the ladder's drive where the silence leaves 20.128
+
+  ok   and none of the superseded wording survives anywhere in the file the retune is complete in the prose as well as in the code
+
+====================================================================================================
+WHAT THIS FILE CANNOT CHECK, AND WHO COULD
+====================================================================================================
+
+  There is no Godot and no class database in this sandbox, so nothing above
+  proves the file COMPILES. In particular these names are used here and
+  nowhere else in the project, so no other file proves they exist either:
+
+    Button              ColorRect           FOCUS_NONE          MOUSE_FILTER_IGNORE  MOUSE_FILTER_STOP   PRESET_FULL_RECT  
+    Panel               StyleBoxFlat      
+
+  If one of them is wrong the scene will not load. Everything else in this
+  report was measured, replayed or parsed; these were recalled.
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+
+  307 checks, 0 failed
+
+  The numbers this run stands behind:
+    the ceiling with no gate          39.672
+    the loose two-bar pair it beat    39.672 forward, 46.198 astern, net -6.525
+    the old one bar at 40.0             23.303 forward, 19.909 astern, net +3.394
+    the shipped PAIR 40.0 / 55.0        23.303 forward, 12.351 astern, net +10.952
+    ...and with the 0.10 s cooldown      20.128 forward, 6.901 astern, net +13.227
+    backstroke takes netting astern   1 of 4 without the cooldown, 1 with
+    the player's own captured rowing   1.699 forward, 0.000 astern -- and the
+                                      same to the last digit whether the
+                                      silence is armed by the forward half
+                                      alone or by either direction
+
+  REPORT-COMPLETE 307 checks 0 failed
