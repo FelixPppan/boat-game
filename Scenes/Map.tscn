@@ -13,6 +13,7 @@
 [ext_resource type="Shader" uid="uid://chbboahvyd03b" path="res://Shaders/memory_fog.gdshader" id="6_ws1hi"]
 [ext_resource type="Shader" uid="uid://cpmcuigjixyso" path="res://Shaders/water_fog.gdshader" id="7_5t7yc"]
 [ext_resource type="Script" uid="uid://cxifeflb47gh3" path="res://Scripts/memory_fog_remove.gd" id="7_xicox"]
+[ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -205,3 +206,7 @@ shape = SubResource("CylinderShape3D_8q6pl")
 [node name="FogVolume" type="FogVolume" parent="." unique_id=1293038478]
 size = Vector3(100, 5, 100)
 material = SubResource("ShaderMaterial_3ytfl")
+
+[node name="WaveDetector" type="Node" parent="." unique_id=1461835097 node_paths=PackedStringArray("fog_remover")]
+script = ExtResource("14_6bwvt")
+fog_remover = NodePath("../Rock1/Area3D")
