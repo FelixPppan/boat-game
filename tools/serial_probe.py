@@ -28,6 +28,12 @@ macOS 下串口是通过 termios 配置的,而 termios 属于「一个打开着�
 字节照样到,只是按错的速率解码,看上去像设备坏了,而不是像读的人弄错了。
 正确做法是在「你即将读的那个描述符」上设 termios,也就是这个文件做的事,
 而 Scripts/sensor_input.gd 通过 gdserial 免费得到了同样的效果。
+
+用法:
+    python3 tools/serial_probe.py                 # 自动检测,5 秒
+    python3 tools/serial_probe.py -s 15           # 更长的窗口
+    python3 tools/serial_probe.py --raw           # 十六进制转储而不是文本
+    python3 tools/serial_probe.py -p /dev/cu.usbserial-10 -b 115200
 """
 
 import argparse
@@ -74,6 +80,7 @@ def find_port() -> str:
         if names:
             # cu. opens more reliably than tty. on macOS; prefer it when both
             # spellings exist for the same device.
+            # cu. 在 macOS 上比 tty. 开得更可靠;同一设备两种写法都在时优先 cu.。
             for n in names:
                 if n.startswith("cu."):
                     return "/dev/" + n
@@ -87,15 +94,23 @@ def open_configured(port: str, baud: int) -> int:
     The whole point of this function is the ordering: termios is applied to a
     descriptor that is already open and is the one that will be read, so
     nothing can reset it in between.
+
+    打开端口、设好它的线路规程,返回该描述符。这个函数的全部要点就在顺序:termios 作用在
+    一个已经打开、而且就是要被读的那个描述符上,中间没有任何东西能把它复位。
     """
     fd = os.open(port, os.O_RDWR | os.O_NONBLOCK)
     attrs = termios.tcgetattr(fd)
     attrs[0] = 0                                        # iflag: no translation
+    # iflag: 不做任何转换
     attrs[1] = 0                                        # oflag: no translation
+    # oflag: 不做任何转换
     attrs[2] = termios.CS8 | termios.CREAD | termios.CLOCAL
     attrs[3] = 0                                        # lflag: raw
+    # lflag: 原始
     attrs[4] = baud                                     # ispeed
+    # ispeed: 输入速率
     attrs[5] = baud                                     # ospeed
+    # ospeed: 输出速率
     attrs[6][termios.VMIN] = 0
     attrs[6][termios.VTIME] = 0
     termios.tcsetattr(fd, termios.TCSANOW, attrs)
@@ -170,6 +185,8 @@ def main() -> int:
     # The final element is a partial line unless the capture ended exactly on a
     # newline, so it is dropped rather than parsed -- a half line that happened
     # to parse would be counted as a real sample.
+    # 最后一个元素是半行,除非采集正好停在一个换行上,所以它被丢掉而不是拿去解析 ——
+    # 一个碰巧能解析的半行会被当成真样本。
     complete = lines[:-1] if lines else []
 
     imu, xyz, junk = 0, 0, 0

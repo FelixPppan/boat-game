@@ -37,6 +37,38 @@ Usage:
     python3 tools/udp_probe.py --seconds 60    # run for a minute, print a summary
 
 Exit code is 0 if any sample arrived, 1 if none did, so a script can tell.
+
+读取桨的无线流,量的是**链路**而不是传感器。
+
+与 tools/serial_probe.py 配套。同样的活 —— 把真正到达的东西显示出来 —— 只是对着 ESP32
+自己的热点而不是 USB 线,而且多了一个无线才会提出的问题:它丢了什么?
+
+    data         udp/4210   "Accel(g): ..." 那些行
+    diagnostics  udp/4211   固件的 "# ..." 那些行
+
+有两样东西让这件事可量,而其中只有一样是白得的:
+
+  * 每个样本的无线副本带着板子自己的包计数器(S)和 micros() 时间戳(T)。没有 S,丢包是
+    看不见的 —— 速率只是读起来更低,而那正是「传感器卡住了」的样子。没有 T,这里的每个
+    时间数字描述的都是 WiFi 和操作系统,而不是传感器。
+  * 没有别的了。主机侧的到达时刻,取在阻塞的 recvfrom() 返回之后立刻、在各个 socket 自己
+    的线程里,所以不会被一个 select() 循环批量收取给抹平;这正是「量到达抖动」和「量这个
+    进程多久醒一次」的区别。
+
+运行之前
+--------
+  1. 先从 Mac 的 WiFi 菜单加入 "oar-sensor" 这个网络。它没有外网,macOS 会指出来,这是
+     正常的。
+  2. 在游戏**没有**运行时跑这个。两者没法共用端口 —— bind 是故意要失败,而不是让一方悄悄
+     抢走另一方的包,所以看到 "address already in use",那就是这条信息。
+  3. 第一次跑会让 macOS 询问 python3 能不能接受入站连接。选「是」。如果曾经被拒过,防火墙
+     设置就得手动改 —— 被拒的 socket 什么都收不到、也不报错,和一个没在发送的板子分不出来。
+
+用法:
+    python3 tools/udp_probe.py                 # 跑到 Ctrl-C
+    python3 tools/udp_probe.py --seconds 60    # 跑一分钟,打印汇总
+
+只要有样本到达,退出码就是 0,一个都没有就是 1,这样脚本分得出。
 """
 
 import argparse
@@ -50,16 +82,23 @@ import time
 # identical on purpose: if the probe and the game disagree about where a number
 # starts, the probe is measuring a different line than the one the game reads,
 # and it would report a healthy stream that the game cannot parse.
+# 和 Scripts/sensor_input.gd 的 _numbers_in() 擦除的是同一组分隔符。故意保持一致:如果
+# 探针和游戏对「一个数字从哪开始」看法不同,探针量的就是另一行,会报出一条游戏解析不了的
+# 「健康」流。
 SEPARATORS = "()/,|:;="
 
 # micros() on the board is a 32-bit microsecond counter, so it wraps roughly
 # every 71 minutes. Every delta between two of its values goes through this.
+# 板子上的 micros() 是 32 位微秒计数器,大约每 71 分钟回绕一次。它的两个值之间的每个差值
+# 都要过这一道。
 MICROS_MASK = 0xFFFFFFFF
 
 EXPECTED_INTERVAL_US = 10000  # 100 Hz
 
 # Where the board sits on its own network. An ESP32 SoftAP is always the gateway
 # of 192.168.4.0/24, so this is fixed rather than discovered.
+# 板子在它自己网络里的位置。ESP32 的 SoftAP 永远是 192.168.4.0/24 的网关,所以这是固定
+# 的,不用去发现。
 OAR_ADDRESS = "192.168.4.1"
 
 # What gets sent to the board so it stops broadcasting and starts unicasting. The
@@ -71,11 +110,15 @@ HELLO_PAYLOAD = b"oar-here"
 
 # How often to repeat it. The board forgets on restart and this side can come back
 # on a different lease, so it is not a one-shot.
+# 重复发送的间隔。板子重启就忘了,而这一侧可能换个租约回来,所以它不是一发即止。
 HELLO_INTERVAL_SEC = 1.0
 
 
 def numbers_in(text: str):
-    """Every token of `text` that reads as a number, in order."""
+    """Every token of `text` that reads as a number, in order.
+
+    `text` 里每一个能读成数字的记号,按顺序。
+    """
     cleaned = text
     for ch in SEPARATORS:
         cleaned = cleaned.replace(ch, " ")
@@ -102,21 +145,28 @@ class Link:
     Deliberately one lock and not a queue per socket: the two threads only ever
     add, the main thread only ever reads and resets a window, and at 100 packets
     a second there is no contention worth designing around.
+
+    关于这条流所计的一切,都在同一把锁下改动。故意只用一把锁、而不是每个 socket 一个队列:
+    那两个线程只做增加,主线程只做读取和重置窗口,而每秒 100 个包没什么值得为它设计争用。
     """
 
     def __init__(self):
         self.lock = threading.Lock()
 
         self.packets = 0          # data packets seen
+        # packets: 收到的数据包数
         self.bytes = 0
         self.diag_lines = 0
         self.malformed = 0
 
         self.lost = 0             # samples the radio dropped, from S
+        # lost: 射频丢掉的样本数,来自 S
         self.reordered = 0        # S went backwards or repeated
+        # reordered: S 倒退或重复的次数
 
         self.good = 0
         self.zero_run = 0         # consecutive all-zero samples, for a dead chip
+        # zero_run: 连续全零样本数,用来发现死掉的芯片
 
         self._last_seq = None
         self._last_t_us = None
@@ -149,10 +199,11 @@ class Link:
         self.bad_examples = []
 
         # Windowed counters, reset once a second by the reporter.
+        # 按窗口计的计数器,由汇报线程每秒重置一次。
         self.win_packets = 0
         self.win_bytes = 0
 
-    # -- data ---------------------------------------------------------------
+    # -- data / 数据 ---------------------------------------------------------
     def add_sample(self, arrival, text):
         nums = numbers_in(text)
         if len(nums) < 6:
@@ -175,6 +226,8 @@ class Link:
             # The board's own view: did IT keep to 100 Hz? Independent of the
             # radio, so a bad number here is the sensor's fault and a bad number
             # below is the link's.
+            # 板子自己的视角:它自己有没有守住 100 Hz?这和射频无关,所以这里的数字坏是
+            # 传感器的错,而下面的数字坏才是链路的错。
             if len(nums) >= 8:
                 t_us = int(nums[7]) & MICROS_MASK
                 if self._last_t_us is not None:
@@ -188,6 +241,8 @@ class Link:
             # Gap detection, which only exists because the board numbers the
             # packets. A restart gives a large backwards jump, so it lands in
             # `reordered` rather than being mistaken for a million lost packets.
+            # 缺口检测之所以存在,只是因为板子给包编了号。重启会造成一个很大的倒退跳变,
+            # 于是它落进 `reordered`,而不会被误当成一百万次丢包。
             if len(nums) >= 7:
                 seq = int(nums[6])
                 if self._last_seq is not None:
@@ -202,6 +257,7 @@ class Link:
                 self.last_seq = seq
 
             # Host-side arrival timing.
+            # 主机侧的到达计时。
             if self._last_arrival is not None:
                 dt = arrival - self._last_arrival
                 self.arrival_intervals.append(dt)
@@ -214,18 +270,20 @@ class Link:
             # fields that were never populated -- all zeros, forever, and silent
             # about it. Cheap to watch for, and the failure mode is otherwise
             # easy to mistake for "the oar is not moving".
+            # 厂商 demo 的招牌故障,是从从未被填充的字段里打印六个轴 —— 永远全零,而且一声
+            # 不吭。盯着它很便宜,而这个故障否则很容易被误当成「桨没在动」。
             if all(v == 0.0 for v in nums[:6]):
                 self.zero_run += 1
             else:
                 self.zero_run = 0
 
-    # -- diagnostics --------------------------------------------------------
+    # -- diagnostics / 诊断 --------------------------------------------------
     def add_diag(self, text):
         with self.lock:
             self.diag_lines += 1
             self.diag_messages.append(text)
 
-    # -- reporting ----------------------------------------------------------
+    # -- reporting / 汇报 ----------------------------------------------------
     def _board_rate_unlocked(self):
         """The board's true sample rate in Hz, or None. Call with the lock held.
 
@@ -280,6 +338,7 @@ def data_thread(sock, link, stop):
             continue
         # Taken here, in this thread, immediately after the syscall returned --
         # not handed to the main thread to timestamp later.
+        # 取在这里、在这个线程里、系统调用一返回就取 —— 不是交给主线程稍后再打时间戳。
         arrival = time.monotonic()
         text = packet.decode("ascii", "replace").strip()
         if not text:
@@ -288,6 +347,8 @@ def data_thread(sock, link, stop):
             # A diagnostic on the DATA port would be a firmware bug: they belong
             # on udp/4211 so the game's parse-failure count keeps meaning one
             # thing. Count it as malformed so it shows up rather than hides.
+            # 诊断行跑到 DATA 端口上会是固件的 bug:它们该在 udp/4211 上,这样游戏的解析
+            # 失败计数才只有一个含义。把它算作 malformed,好让它显出来而不是藏起来。
             link.add_sample(arrival, text)
             link.add_diag("(on the data port, which is wrong) " + text)
         else:
@@ -385,6 +446,7 @@ def open_socket(port, label):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # A fat receive buffer, so a burst is not dropped by the kernel and then
     # reported here as the radio's fault.
+    # 收包缓冲开大一点,这样一阵突发不会被内核丢掉、再在这里被报成射频的错。
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1 << 20)
     except OSError:
@@ -393,6 +455,9 @@ def open_socket(port, label):
     # bind and the kernel would hand the packets to one of them -- so the probe
     # would report a silent, wrong result. Without it, the conflict is an error
     # message that says which port and why.
+    # 故意不设 SO_REUSEADDR。设了的话,它和一个正在跑的游戏会同时 bind,内核把包发给其中
+    # 一个 —— 探针就会报出一个沉默的、错误的结果。不设的话,冲突就是一条说清楚哪个端口、
+    # 为什么的错误信息。
     try:
         sock.bind(("", port))
     except OSError as exc:

@@ -141,6 +141,7 @@ const RECONNECT_INTERVAL_SEC := 2.0
 const SILENCE_TIMEOUT_SEC := 3.0
 
 # --------------------------------------------------------------- Wireless --
+# --------------------------------------------------------------- 无线 --
 ## The ports the oar's ESP32 broadcasts on. Must match
 ## Arduino/esp32_bmi270/esp32_bmi270.ino's UDP_DATA_PORT and UDP_DIAG_PORT, and
 ## the network to join is that file's AP_SSID.
@@ -192,6 +193,7 @@ const OAR_ADDRESS := "192.168.4.1"
 const HELLO_INTERVAL_SEC := 1.0
 
 # ----------------------------------------------------------------- Signals --
+# ----------------------------------------------------------------- 信号 --
 ## Emitted once per successfully parsed sample, at the SENSOR's own rate, not at
 ## the physics rate. Anything that needs every sample rather than the latest one
 ## -- the stroke recorder, a replay log -- must connect to this.
@@ -212,17 +214,18 @@ const HELLO_INTERVAL_SEC := 1.0
 ## 它没有办法区分「重复的样本」和「真的没变」。录制器要的是「到达」,所以从这里拿。
 ##
 ## Carries the accelerometer only. The gyro is exposed on the fields (gx/gy/gz)
-## and deliberately not folded in here: the recorder and tools/direction_lab.py
-## are written against three numbers, and widening a signal that a golden trace
-## is verified against is a change that should be made on purpose, not as a side
-## effect of adding a sensor.
-## 只带加速度计。陀螺仪走字段(gx/gy/gz),故意不塞进来:录制器和
-## tools/direction_lab.py 都是按三个数写的,而「golden trace 拿它做逐帧比对」的信号
-## 想加宽,应该是有意为之,而不是加个传感器的副作用。
+## instead, and a handler that wants it reads the fields: this signal is emitted
+## after they are written, so the fields hold this same sample and the extra
+## arguments would be a second copy of them. Widening the signal would break every
+## listener in the project to carry numbers they can already reach.
+## 只带加速度计。陀螺仪走字段(gx/gy/gz),想要它的处理函数直接读字段:这个信号是在那些
+## 字段写好之后才发的,所以字段里就是同一个样本,再多传几个参数只是它们的第二份拷贝。
+## 加宽这个信号会让工程里每一个监听者都要改,只为拿到它们本来就够得着的数字。
 signal sample(x: float, y: float, z: float)
 
 
 # ------------------------------------------------------------------- State --
+# ------------------------------------------------------------------- 状态 --
 var x: float = 0.0
 var y: float = 0.0
 var z: float = 0.0
@@ -252,13 +255,17 @@ var has_gyro: bool = false
 ## `magnitude` 的单位是 g 而不是 m/s² 时为 true。
 var accel_in_g: bool = false
 ## Whether the serial port is currently open.
+## 串口当前是否打开。
 var port_open: bool = false
 ## The last complete raw line, for troubleshooting.
+## 最后一条完整的原始行,供排查用。
 var last_line: String = ""
 ## Lines parsed successfully / lines that failed to parse.
+## 解析成功的行数 / 解析失败的行数。
 var good_lines: int = 0
 var bad_lines: int = 0
 ## Measured lines per second, to verify the sample rate (target 100).
+## 实测每秒行数,用来核对采样率(目标 100)。
 var hz: float = 0.0
 
 ## Samples the radio dropped, counted from the board's own packet counter. This
@@ -327,6 +334,7 @@ var _hello_msec: int = 0
 
 
 # -------------------------------------------------------------- Lifecycle --
+# -------------------------------------------------------------- 生命周期 --
 func _ready() -> void:
 	_manager = GdSerialManager.new()
 	_manager.data_received.connect(_on_data)
@@ -372,6 +380,7 @@ func _process(delta: float) -> void:
 
 ## Counts the lines actually received once per second, to check whether the
 ## sample rate really is hitting 100.
+## 每秒统计一次实际收到的行数,用来核对采样率是否真的达到 100。
 func _update_hz(delta: float) -> void:
 	_hz_accum += delta
 	if _hz_accum >= 1.0:
@@ -396,6 +405,7 @@ func _input(event: InputEvent) -> void:
 
 
 # ----------------------------------------------------------- Wireless link --
+# ----------------------------------------------------------- 无线链路 --
 ## Whether the radio, rather than the cable, is the link carrying samples right
 ## now. Public because it decides which stream the readout is describing, and
 ## because anything recording samples should record which link they came off.
@@ -530,6 +540,7 @@ func _note_wifi_seq(board_seq: int) -> void:
 
 
 # ------------------------------------------------------------ Serial port --
+# ------------------------------------------------------------ 串口 --
 func _open_port() -> void:
 	var candidates := _candidate_ports()
 	if candidates.is_empty():
@@ -542,6 +553,7 @@ func _open_port() -> void:
 
 	# Try them in order; each candidate also gets an automatic macOS
 	# /dev/cu. variant.
+	# 按顺序逐个试;每个候选还会自动加上一个 macOS 的 /dev/cu. 变体。
 	var tried: Array[String] = []
 	for cand in candidates:
 		if _manager.open(cand, BAUD_RATE, READ_TIMEOUT_MS,
@@ -590,6 +602,8 @@ func _lose_port(reason: String, warn: bool) -> void:
 ## Builds the list of port names to try: explicit choice > auto-picked > every
 ## USB serial port, each with a macOS /dev/cu. variant added (cu opens more
 ## reliably than tty).
+## 构造要尝试的端口名列表:显式指定 > 自动挑选 > 每个 USB 串口,每个都加上一个 macOS 的
+## /dev/cu. 变体(cu 比 tty 打开更可靠)。
 func _candidate_ports() -> Array[String]:
 	var raw: Array[String] = []
 	if PORT_NAME != "":
@@ -638,11 +652,13 @@ func _pick_port() -> String:
 				str(info.get("port_type", "")))
 
 	# Prefer a USB serial adapter, which is what an Arduino normally is.
+	# 优先选 USB 串口适配器,Arduino 通常就是这种。
 	for pname in names:
 		if _looks_usb(pname):
 			return pname
 
 	# Nothing suitable, so fall back to the first one.
+	# 没有合适的,就退回第一个。
 	return names[0]
 
 
@@ -657,6 +673,7 @@ func _list_port_names() -> Array[String]:
 
 ## macOS: /dev/tty.usbmodem14101 -> /dev/cu.usbmodem14101. Returned unchanged
 ## on every other platform.
+## macOS:/dev/tty.usbmodem14101 -> /dev/cu.usbmodem14101。其他平台上原样返回。
 func _cu_variant(port: String) -> String:
 	if port.begins_with("/dev/tty."):
 		return "/dev/cu." + port.substr("/dev/tty.".length())
@@ -854,6 +871,7 @@ func _on_disconnected(port: String) -> void:
 
 
 # ----------------------------------------------------------------- Readout --
+# ----------------------------------------------------------------- 读数 --
 func _build_overlay() -> void:
 	_overlay = CanvasLayer.new()
 	_overlay.layer = 100

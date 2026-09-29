@@ -534,13 +534,20 @@ void waitForSensor() {
 // 这两件事都需要:卡住要**报出来**(并说明是哪条分支),故障才是看得见的;
 // 同时要**尝试自救**,总线上的瞬时故障才能自己恢复,而不是让用户玩到一半去拔线。
 //
-// How long with nothing printed before the watchdog looks. 100 samples at the
-// 100 Hz ODR, well clear of jitter. Note this is a threshold on OUTPUT, not on
-// the sensor: whether it means a fault is decided by `drdy_seen` below, because
-// a host that has stopped reading produces exactly the same silence.
-// 多久没有打印出来,看门狗才开始看。100 Hz 下 100 个样本,离抖动很远。
-// 注意这是对**输出**的门槛,不是对传感器的:它算不算故障由下面的 `drdy_seen` 决定,
-// 因为主机停止读取所产生的沉默和它一模一样。
+// How long with no successfully-read sample before the watchdog looks. 100
+// samples at the 100 Hz ODR, well clear of jitter.
+//
+// What this measures matters: a sample that was READ, not a line that went out.
+// A chip that keeps answering and keeps handing samples over is never faulted
+// here, whatever happens to the bytes afterwards, because reading a sample is
+// what refreshes last_print_ms. What it catches is the chip no longer
+// delivering -- the only thing resetting the chip can actually fix.
+// 多久没有**成功读到**样本,看门狗才开始看。100 Hz 下 100 个样本,离抖动很远。
+//
+// 它量的是什么很关键:量的是**被读到的样本**,不是发出去的行。芯片只要一直在应答、
+// 一直在交样本,就不会在这里被判故障,不管那些字节之后遭遇了什么 —— 因为刷新
+// last_print_ms 的正是「读到了一个样本」这件事。它抓的是芯片不再交样本,
+// 而那是复位芯片唯一真能治的东西。
 constexpr unsigned long SILENCE_LIMIT_MS = 1000UL;
 
 // How often to say so while still stalled, and how long to leave a recovery
@@ -555,20 +562,37 @@ unsigned long last_print_ms = 0;
 unsigned long last_stall_report_ms = 0;
 unsigned long last_recover_ms = 0;
 
-// Set whenever a poll sees DRDY, cleared whenever a sample is actually printed.
+// A `drdy_seen` latch used to live here and it was a trap. It was set whenever a
+// poll saw DRDY and cleared ONLY after a sample was successfully printed, and it
+// gated recovery: `if (!drdy_seen) recoverSensor();`.
 //
-// This is what separates "the chip stopped producing samples" from "the samples
-// are fine but the serial output could not get out", and the difference decides
-// whether resetting the chip is the right medicine. Both look identical from
-// the host -- total silence -- and a watchdog that could not tell them apart
-// would reset a perfectly healthy sensor every time the host stopped reading
-// for a second, which is a way of causing the fault it is meant to cure.
-// 每次轮询看到 DRDY 就置位,真正打印出一个样本时清零。
+// A failed read leaves DRDY SET in the chip -- the data registers were never
+// clocked out -- so the state that set the latch re-created itself on the next
+// poll, forever. And the only way to reach the watchdog with the latch set was
+// exactly "the chip says a sample is ready and reading it keeps failing", i.e. a
+// stalled chip: the one fault recovery exists for. The latch therefore reported
+// "chip is fine, not resetting" and disabled recovery permanently. The oar went
+// silent until the board was reset while the access point stayed up, which is
+// how the user found it on 2026-09-29.
 //
-// 它是用来区分「芯片不再出样本」和「样本没问题、只是串口输出发不出去」的,
-// 而这个区别决定了该不该动芯片。从主机那一侧看两者一模一样 —— 都是彻底沉默 ——
-// 分不清的看门狗会在主机停读一秒时把一颗完全健康的芯片复位,那等于亲手制造它要治的那个故障。
-bool drdy_seen = false;
+// Nothing needs to go back here. A healthy chip whose OUTPUT is blocked cannot
+// reach the watchdog at all: it keeps reading samples successfully, and every
+// successful read refreshes last_print_ms, which is the watchdog's own gate. So
+// "no successful sample for SILENCE_LIMIT_MS" is the entire condition -- and a
+// condition that is re-derived from scratch on every poll cannot latch.
+//
+// 这里原来有一个 `drdy_seen` 闩锁,它是个陷阱。看到 DRDY 就置位,**只有成功打印出一个
+// 样本才清零**,而自救被它把关:`if (!drdy_seen) recoverSensor();`。
+//
+// **读失败会让 DRDY 留在芯片里置位** —— 数据寄存器根本没被读走 —— 所以置位它的那个状态
+// 会在下一轮自己重建,永远如此。而唯一能带着它走到看门狗的状态,恰恰就是「芯片说有样本
+// 好了、而读它一直在失败」,也就是卡住的芯片:自救存在的唯一理由。于是这个闩锁报出
+// 「芯片没事,不复位」,并且永久关掉了自救。桨从此彻底沉默直到板子被复位,而热点一直立着
+// —— 用户 2026-09-29 就是这么发现的。
+//
+// 这里不需要补任何东西。「输出被挡住但芯片健康」根本走不到看门狗:它一直在成功读样本,
+// 而每次成功都会刷新 last_print_ms,那本身就是看门狗的门槛。所以「连续 SILENCE_LIMIT_MS
+// 没有成功样本」就是全部条件 —— 而每轮都从零重新算出来的条件,闩不住。
 
 // Which branch returned early without printing. Named rather than counted,
 // because "no DRDY" and "getStatus failed" mean opposite things: the first is a
@@ -664,7 +688,6 @@ void recoverSensor() {
     // 否则一颗「回来了但其实还是死的」芯片会被无限期地每 3 秒复位一次。
     last_print_ms = millis();
     stalled_at = "nothing yet";
-    drdy_seen = false;
   }
 }
 
@@ -677,30 +700,26 @@ void watchSilence() {
 
   if (now - last_stall_report_ms >= STALL_REPORT_INTERVAL_MS) {
     last_stall_report_ms = now;
-    if (drdy_seen) {
-      // The chip has been handing over samples the whole time, so nothing is
-      // wrong with it: the bytes simply did not get out. Say exactly that, and
-      // say it in a way that makes clear the sensor is NOT the problem.
-      //
-      // "output", not "serial output": with the radio on, the host may not be
-      // reading a serial port at all, and naming the wrong link here would send
-      // whoever reads this looking in the wrong place.
-      // 芯片全程都在交样本,所以它没有毛病:只是字节没发出去。就这么说,
-      // 并且说清楚问题**不在**传感器。
-      //
-      // 说「output」而不是「serial output」:开着无线时,主机可能根本没有在读串口,
-      // 在这里点错链路会把人引到错误的地方去找。
-      diag("# output is behind (DRDY kept arriving) -- chip is fine, not resetting");
-    } else {
-      diag("# no samples for %lu ms, stalled at %s, i2c failures=%lu",
-           now - last_print_ms, stalled_at, bus_error_count);
-    }
+    // `stalled_at` names the branch, which is the whole diagnosis: "no DRDY" is
+    // a chip that answers and has nothing to give, "getStatus" is a bus that
+    // stopped answering, and "getSensorData" is a chip that says a sample is
+    // ready while reading it fails -- a bus fault wearing a healthy chip's
+    // status register. See where `drdy_seen` used to be for why there is only
+    // one message here now.
+    // `stalled_at` 指明了是哪条分支,诊断全在这里:「没有 DRDY」是芯片会应答但没东西给,
+    // 「getStatus」是总线不再应答,而「getSensorData」是芯片说样本好了、读它却失败 ——
+    // 一个披着健康芯片状态寄存器外衣的总线故障。这里现在为什么只剩一条信息,
+    // 见 `drdy_seen` 原来的位置。
+    diag("# no samples for %lu ms, stalled at %s, i2c failures=%lu",
+         now - last_print_ms, stalled_at, bus_error_count);
   }
 
-  // Only a chip that has stopped delivering samples is worth resetting. Seeing
-  // DRDY and failing to print is a host-side problem that resetting cannot help.
-  // 只有「不再交样本」的芯片才值得复位。看到 DRDY 却打印不出来是主机侧的问题,复位帮不上忙。
-  if (!drdy_seen && now - last_recover_ms >= RECOVER_INTERVAL_MS) {
+  // A full second with no successful sample is the entire condition, and it is
+  // recomputed from scratch every poll, so it cannot latch. The latch that used
+  // to gate this could only ever fire at the moment recovery was needed.
+  // 整整一秒没有成功样本就是全部条件,而且每轮都从零重算,闩不住。原来把关的那个闩锁,
+  // 只会在需要自救的那一刻把自救关掉。
+  if (now - last_recover_ms >= RECOVER_INTERVAL_MS) {
     last_recover_ms = now;
     recoverSensor();
   }
@@ -758,16 +777,20 @@ void loop() {
     stalled_at = "no DRDY (chip answers but never has a sample)";
     return;             // no new sample yet; printing would repeat the last one
   }
-  drdy_seen = true;
 
   if (imu.getSensorData() != BMI2_OK) {
-    stalled_at = "getSensorData";
+    // Getting here means the chip has just said a sample is ready and reading
+    // it failed. That is a fault on the bus, not a chip with nothing to give --
+    // name it, because the two send whoever is reading this looking in
+    // completely different places.
+    // 走到这里说明芯片刚说了样本好了、而读它失败了。那是总线上的故障,不是没东西可给的
+    // 芯片 —— 要说清楚,因为这两者会让读这条信息的人去完全不同的地方找。
+    stalled_at = "getSensorData (chip reports a sample ready, the read fails)";
     return;
   }
 
   last_print_ms = millis();
   stalled_at = "nothing yet";
-  drdy_seen = false;
 
   // The exact shape Scripts/sensor_input.gd parses. Six numbers, in the order
   // accelerometer x,y,z then gyro x,y,z -- the labels carry no digits, which is
