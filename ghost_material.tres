@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dnjy3hkncmgd"]
+
+[ext_resource type="Shader" uid="uid://4l7l54juft62" path="res://ghost/ghost.gdshader" id="1_wnqhv"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_wnqhv")
+shader_parameter/ghost_color = Color(0.92, 0.95, 1, 1)
+shader_parameter/top_opacity = 0.98
+shader_parameter/bottom_opacity = 0.45
+shader_parameter/bottom_height = -0.3702
+shader_parameter/top_height = -0.2034
+shader_parameter/edge_softness = 0.7780000362564801
+shader_parameter/edge_opacity = 0.9
+shader_parameter/grain_opacity_strength = 0.03
+shader_parameter/grain_strength = 0.16
+shader_parameter/grain_size = 1.0
+shader_parameter/glow_color = Color(0.65, 0.85, 1, 1)
+shader_parameter/glow_strength = 0.3

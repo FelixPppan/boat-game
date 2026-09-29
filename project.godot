@@ -41,3 +41,4 @@ enabled=PackedStringArray("res://addons/gdserial/plugin.cfg")
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+environment/volumetric_fog/volume_size=128
