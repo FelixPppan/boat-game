@@ -5,31 +5,21 @@
 [ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/water.gd" id="2_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_ngcqm"]
 [ext_resource type="VoxelGIData" uid="uid://jvku1bifihxq" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
-[ext_resource type="Script" uid="uid://b87b21y60o3i5" path="res://Scripts/fog_controller.gd" id="4_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
-[ext_resource type="PackedScene" uid="uid://bc0v08s5bm3sb" path="res://model/boat.glb" id="5_6kno7"]
 [ext_resource type="Script" uid="uid://cidxk26urt58y" path="res://Scenes/buoyancy.gd" id="5_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
-[ext_resource type="Shader" uid="uid://b8kvjc53wy6nm" path="res://Shaders/map_memory_fog.gdshader" id="6_ws1hi"]
-[ext_resource type="Shader" uid="uid://cpmcuigjixyso" path="res://Shaders/water_fog.gdshader" id="7_5t7yc"]
-[ext_resource type="Script" uid="uid://cxifeflb47gh3" path="res://Scripts/memory_fog_remove.gd" id="7_xicox"]
-[ext_resource type="Material" uid="uid://dnjy3hkncmgd" path="res://ghost_material.tres" id="9_bjq7f"]
-[ext_resource type="PackedScene" uid="uid://cotvmvr73nnfs" path="res://model/ghostwithoutbone.glb" id="9_uylqo"]
-[ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
-[ext_resource type="Script" uid="uid://co68752praj8e" path="res://Scripts/ghost_passenger.gd" id="15_passenger"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
 height = 1.0556946
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_ngcqm"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0eb53"]
+radius = 0.26953125
+height = 1.6895523
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_umuii"]
-sky_top_color = Color(0.62, 0.6, 0.74, 1)
-sky_horizon_color = Color(0.78, 0.76, 0.86, 1)
-ground_bottom_color = Color(0.35, 0.34, 0.42, 1)
-ground_horizon_color = Color(0.55, 0.54, 0.62, 1)
+sky_top_color = Color(3.272891e-06, 0.5757627, 0.8311559, 1)
 
 [sub_resource type="Sky" id="Sky_mgsmc"]
 sky_material = SubResource("ProceduralSkyMaterial_umuii")
@@ -38,55 +28,16 @@ sky_material = SubResource("ProceduralSkyMaterial_umuii")
 background_mode = 2
 sky = SubResource("Sky_mgsmc")
 ambient_light_source = 3
-glow_enabled = true
-glow_intensity = 0.35
-glow_strength = 0.7
-glow_bloom = 0.06
-glow_hdr_threshold = 0.85
 fog_enabled = true
 fog_mode = 1
-fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
+fog_light_color = Color(0.45625693, 0.67601097, 0.85588694, 1)
 fog_sun_scatter = 0.2
-fog_density = 0.0758
+fog_density = 1.0
 fog_depth_curve = 0.26794425
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.0
-volumetric_fog_albedo = Color(0.9, 0.88, 0.95, 1)
-volumetric_fog_emission = Color(0.15, 0.14, 0.18, 1)
-volumetric_fog_detail_spread = 1.5
-volumetric_fog_sky_affect = 0.15
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_8q6pl"]
 height = 3.493164
 radius = 1.4848633
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_r4u16"]
-noise_type = 3
-frequency = 0.02
-fractal_type = 2
-fractal_octaves = 3
-fractal_gain = 0.4
-
-[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_08pfp"]
-width = 96
-height = 96
-depth = 96
-noise = SubResource("FastNoiseLite_r4u16")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8q6pl"]
-shader = ExtResource("6_ws1hi")
-shader_parameter/max_density = 2.000000095
-shader_parameter/fog_color = Color(0.8330776, 0.8216348, 0.89498526, 1)
-shader_parameter/emission_amount = 0.6000000285
-shader_parameter/soft_edge = 0.94999998807907
-shader_parameter/noise_scale = 0.1
-shader_parameter/noise_contrast = 0.45
-shader_parameter/shadow_lift = 0.70000003325
-shader_parameter/noise_texture = SubResource("NoiseTexture3D_08pfp")
-shader_parameter/dissolve_factor = 1.0
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_3ytfl"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_a2mn1"]
 height = 2.6542969
@@ -95,16 +46,6 @@ radius = 0.69970703
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_4vjv7"]
 height = 33.30359
 radius = 22.165527
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_3ytfl"]
-shader = ExtResource("7_5t7yc")
-shader_parameter/base_density = 1.50000007125
-shader_parameter/fog_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
-shader_parameter/noise_texture = SubResource("NoiseTexture3D_08pfp")
-shader_parameter/fog_height_max = 2.0
-shader_parameter/boat_position = Vector3(0, 0, 0)
-shader_parameter/boat_inner_radius = 3.0
-shader_parameter/boat_outer_radius = 7.0
 
 [node name="Map" type="Node3D" unique_id=1130590225]
 
@@ -118,59 +59,56 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("2_ngcqm")
 
 [node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.31988573, 12.437188)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
 script = ExtResource("2_5t7yc")
-
-[node name="boat" parent="Boat" unique_id=1460441412 instance=ExtResource("5_6kno7")]
-transform = Transform3D(-3.934025e-08, 0, 0.9, 0, 0.9, 0, -0.9, 0, -3.934025e-08, 0, -0.20267451, 0.5632906)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Boat" unique_id=1178132166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0.0859251)
 shape = SubResource("CapsuleShape3D_3ytfl")
 
+[node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335445, -0.42266667, 0.0661726)
+
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
-transform = Transform3D(1, 0, 0, 0, 0.9251595, 0.37957862, 0, -0.37957862, 0.9251595, 0, 3.1473308, 7.023223)
+transform = Transform3D(1, 0, 0, 0, 0.97268647, 0.23212299, 0, -0.23212299, 0.97268647, 0, 1.616128, 4.0289736)
 keep_aspect = 0
 
-[node name="FogController" type="Node3D" parent="Boat" unique_id=1609239132 node_paths=PackedStringArray("water_fog_volume")]
-script = ExtResource("4_ngcqm")
-water_fog_volume = NodePath("../../FogVolume")
-
-[node name="GhostSeat" type="Node3D" parent="Boat" unique_id=770449023]
-transform = Transform3D(4.9073634e-08, 0, -0.65, 0, 0.65, 0, 0.65, 0, 4.9073634e-08, 0, -0.13, 0.98)
-script = ExtResource("15_passenger")
-
-[node name="ghostwithoutbone" parent="Boat/GhostSeat" unique_id=854424610 instance=ExtResource("9_uylqo")]
-transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
-
-[node name="left_hand" parent="Boat/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 672248459) index="1" unique_id=146559431]
-material_override = ExtResource("9_bjq7f")
-
-[node name="white_body" parent="Boat/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 672248459) index="2" unique_id=1688189662]
-material_override = ExtResource("9_bjq7f")
-
-[node name="right_hand" parent="Boat/GhostSeat/ghostwithoutbone" index="1" unique_id=867505476]
-material_override = ExtResource("9_bjq7f")
-
 [node name="Buoyancy Boat" type="RigidBody3D" parent="." unique_id=2098697709]
-transform = Transform3D(-0.75194573, 0, -0.65922505, 0, 1, 0, 0.65922505, 0, -0.75194573, 7.2164273, 0.43897676, 9.024361)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.634, 0, 6.619)
 script = ExtResource("5_ngcqm")
-float_force = 2.0
+float_force = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Buoyancy Boat" unique_id=2098058324]
-shape = SubResource("SphereShape3D_ngcqm")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buoyancy Boat" unique_id=508325658]
+transform = Transform3D(0.565, 0, 0, 0, -2.4696934e-08, -0.565, 0, 0.565, -2.4696934e-08, 0, 0.1266219, -0.034776688)
+shape = SubResource("CapsuleShape3D_0eb53")
 
 [node name="Sail Boat" parent="Buoyancy Boat" unique_id=1389022062 instance=ExtResource("3_ngcqm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335445, -0.42266667, 0.0661726)
+
+[node name="BuoyancyPoints" type="Node3D" parent="Buoyancy Boat" unique_id=1352637678]
+
+[node name="Buoyancy Point 1" type="Marker3D" parent="Buoyancy Boat/BuoyancyPoints" unique_id=849091469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016239181, 0.35504913)
+
+[node name="Buoyancy Point 2" type="Marker3D" parent="Buoyancy Boat/BuoyancyPoints" unique_id=1537153655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0358382, -0.37734032)
+
+[node name="Buoyancy Point 3" type="Marker3D" parent="Buoyancy Boat/BuoyancyPoints" unique_id=1140030440]
+
+[node name="Buoyancy Point 4" type="Marker3D" parent="Buoyancy Boat/BuoyancyPoints" unique_id=1586040452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2093023, 0.05, -0.09000015)
+
+[node name="Buoyancy Point 5" type="Marker3D" parent="Buoyancy Boat/BuoyancyPoints" unique_id=1608360704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.05, -0.09)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1491661626]
 environment = SubResource("Environment_3ytfl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1902198615]
-transform = Transform3D(1, 0, 0, 0, -0.54062665, 0.84126276, 0, -0.84126276, -0.54062665, 0, 10.071228, 0)
+transform = Transform3D(1, 0, 0, 0, -0.9268225, 0.37549984, 0, -0.3754998, -0.92682236, 0, 10.071228, 0)
+light_angular_distance = 15.0
 
 [node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0915494, 6.2088985)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.2088985)
 
 [node name="Rock Forms 2" parent="Rock1" unique_id=278137896 instance=ExtResource("5_xicox")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4589539, 0.7876282, -7.6241455)
@@ -179,22 +117,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4589539, 0.7876282, -7.624
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
 
-[node name="FogVolume" type="FogVolume" parent="Rock1" unique_id=1647548799]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
-size = Vector3(3.4447556, 4.4262466, 4.316284)
-shape = 0
-material = SubResource("ShaderMaterial_8q6pl")
-
-[node name="Area3D" type="Area3D" parent="Rock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume")]
-script = ExtResource("7_xicox")
-memory_fog_volume = NodePath("../FogVolume")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1/Area3D" unique_id=208269092]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
-shape = SubResource("SphereShape3D_3ytfl")
-
 [node name="Rock2" type="StaticBody3D" parent="." unique_id=1901283999]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5300884, 0.25525117, 10.41245)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5300884, 0, 10.41245)
 
 [node name="Rock Forms 3" parent="Rock2" unique_id=1756967937 instance=ExtResource("6_bjq7f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9130373, 0.28616726, 0)
@@ -204,7 +128,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.87265015, -0.45898438, 0)
 shape = SubResource("CylinderShape3D_a2mn1")
 
 [node name="Island" type="StaticBody3D" parent="." unique_id=1165908882]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2517395, 0)
 
 [node name="Island" parent="Island" unique_id=878118820 instance=ExtResource("4_ws1hi")]
 transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.9978027, 0.24405193, 5.7730713)
@@ -222,13 +145,3 @@ transform = Transform3D(0.43276986, 0, 0.90150446, 0, 1, 0, -0.90150446, 0, 0.43
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Rock3" unique_id=2106690819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
-
-[node name="FogVolume" type="FogVolume" parent="." unique_id=1293038478]
-size = Vector3(100, 5, 100)
-material = SubResource("ShaderMaterial_3ytfl")
-
-[node name="WaveDetector" type="Node" parent="." unique_id=1461835097 node_paths=PackedStringArray("fog_remover")]
-script = ExtResource("14_6bwvt")
-fog_remover = NodePath("../Rock1/Area3D")
-
-[editable path="Boat/GhostSeat/ghostwithoutbone"]
