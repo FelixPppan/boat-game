@@ -1,7 +1,7 @@
 extends Node
 # Detects a waving hand and tells the fog to dissolve.
 
-const MIN_SWING: float = 0.05  # sideways distance that counts as a swing (0.05 = 5% of the image width)
+const MIN_SWING: float = 0.1  # sideways distance that counts as a swing (0.1 = 10% of the image width)
 const SWINGS_NEEDED: int = 3
 const WINDOW: float = 1.0  # the swings must happen within this many seconds
 
