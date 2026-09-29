@@ -1,4 +1,8 @@
 extends CharacterBody3D
+
+signal rowing_animation_changed(action: StringName)
+
+var _rowing_animation: StringName = &"idle"
 ## The boat's motion. Two input paths:
 ##   1. sensor  -- OarController works out this stroke's thrust, lateral force
 ##                 and yaw torque (the default)
@@ -157,6 +161,8 @@ func _physics_process(delta: float) -> void:
 			turn_input -= 1.0
 		yaw_torque = turn_input * keyboard_turn * max_thrust
 
+	_update_rowing_animation(thrust_local, yaw_torque)
+
 	# --- 2. Rotate the thrust into world space ---------------------------
 	var thrust_world := global_transform.basis * thrust_local
 	thrust_world.y = 0.0      # planar motion only; the boat does not bob
@@ -227,3 +233,15 @@ func _update_camera_tilt(delta: float) -> void:
 	_camera_tilt = lerp(_camera_tilt, target_tilt,
 		1.0 - exp(-camera_tilt_smoothing * delta))
 	camera.rotation.z = _camera_tilt
+
+func _update_rowing_animation(thrust: Vector3, torque: float) -> void:
+	var action: StringName = &"idle"
+	if thrust.length_squared() > 0.01:
+		action = &"forward"
+	if torque > 0.01:
+		action = &"left"
+	elif torque < -0.01:
+		action = &"right"
+	if action != _rowing_animation:
+		_rowing_animation = action
+		rowing_animation_changed.emit(action)

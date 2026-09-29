@@ -1,56 +1,41 @@
 shader_type fog;
 
-/// Overall thickness. Keep low (0.6–2.0) for soft haze; high values read as
-/// solid cotton and amplify volumetric flicker.
-uniform float max_density : hint_range(0.0, 5.0) = 1.2;
-uniform vec3 fog_color : source_color = vec3(0.95, 0.93, 1.0);
-/// Soft self-light. Coupled to density below — do not crank this alone.
-uniform float emission_amount : hint_range(0.0, 3.0) = 0.75;
-/// How fuzzy the FogVolume boundary is (higher = softer, more ethereal).
-uniform float soft_edge : hint_range(0.15, 0.95) = 0.62;
-/// World-space noise scale. Smaller = larger, softer billows (less sparkle).
-uniform float noise_scale : hint_range(0.02, 0.5) = 0.1;
-/// 0 = almost even haze, 1 = stronger holes. Lower = less "solid cloud".
-uniform float noise_contrast : hint_range(0.0, 1.0) = 0.45;
-/// Lifts dark noise pockets toward fog_color so gaps are milky, not scene-grey.
-uniform float shadow_lift : hint_range(0.0, 1.0) = 0.55;
-uniform sampler3D noise_texture : repeat_enable;
-
-// 1.0 = full cover, 0.0 = dissolved
-uniform float dissolve_factor : hint_range(0.0, 1.0) = 1.0;
+uniform sampler3D cloud_noise : repeat_enable, filter_linear;
+uniform vec4 fog_color : source_color = vec4(0.65, 0.76, 0.92, 1.0);
+uniform float density : hint_range(0.0, 4.0) = 1.4;
+uniform float flow_speed : hint_range(0.0, 0.3) = 0.015;
+uniform float detail_scale : hint_range(0.5, 4.0) = 1.3;
+uniform float warp_strength : hint_range(0.0, 0.5) = 0.18;
+uniform float fog_opacity : hint_range(0.0, 1.0) = 1.0;
+uniform float glow_strength : hint_range(0.0, 1.0) = 0.35;
+uniform float grain_strength : hint_range(0.0, 1.0) = 0.4;
+uniform float grain_scale : hint_range(1.0, 6.0) = 2.0;
+uniform float contrast : hint_range(1.0, 4.0) = 1.4;
 
 void fog() {
-	vec3 world_pos = WORLD_POSITION;
-
-	// Soft ellipsoid falloff inside the FogVolume (UVW is 0..1 across the volume).
-	// Hard volume edges + temporal reprojection = flicker when the camera bobs.
-	float radial = length(UVW - vec3(0.5));
-	float edge = 1.0 - smoothstep(soft_edge * 0.45, 0.52, radial);
-
-	// Large, slow noise — soft mist, not crawling speckles.
-	vec3 noise_uv = world_pos * noise_scale
-			+ vec3(TIME * 0.012, TIME * 0.008, TIME * 0.006);
-	float n = texture(noise_texture, noise_uv).r;
-
-	// Soft remap: avoid harsh 0/1 blobs that shimmer under temporal fog.
-	float soft_n = smoothstep(0.15, 0.9, n);
-	soft_n = mix(0.75, soft_n, noise_contrast);
-
-	float dissolve = smoothstep(1.0 - max(dissolve_factor, 0.001), 1.0, n)
-			* dissolve_factor;
-
-	float density = max_density * soft_n * edge * dissolve;
-	// Slightly sub-linear so mid-density fills more evenly (less chalky).
-	density = pow(max(density, 0.0), 0.8);
-
-	DENSITY = density;
-
-	// Dark pockets lean toward fog_color instead of picking up grey scene light.
-	vec3 lifted = mix(fog_color * shadow_lift, fog_color, soft_n);
-	ALBEDO = lifted;
-
-	// Emission follows the soft mask — bright cores glow gently, edges stay airy.
-	// This avoids "blow out whites / grey holes" from a flat emission_amount.
-	float emit_mask = mix(shadow_lift * 0.35, 1.0, soft_n) * edge;
-	EMISSION = fog_color * emission_amount * emit_mask;
+	vec3 p = UVW;
+	float t = TIME * flow_speed;
+	vec3 q = p * detail_scale + vec3(t * 0.3, -t, t * 0.2);
+	// 三维 Simplex 噪声扭曲三维采样坐标，减少规则网格方向感。
+	vec3 warp = vec3(
+		texture(cloud_noise, q * 0.7).r,
+		texture(cloud_noise, q * 0.7 + vec3(0.31, 0.57, 0.13)).r,
+		texture(cloud_noise, q * 0.7 + vec3(0.71, 0.19, 0.43)).r
+	) - 0.5;
+	float broad = texture(cloud_noise, q + warp * warp_strength).r;
+	float detail = texture(cloud_noise, q * 1.9 - vec3(t * 0.1, 0.0, t * 0.2)).r;
+	float cloud = mix(broad, detail, 0.2);
+	// 细节附着在三维空间中缓慢移动，不使用逐帧随机闪烁的噪点。
+	// 细颗粒单独缓慢漂移，频率增大时不再同时放大移动速度。
+	vec3 grain_position = p * detail_scale * grain_scale + vec3(t * 0.08, -t * 0.12, 0.0);
+	float grain = texture(cloud_noise, grain_position + warp * 0.1).r;
+	cloud = clamp((cloud - 0.5) * contrast + 0.5, 0.0, 1.0);
+	// 雾分布在有厚度的椭球内部，不再是带透明度的平面。
+	float radius = length((p - 0.5) * 2.0 + warp * 0.12);
+	float envelope = 1.0 - smoothstep(0.25, 0.95, radius);
+	float amount = smoothstep(0.2, 0.75, cloud) * envelope;
+	amount *= mix(1.0, smoothstep(0.15, 0.85, grain) * 1.6, grain_strength);
+	DENSITY = amount * density * fog_opacity;
+	ALBEDO = fog_color.rgb;
+	EMISSION = fog_color.rgb * glow_strength * mix(0.85, 1.05, broad);
 }

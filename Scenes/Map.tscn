@@ -7,12 +7,17 @@
 [ext_resource type="VoxelGIData" uid="uid://jvku1bifihxq" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
 [ext_resource type="Script" uid="uid://b87b21y60o3i5" path="res://Scripts/fog_controller.gd" id="4_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
+[ext_resource type="PackedScene" uid="uid://bc0v08s5bm3sb" path="res://model/boat.glb" id="5_6kno7"]
 [ext_resource type="Script" uid="uid://cidxk26urt58y" path="res://Scenes/buoyancy.gd" id="5_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
-[ext_resource type="Shader" uid="uid://chbboahvyd03b" path="res://Shaders/memory_fog.gdshader" id="6_ws1hi"]
+[ext_resource type="Shader" uid="uid://b8kvjc53wy6nm" path="res://Shaders/map_memory_fog.gdshader" id="6_ws1hi"]
 [ext_resource type="Shader" uid="uid://cpmcuigjixyso" path="res://Shaders/water_fog.gdshader" id="7_5t7yc"]
 [ext_resource type="Script" uid="uid://cxifeflb47gh3" path="res://Scripts/memory_fog_remove.gd" id="7_xicox"]
+[ext_resource type="Material" uid="uid://dnjy3hkncmgd" path="res://ghost_material.tres" id="9_bjq7f"]
+[ext_resource type="PackedScene" uid="uid://cotvmvr73nnfs" path="res://model/ghostwithoutbone.glb" id="9_uylqo"]
+[ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
+[ext_resource type="Script" uid="uid://co68752praj8e" path="res://Scripts/ghost_passenger.gd" id="15_passenger"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -116,8 +121,8 @@ script = ExtResource("2_ngcqm")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.31988573, 12.437188)
 script = ExtResource("2_5t7yc")
 
-[node name="Sail Boat" parent="Boat" unique_id=747613667 instance=ExtResource("3_ngcqm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.010335445, -0.42266667, 0.76642895)
+[node name="boat" parent="Boat" unique_id=1460441412 instance=ExtResource("5_6kno7")]
+transform = Transform3D(-3.934025e-08, 0, 0.9, 0, 0.9, 0, -0.9, 0, -3.934025e-08, 0, -0.20267451, 0.5632906)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Boat" unique_id=1178132166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026583195, -0.036602736, 0.0859251)
@@ -130,6 +135,22 @@ keep_aspect = 0
 [node name="FogController" type="Node3D" parent="Boat" unique_id=1609239132 node_paths=PackedStringArray("water_fog_volume")]
 script = ExtResource("4_ngcqm")
 water_fog_volume = NodePath("../../FogVolume")
+
+[node name="GhostSeat" type="Node3D" parent="Boat" unique_id=770449023]
+transform = Transform3D(4.9073634e-08, 0, -0.65, 0, 0.65, 0, 0.65, 0, 4.9073634e-08, 0, -0.13, 0.98)
+script = ExtResource("15_passenger")
+
+[node name="ghostwithoutbone" parent="Boat/GhostSeat" unique_id=854424610 instance=ExtResource("9_uylqo")]
+transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
+
+[node name="left_hand" parent="Boat/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 672248459) index="1" unique_id=146559431]
+material_override = ExtResource("9_bjq7f")
+
+[node name="white_body" parent="Boat/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 672248459) index="2" unique_id=1688189662]
+material_override = ExtResource("9_bjq7f")
+
+[node name="right_hand" parent="Boat/GhostSeat/ghostwithoutbone" index="1" unique_id=867505476]
+material_override = ExtResource("9_bjq7f")
 
 [node name="Buoyancy Boat" type="RigidBody3D" parent="." unique_id=2098697709]
 transform = Transform3D(-0.75194573, 0, -0.65922505, 0, 1, 0, 0.65922505, 0, -0.75194573, 7.2164273, 0.43897676, 9.024361)
@@ -205,3 +226,9 @@ shape = SubResource("CylinderShape3D_8q6pl")
 [node name="FogVolume" type="FogVolume" parent="." unique_id=1293038478]
 size = Vector3(100, 5, 100)
 material = SubResource("ShaderMaterial_3ytfl")
+
+[node name="WaveDetector" type="Node" parent="." unique_id=1461835097 node_paths=PackedStringArray("fog_remover")]
+script = ExtResource("14_6bwvt")
+fog_remover = NodePath("../Rock1/Area3D")
+
+[editable path="Boat/GhostSeat/ghostwithoutbone"]
