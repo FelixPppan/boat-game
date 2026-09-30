@@ -79,6 +79,15 @@ var _rowing_animation: StringName = &"idle"
 ## 船体跟随浪高的快慢(越大越跟手)。
 @export var wave_follow_smoothing: float = 8.0
 
+@export_group("Debug UI")
+## Show the top-right FORWARD SWEEP gyro tuning panel.
+## 是否显示右上角 FORWARD SWEEP 陀螺仪调参面板。
+@export var show_forward_sweep_panel: bool = false:
+	set(value):
+		show_forward_sweep_panel = value
+		if _oar != null:
+			_oar.show_panel = show_forward_sweep_panel
+
 # preload rather than the bare class name: a class name is only recognised
 # once the editor has scanned it into the .godot cache, whereas this path
 # always resolves.
@@ -122,6 +131,7 @@ func _ready() -> void:
 	# 它的面板按牛顿打印「推力 X / Y」,Y 是这边的数,所以交过去 —— 免得控制器自己存一份、
 	# 这边一调这边就成了假数。
 	_oar.max_thrust_report = max_thrust
+	_oar.show_panel = show_forward_sweep_panel
 	add_child(_oar)
 
 	# Stern trail history → aurora mist in waves.gdshader.

@@ -200,6 +200,16 @@ const TUNED_FLASH := 0.7
 ## 建控制器时写进来,于是调 `max_thrust` 时这个标签跟着变。
 var max_thrust_report := 600.0
 
+## Whether the top-right FORWARD SWEEP tuning panel is shown. Set from boat.gd's
+## inspector export; F2 still toggles the whole overlay (panel + bottom readout).
+## 是否显示右上角 FORWARD SWEEP 调参面板。由 boat.gd 的 Inspector 开关写入;
+## F2 仍然控制整块叠加层(面板 + 左下读数)。
+var show_panel := true:
+	set(value):
+		show_panel = value
+		if _panel != null:
+			_panel.visible = show_panel
+
 # ------------------------------------------------------------------- State --
 ## Live knobs, in deg/s of sweep. Written only by `_tune_dead` / `_tune_full`.
 ## 实时旋钮,单位是扫速 deg/s。只有 `_tune_dead` / `_tune_full` 会写。
@@ -834,6 +844,7 @@ func _build_panel(root: Control) -> void:
 	# IGNORE 挡不住子节点被测试,所以表条仍然可以在它内部保持 STOP。
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_panel)
+	_panel.visible = show_panel
 
 	_title = _panel_label("FORWARD SWEEP   gyro gx", PANEL_PAD, 0.0, 300.0, 20.0, 12)
 	_title.add_theme_color_override("font_color", Color(0.78, 0.82, 0.88))
