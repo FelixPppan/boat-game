@@ -13,11 +13,12 @@ extends RigidBody3D
 @export var water_drag: float = 0.05
 @export var water_drag_angular: float = 0.05
 
+
 var submerged: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -31,7 +32,6 @@ func _physics_process(delta: float) -> void:
 		if  depth > 0:
 			submerged = true
 			apply_force(Vector3.UP * float_force * gravity * depth, point.global_position - global_position) # Position is offset from body origin in global coordinates 
-			# apply_central_force(Vector3.UP * float_force * gravity * depth)
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if submerged:

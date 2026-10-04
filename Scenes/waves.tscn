@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dfalxdw5p502x"]
 
-[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/waves.gdshader" id="1_rqboq"]
-[ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/water.gd" id="2_5a5lk"]
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/Water/waves.gdshader" id="1_rqboq"]
+[ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/Water/water.gd" id="2_5a5lk"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="2_umuii"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_0eb53"]
@@ -29,6 +29,18 @@ shader_parameter/noise = SubResource("NoiseTexture2D_rqboq")
 shader_parameter/noise_intensity = 0.250000011875
 shader_parameter/gerstner_wave = Vector4(8.905, 0.655, 1, 1)
 shader_parameter/time = 0.0
+shader_parameter/trail_world_center = Vector2(0, 0)
+shader_parameter/trail_world_size = 100.0
+shader_parameter/trail_layer_u = Vector3(0.22, 0.48, 0.88)
+shader_parameter/trail_strength = 2.2
+shader_parameter/trail_softness = 2.0
+shader_parameter/trail_flow = 1.0
+shader_parameter/trail_flow_scale = 0.028
+shader_parameter/trail_warp = 3.5
+shader_parameter/trail_edge_min = 0.52
+shader_parameter/trail_edge_max = 0.78
+shader_parameter/trail_halo = 0.45
+shader_parameter/trail_core_boost = 1.75
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_umuii"]
 sky_top_color = Color(3.272891e-06, 0.5757627, 0.8311559, 1)

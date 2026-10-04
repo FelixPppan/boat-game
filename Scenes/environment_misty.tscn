@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k0u1mye8is8s"]
 
 [ext_resource type="PackedScene" uid="uid://bopnrnt34f76d" path="res://Scenes/WaterPlane.tscn" id="1_d04rp"]
-[ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scenes/boat.gd" id="2_yj2r7"]
+[ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scripts/Water/boat.gd" id="2_yj2r7"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_unba8"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="4_c3voh"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="5_pdb7t"]

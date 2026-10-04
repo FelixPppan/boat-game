@@ -4,6 +4,7 @@
 .venv/
 __pycache__/
 hand_landmarker.task
+addons/godot-git-plugin/
 
 # Raw oar recordings from the stroke recorder. They are large, machine-specific
 # and only meaningful next to the session that produced them -- the scored
