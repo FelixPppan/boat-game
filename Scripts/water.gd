@@ -12,11 +12,18 @@ var gerstner_wave: Vector4
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Getting shader parameters
+	add_to_group("water_plane")
 	shader_material = get_surface_override_material(0)
+	if shader_material == null:
+		shader_material = material_override
+	if shader_material == null:
+		push_warning("WaterPlane: no ShaderMaterial")
+		return
 	noise = shader_material.get_shader_parameter("noise")
-	noise_intensity = shader_material.get_shader_parameter("noise_intensity")
-	gerstner_wave = shader_material.get_shader_parameter("gerstner_wave")
+	var ni = shader_material.get_shader_parameter("noise_intensity")
+	noise_intensity = float(ni) if ni != null else 0.2
+	var gw = shader_material.get_shader_parameter("gerstner_wave")
+	gerstner_wave = gw if gw != null else Vector4(1, 1, 1, 1)
 
 # Re-implementation of Gerstner wave function in GDScript
 # Tangent and binormal are not included, as they are only needed for lighting (calculating the surface normal)
@@ -51,4 +58,5 @@ func get_height(point: Vector3):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	time += delta
-	shader_material.set_shader_parameter("time", time)
+	if shader_material != null:
+		shader_material.set_shader_parameter("time", time)
