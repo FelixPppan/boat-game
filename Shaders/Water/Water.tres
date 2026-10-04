@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://cipaepuetlh6q"]
 
-[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/Water/waves.gdshader" id="1_ywhyq"]
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/Water/waves.gdshader" id="1_08pfp"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_5t7yc"]
 noise_type = 4
@@ -18,9 +18,9 @@ gradient = SubResource("Gradient_trail")
 
 [resource]
 render_priority = 0
-shader = ExtResource("1_ywhyq")
-shader_parameter/albedo = Color(0, 0.5243302, 0.72746974, 1)
-shader_parameter/albedo_high = Color(0.39503065, 0.75992745, 0.9411307, 1)
+shader = ExtResource("1_08pfp")
+shader_parameter/albedo = Color(3.080368e-06, 0.45537132, 0.5846439, 1)
+shader_parameter/albedo_high = Color(1.347661e-06, 0.7826294, 0.9911545, 1)
 shader_parameter/blend_from = -0.24399996409
 shader_parameter/blend_to = 0.73600003496
 shader_parameter/metallic = 0.0

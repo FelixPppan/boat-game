@@ -19,9 +19,6 @@
 [ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
 [ext_resource type="Script" uid="uid://co68752praj8e" path="res://Scripts/ghost_passenger.gd" id="15_passenger"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ejakq"]
-size = Vector3(0.65356445, 0.97753906, 1.0996094)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_0eb53"]
 size = Vector3(0.57225037, 0.6045935, 1.1854858)
 
@@ -125,21 +122,14 @@ script = ExtResource("2_ngcqm")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
 script = ExtResource("2_5t7yc")
 
-[node name="Player Collision" type="CollisionShape3D" parent="Boat" unique_id=1764893917]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.020874023, -0.43539226, 0.025550842)
-shape = SubResource("BoxShape3D_ejakq")
-
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
 transform = Transform3D(1, 0, 0, 0, 0.9251595, 0.37957865, 0, -0.37957865, 0.9251595, 0, 3.1473308, 7.023223)
 keep_aspect = 0
 
 [node name="RigidBody3D" type="RigidBody3D" parent="Boat" unique_id=1053459779]
-collision_layer = 2
-collision_mask = 2
-axis_lock_angular_y = true
-axis_lock_angular_z = true
+axis_lock_linear_x = true
+axis_lock_linear_z = true
 script = ExtResource("5_ngcqm")
-float_force = 3.0
 metadata/Camera = false
 
 [node name="Model" type="Node3D" parent="Boat/RigidBody3D" unique_id=2116991492]
@@ -257,8 +247,6 @@ environment = SubResource("Environment_3ytfl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1902198615]
 transform = Transform3D(1, 0, 0, 0, -0.54062665, 0.84126276, 0, -0.84126276, -0.54062665, 0, 10.071228, 0)
-light_energy = 0.8
-light_indirect_energy = 0.3
 
 [node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0915494, 6.2088985)
