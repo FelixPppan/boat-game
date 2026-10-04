@@ -1,14 +1,3 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
-.venv/
-__pycache__/
-hand_landmarker.task
-addons/godot-git-plugin/
-
-# Raw oar recordings from the stroke recorder. They are large, machine-specific
-# and only meaningful next to the session that produced them -- the scored
-# summaries that come out of tools/direction_lab.py are what belongs in git.
-# 划桨录制器写出的原始数据。体积大、跟具体那一次装配绑定,只对它被录下来的那次会话
-# 有意义 —— 该进 git 的是 tools/direction_lab.py 打出来的评分摘要。
-recordings/

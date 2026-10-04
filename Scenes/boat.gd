@@ -74,11 +74,11 @@ var _camera_tilt := 0.0
 var _oar
 var _trail
 
+
 func _ready() -> void:
 	# The boat floats: there is no notion of ground, so use floating mode
 	# (no gravity, no snapping to a floor).
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
-	# _camera_rest_local_y = camera.position.y
 
 	# The controller is created in code so the scene file needs no edits.
 	_oar = OarControllerScript.new()
@@ -162,42 +162,7 @@ func _physics_process(delta: float) -> void:
 	_vel = velocity
 	_vel.y = 0.0
 
-<<<<<<< Updated upstream:Scenes/boat.gd
 	_update_camera_tilt(delta)
-=======
-	# --- 6. Ride the Gerstner surface ------
-	# --- 6. 跟随 Gerstner 波面
-	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
-	# Buoyancy Boat 用的是力;这里只是把 Y 贴/插值到同一个高度场。
-	# _follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
-
-	#_update_camera_tilt(delta)
-	#_stabilize_camera_height()
-
-	if _trail != null:
-		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
-
-
-func _follow_wave_height(delta: float) -> void:
-	if _water == null or not _water.has_method("get_height"):
-		return
-	var target_y := float_height + float(_water.get_height(global_position))
-	var t := 1.0 - exp(-wave_follow_smoothing * delta)
-	global_position.y = lerpf(global_position.y, target_y, t)
-
-
-## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
-## the wave offset on its local Y so the view does not bob.
-## 让相机继续做船的子节点(平移和转向照旧跟随),但把它局部的 Y 上的浪高偏移抵消掉,
-## 于是镜头不上下晃。
-func _stabilize_camera_height() -> void:
-	if not camera_ignore_waves:
-		camera.position.y = _camera_rest_local_y
-		return
-	# global_y = boat.y + local_y  (boat only yaws) → lock to calm height.
-	# global_y = 船的 y + 局部 y(船只会偏航),于是锁到平静高度。
-	camera.position.y = _camera_rest_local_y + float_height - global_position.y
->>>>>>> Stashed changes:Scripts/Water/boat.gd
 
 
 func _update_camera_tilt(delta: float) -> void:
