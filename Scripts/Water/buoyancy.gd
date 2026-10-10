@@ -12,9 +12,11 @@ extends RigidBody3D
 @export var float_force: float = 1.0
 @export var water_drag: float = 0.05
 @export var water_drag_angular: float = 0.05
+@export var allowed_angle_change: float = 180.0;
 
 
 var submerged: bool = false
+var accum_delta: float = 0.0; # Accumulated delta
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -22,7 +24,26 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	# Temporary rotation reset function, needs to be improved.
+	accum_delta += delta
+	var min_velocity: Vector3 = Vector3(0.1, 0.1, 0.1)
+	
+	var angle: float =  allowed_angle_change * (PI / 180.0)
+	var high_x: bool = rotation.x > angle || rotation.x < -angle
+	var high_y: bool = rotation.y > angle || rotation.y < -angle
+	var high_z: bool = rotation.z > angle || rotation.z < -angle
+	
+	if (high_x || high_y || high_z):
+		accum_delta += delta
+	
+	if (accum_delta > 2.0):
+		accum_delta = 0.0;
+		if high_x:
+			rotation.x = 0.0;
+		if high_y:
+			rotation.y = 0.0;
+		if high_z:
+			rotation.z = 0.0;
 
 func _physics_process(delta: float) -> void:
 	submerged = false

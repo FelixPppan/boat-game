@@ -11,6 +11,8 @@ Sources used:
 */
 
 shader_type spatial;
+render_mode blend_mix, depth_draw_opaque;
+stencil_mode read, compare_not_equal, 1;
 
 // Colour and texture
 uniform vec3 albedo : source_color;
@@ -26,6 +28,8 @@ uniform float noise_intensity: hint_range(0,1) = 0.2;
 
 // Gerstner settings
 uniform vec4 gerstner_wave = vec4(1.0, 1.0, 1.0, 1.0);
+
+uniform float size_of_plane = 100.0;
 
 // For use by water.gd script when synching buoyancy physics
 uniform float time; // Change to TIME to unbind from script
@@ -155,7 +159,7 @@ vec3 gerstner(
 	float f = k * dot(d, p.xz) - c * time; // Function inside sin/cos wave	
 	float a = steepness / k;
 	
-	float wave_noise = texture(noise, p.xz / 100.0 + dir * time * -0.0025).r * noise_intensity - noise_intensity / 2.0;
+	float wave_noise = texture(noise, p.xz / size_of_plane + dir * time * -0.0025).r * noise_intensity - noise_intensity / 2.0;
 	
 	tangent += vec3(
 		-d.x * d.x * (steepness * sin(f)),
@@ -203,6 +207,7 @@ void fragment() {
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
 	RIM = 0.5;
+	ALPHA = 1.0;
 
 	// Continuous trail: mask intensity only — never gated by wave height.
 	float trail_m = sample_trail_soft(trail_xz);
