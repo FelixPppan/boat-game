@@ -26,10 +26,16 @@ uniform float roughness : hint_range(0.0, 1.0) = 0;
 uniform sampler2D noise;
 uniform float noise_intensity: hint_range(0,1) = 0.2;
 
+// Wave displacement map (taken from DisplacementViewport)
+uniform sampler2D displacement_map: repeat_disable;
+
+// Foam map (from FoamViewport)
+uniform sampler2D foam_map: repeat_disable;
+
 // Gerstner settings
 uniform vec4 gerstner_wave = vec4(1.0, 1.0, 1.0, 1.0);
 
-uniform float size_of_plane = 100.0;
+uniform float size_of_plane = 10.0;
 
 // For use by water.gd script when synching buoyancy physics
 uniform float time; // Change to TIME to unbind from script
@@ -184,15 +190,59 @@ void create_wave(inout vec3 p, inout vec3 tangent, inout vec3 binormal) {
 	p += gerstner(gerstner_wave.x, gerstner_wave.y, vec2(gerstner_wave.z, gerstner_wave.w), p, tangent, binormal);
 }
 
+vec3 get_displacement(vec2 uv) {
+	vec3 uv_displacement = texture(displacement_map, uv).xyz;
+	vec3 displacement = uv_displacement;
+	return displacement;
+}
+
 void vertex() {
 	vec3 point = VERTEX.xyz;
-	vec3 tangent = vec3(1, 0, 0);
-	vec3 binormal = vec3(0, 0, 1);
-	create_wave(point, tangent, binormal);
+	
+	VERTEX.xyz = point + get_displacement(point.xz / size_of_plane + 0.5);
+	
+	// Approximating tangents in x and z directions
+	vec3 forward_point = point + vec3(1,0,0) * 0.1;
+	vec3 right_point = point + vec3(0,0,1) * 0.1;
+	
+	vec3 tangent_x = forward_point + get_displacement(forward_point.xz / size_of_plane + 0.5) - VERTEX.xyz;
+	vec3 tangent_z = right_point + get_displacement(right_point.xz / size_of_plane + 0.5) - VERTEX.xyz;
+	
+	NORMAL = normalize(cross(tangent_z, tangent_x));
+	
+	
+	/*
+	vec3 tangent = vec3(1,0,0);
+	vec3 binormal = vec3(0,0,1);
+	
+	//vec3 tangent_x = x_vec + get_displacement(x_vec.xz / size_of_plane + 0.5) - VERTEX.xyz;
+	//vec3 tangent_z = z_vec + get_displacement(z_vec.xz / size_of_plane + 0.5) - VERTEX.xyz;
+	
+	
+	// NORMAL = normalize(cross(tangent_z, tangent_x));
+	
+	vec3 x_vec = point + vec3(1,0,0);
+	vec3 z_vec = point + vec3(0,0,1);
 
-	vec3 normal = normalize(cross(binormal, tangent));
+	create_wave(point, tangent, binormal);
+	
+	// Approximating tangents in x and z directions
+	//vec3 x_vec = point + vec3(1,0,0); // Point moved in x direction
+	//vec3 z_vec = point + vec3(0,0,1); // Point moved in z direction
+	
+	vec3 temp = vec3(0,0,0);
+	create_wave(x_vec, temp, temp);
+	create_wave(z_vec, temp, temp);
+	
+	vec3 tangent_x = x_vec - point;
+	vec3 tangent_z = z_vec - point;
+	vec3 normal = normalize(cross(tangent_z, tangent_x));
+
+	// vec3 normal = normalize(cross(binormal, tangent));
 	VERTEX.xyz = point;
 	NORMAL = normal;
+	*/
+	
 	// History mask is painted in world XZ — sample the surface's current world XZ
 	// (after Gerstner), not rest-pose, or troughs sample empty mask cells.
 	trail_xz = (MODEL_MATRIX * vec4(point, 1.0)).xz;
@@ -202,12 +252,18 @@ void fragment() {
 	vec4 world_position = INV_VIEW_MATRIX * vec4(VERTEX, 1);
 	float height_blend = smoothstep(blend_from, blend_to, world_position.y);
 	vec3 albedo_mix = mix(albedo, albedo_high, height_blend);
+	float alpha_mix = mix(1.0, 0.8, height_blend);
+	
+	float foam = texture(foam_map, UV).r;
+	vec3 foam_colour = vec3(1.0);
+	
+	vec3 albedo_foam_mix = mix(albedo_mix, foam_colour, foam);
 
-	ALBEDO = albedo_mix;
+	ALBEDO = albedo_foam_mix;
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
-	RIM = 0.5;
-	ALPHA = 1.0;
+	RIM = 0.2;
+	ALPHA = alpha_mix;
 
 	// Continuous trail: mask intensity only — never gated by wave height.
 	float trail_m = sample_trail_soft(trail_xz);

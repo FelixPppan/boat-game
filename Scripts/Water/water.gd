@@ -3,6 +3,11 @@ extends MeshInstance3D
 var shader_material
 var time: float = 0
 
+
+# Displacement map
+# @onready var displacement_map = $DisplacementColorRect.material
+@onready var displacement_map: ColorRect = get_node("/root/Map/Water/DisplacementViewport/DisplacementColorRect")
+
 # Noise
 var noise: NoiseTexture2D
 var noise_intensity: float
@@ -13,7 +18,7 @@ var gerstner_wave: Vector4
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_to_group("water_plane")
-	shader_material = get_surface_override_material(0)
+	shader_material = displacement_map.material
 	if shader_material == null:
 		shader_material = material_override
 	if shader_material == null:

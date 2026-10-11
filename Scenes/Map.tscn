@@ -2,11 +2,14 @@
 
 [ext_resource type="PackedScene" uid="uid://bopnrnt34f76d" path="res://Scenes/WaterPlane.tscn" id="1_00287"]
 [ext_resource type="Script" uid="uid://dbcvun1srumpe" path="res://Scripts/Water/boat.gd" id="2_5t7yc"]
+[ext_resource type="Shader" uid="uid://3x5fngcixxfe" path="res://Shaders/Water/gerstner_displacement.gdshader" id="2_ejakq"]
 [ext_resource type="Script" uid="uid://dt5ccu6h762ax" path="res://Scripts/Water/water.gd" id="2_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://3w6c7xndtiwc" path="res://Assets/Sail Boat.glb" id="3_ngcqm"]
 [ext_resource type="VoxelGIData" uid="uid://jvku1bifihxq" path="res://Shaders/Map.VoxelGI_data.res" id="3_ws1hi"]
+[ext_resource type="Shader" uid="uid://bycocw2y6vm17" path="res://Shaders/Water/waves.gdshader" id="4_dms03"]
 [ext_resource type="Script" uid="uid://b87b21y60o3i5" path="res://Scripts/fog_controller.gd" id="4_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://dt2kl47m4soii" path="res://Assets/Island.glb" id="4_ws1hi"]
+[ext_resource type="Shader" uid="uid://sqtkjfi4kid8" path="res://Shaders/Water/foam_calc.gdshader" id="5_6kno7"]
 [ext_resource type="Script" uid="uid://cidxk26urt58y" path="res://Scripts/Water/buoyancy.gd" id="5_ngcqm"]
 [ext_resource type="PackedScene" uid="uid://rm2bfc0jou6" path="res://Assets/Rock Forms 2.glb" id="5_xicox"]
 [ext_resource type="PackedScene" uid="uid://tc32ep8asphm" path="res://Assets/Rock Forms 3.glb" id="6_bjq7f"]
@@ -17,6 +20,80 @@
 [ext_resource type="PackedScene" uid="uid://cotvmvr73nnfs" path="res://model/ghostwithoutbone.glb" id="9_uylqo"]
 [ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
 [ext_resource type="Script" uid="uid://co68752praj8e" path="res://Scripts/ghost_passenger.gd" id="15_passenger"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_ejakq"]
+size = Vector2(100, 100)
+subdivide_width = 1024
+subdivide_depth = 1024
+orientation = 1
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_6kno7"]
+viewport_path = NodePath("../DisplacementViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_nitb1"]
+viewport_path = NodePath("../FoamViewport")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6kno7"]
+noise_type = 4
+frequency = 0.15
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uylqo"]
+noise = SubResource("FastNoiseLite_6kno7")
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.42, 0.72, 1)
+colors = PackedColorArray(0.99999994, 0.7012559, 0.06396211, 1, 0, 0.8199626, 0.8564243, 1, 0.5996321, 0.95101243, 0.99999994, 1, 0.85, 0.55, 0.9, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_trail"]
+gradient = SubResource("Gradient_trail")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dumge"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("4_dms03")
+shader_parameter/albedo = Color(0, 0.5243302, 0.72746974, 1)
+shader_parameter/albedo_high = Color(0.25261486, 0.7907404, 0.8807464, 1)
+shader_parameter/blend_from = -0.24399996409
+shader_parameter/blend_to = 0.73600003496
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 0.010000000475
+shader_parameter/noise = SubResource("NoiseTexture2D_uylqo")
+shader_parameter/noise_intensity = 0.400000019
+shader_parameter/displacement_map = SubResource("ViewportTexture_6kno7")
+shader_parameter/foam_map = SubResource("ViewportTexture_nitb1")
+shader_parameter/gerstner_wave = Vector4(4, 0.4, 1, 1)
+shader_parameter/size_of_plane = 100.0
+shader_parameter/time = 0.0
+shader_parameter/trail_world_center = Vector2(0, 0)
+shader_parameter/trail_world_size = 100.0
+shader_parameter/trail_gradient = SubResource("GradientTexture1D_trail")
+shader_parameter/trail_layer_u = Vector3(0.18, 0.45, 0.9)
+shader_parameter/trail_strength = 1.0000000475
+shader_parameter/trail_softness = 2.0
+shader_parameter/trail_flow = 1.0
+shader_parameter/trail_flow_scale = 0.01500000071248
+shader_parameter/trail_warp = 1.0000000475
+shader_parameter/trail_edge_min = 0.30000001425
+shader_parameter/trail_edge_max = 0.78
+shader_parameter/trail_halo = 0.50000002375
+shader_parameter/trail_core_boost = 1.80000006175
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_76t8t"]
+resource_local_to_scene = true
+shader = ExtResource("2_ejakq")
+shader_parameter/noise = SubResource("NoiseTexture2D_uylqo")
+shader_parameter/noise_intensity = 0.50000002375
+shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
+shader_parameter/time = 0.0
+shader_parameter/size_of_plane = 100.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_uylqo"]
+viewport_path = NodePath("Water/DisplacementViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dms03"]
+resource_local_to_scene = true
+shader = ExtResource("5_6kno7")
+shader_parameter/displacement_map = SubResource("ViewportTexture_uylqo")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ejakq"]
 size = Vector3(0.65356445, 0.97753906, 1.0996094)
@@ -210,14 +287,40 @@ shader_parameter/boat_outer_radius = 7.0
 
 [node name="Map" type="Node3D" unique_id=1130590225]
 
+[node name="Water" type="Node3D" parent="." unique_id=1197893592]
+
+[node name="WaterPlane" parent="Water" unique_id=1136176607 instance=ExtResource("1_00287")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_ejakq")
+surface_material_override/0 = SubResource("ShaderMaterial_dumge")
+script = ExtResource("2_ngcqm")
+
+[node name="DisplacementViewport" type="SubViewport" parent="Water" unique_id=1215712390]
+use_hdr_2d = true
+size = Vector2i(1024, 1024)
+
+[node name="DisplacementColorRect" type="ColorRect" parent="Water/DisplacementViewport" unique_id=1340577001]
+material = SubResource("ShaderMaterial_76t8t")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FoamViewport" type="SubViewport" parent="Water" unique_id=991219770]
+
+[node name="FoamColorRect" type="ColorRect" parent="Water/FoamViewport" unique_id=2059997631]
+material = SubResource("ShaderMaterial_dms03")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="VoxelGI" type="VoxelGI" parent="." unique_id=826415132]
 subdiv = 2
 size = Vector3(100, 20, 100)
 data = ExtResource("3_ws1hi")
-
-[node name="WaterPlane" parent="." unique_id=1136176607 instance=ExtResource("1_00287")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-script = ExtResource("2_ngcqm")
 
 [node name="Boat" type="CharacterBody3D" parent="." unique_id=881339537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 12.437188)
@@ -235,7 +338,6 @@ keep_aspect = 0
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("5_ngcqm")
-float_force = 3.0
 metadata/Camera = false
 
 [node name="Model" type="Node3D" parent="Boat/RigidBody3D" unique_id=2116991492]
@@ -252,13 +354,13 @@ script = ExtResource("15_passenger")
 [node name="ghostwithoutbone" parent="Boat/RigidBody3D/Model/GhostSeat" unique_id=854424610 instance=ExtResource("9_uylqo")]
 transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
 
-[node name="left_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 890762167) index="1" unique_id=2049952972]
+[node name="left_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 1770877031) index="1" unique_id=117643734]
 material_override = ExtResource("9_bjq7f")
 
-[node name="white_body" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 890762167) index="2" unique_id=1448082399]
+[node name="white_body" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(854424610, 1770877031) index="2" unique_id=572450861]
 material_override = ExtResource("9_bjq7f")
 
-[node name="right_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=1557902561]
+[node name="right_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=2126417965]
 material_override = ExtResource("9_bjq7f")
 
 [node name="Collision Cube" type="CollisionShape3D" parent="Boat/RigidBody3D" unique_id=1350965690]
@@ -396,7 +498,7 @@ shape = SubResource("CylinderShape3D_a2mn1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2517395, 0)
 
 [node name="Island" parent="Island" unique_id=878118820 instance=ExtResource("4_ws1hi")]
-transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.9978027, 0.24405193, 5.7730713)
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.998, 0, 5.773)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Island" unique_id=390665870]
 transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 1.9003677, -0.3325252, 5.5262375)
