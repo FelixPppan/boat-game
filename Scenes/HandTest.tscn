@@ -17,6 +17,8 @@ albedo_color = Color(1, 0, 0.047058824, 1)
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 8, 0)
 current = true
 
+[node name="FmodListener3D" type="FmodListener3D" parent="Camera3D" unique_id=1750937350]
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1488347660]
 transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
 
@@ -28,8 +30,16 @@ mesh = SubResource("BoxMesh_wahrj")
 mesh = SubResource("SphereMesh_wahrj")
 surface_material_override/0 = SubResource("StandardMaterial3D_l3f31")
 
-[node name="HandCursor" type="Node3D" parent="." unique_id=414593232 node_paths=PackedStringArray("camera", "block", "cursor")]
+[node name="HandCursor" type="Node3D" parent="." unique_id=414593232 node_paths=PackedStringArray("camera", "block", "cursor", "pickupSound")]
 script = ExtResource("1_df6i8")
 camera = NodePath("../Camera3D")
 block = NodePath("../Block")
 cursor = NodePath("../Cursor")
+pickupSound = NodePath("FmodEventEmitter3D")
+
+[node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="HandCursor" unique_id=1119084118]
+event_name = "event:/TestSound"
+event_guid = "{8a0c2ad3-9713-4ebf-9df3-d2d1c4fd360d}"
+
+[node name="FmodBankLoader" type="FmodBankLoader" parent="." unique_id=233465578]
+bank_paths = ["res://FMODBanks/Desktop/Master.bank"]
