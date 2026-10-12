@@ -16,8 +16,11 @@
 [ext_resource type="Script" uid="uid://cxifeflb47gh3" path="res://Scripts/memory_fog_remove.gd" id="7_xicox"]
 [ext_resource type="Material" uid="uid://dnjy3hkncmgd" path="res://ghost_material.tres" id="9_bjq7f"]
 [ext_resource type="PackedScene" uid="uid://cotvmvr73nnfs" path="res://model/ghostwithoutbone.glb" id="9_uylqo"]
+[ext_resource type="Shader" uid="uid://ccbn88qrems8v" path="res://Shaders/sky_shader.gdshader" id="12_uylqo"]
 [ext_resource type="Script" uid="uid://jt0gxvv3qht5" path="res://Scripts/wave_detector.gd" id="14_6bwvt"]
 [ext_resource type="Script" uid="uid://co68752praj8e" path="res://Scripts/ghost_passenger.gd" id="15_passenger"]
+[ext_resource type="PackedScene" uid="uid://jde7riagek37" path="res://Scenes/memory_content.tscn" id="16_memory"]
+[ext_resource type="Script" uid="uid://cipc8lquyqa38" path="res://Scripts/hand_skeleton_hud.gd" id="17_hand_hud"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -27,14 +30,39 @@ height = 1.0556946
 radius = 0.26953125
 height = 1.6895523
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_umuii"]
-sky_top_color = Color(0.62, 0.6, 0.74, 1)
-sky_horizon_color = Color(0.78, 0.76, 0.86, 1)
-ground_bottom_color = Color(0.35, 0.34, 0.42, 1)
-ground_horizon_color = Color(0.55, 0.54, 0.62, 1)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6kno7"]
+shader = ExtResource("12_uylqo")
+shader_parameter/day_top_color = Color(0.1, 0.6, 1, 1)
+shader_parameter/day_bottom_color = Color(0.714, 0.694, 0.812, 1)
+shader_parameter/sunset_top_color = Color(0.7, 0.75, 1, 1)
+shader_parameter/sunset_bottom_color = Color(1, 0.5, 0.7, 1)
+shader_parameter/night_top_color = Color(0.02, 0, 0.04, 1)
+shader_parameter/night_bottom_color = Color(0.1, 0, 0.2, 1)
+shader_parameter/horizon_color = Color(0.714, 0.694, 0.812, 1)
+shader_parameter/horizon_blur = 0.2
+shader_parameter/sun_color = Color(10, 8, 1, 1)
+shader_parameter/sun_sunset_color = Color(10, 0, 0, 1)
+shader_parameter/sun_size = 0.2
+shader_parameter/sun_blur = 10.0
+shader_parameter/moon_color = Color(1, 0.95, 0.7, 1)
+shader_parameter/moon_size = 0.06
+shader_parameter/moon_blur = 0.1
+shader_parameter/clouds_edge_color = Color(0.8, 0.8, 0.98, 1)
+shader_parameter/clouds_top_color = Color(1, 1, 1, 1)
+shader_parameter/clouds_middle_color = Color(0.92, 0.92, 0.98, 1)
+shader_parameter/clouds_bottom_color = Color(0.83, 0.83, 0.94, 1)
+shader_parameter/clouds_speed = 19.99999955296
+shader_parameter/clouds_direction = 0.11011237
+shader_parameter/clouds_scale = 1.0
+shader_parameter/clouds_cutoff = 0.3
+shader_parameter/clouds_fuzziness = 0.5
+shader_parameter/clouds_weight = 0.0
+shader_parameter/clouds_blur = 0.25
+shader_parameter/stars_speed = 1.0
+shader_parameter/overwritten_time = 0.0
 
 [sub_resource type="Sky" id="Sky_mgsmc"]
-sky_material = SubResource("ProceduralSkyMaterial_umuii")
+sky_material = SubResource("ShaderMaterial_6kno7")
 
 [sub_resource type="Environment" id="Environment_3ytfl"]
 background_mode = 2
@@ -46,17 +74,16 @@ glow_strength = 0.7
 glow_bloom = 0.06
 glow_hdr_threshold = 0.85
 fog_enabled = true
-fog_mode = 1
 fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
-fog_sun_scatter = 0.2
-fog_density = 0.0758
+fog_sun_scatter = 0.15
+fog_sky_affect = 0.0
 fog_depth_curve = 0.26794425
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 volumetric_fog_albedo = Color(0.9, 0.88, 0.95, 1)
 volumetric_fog_emission = Color(0.15, 0.14, 0.18, 1)
 volumetric_fog_detail_spread = 1.5
-volumetric_fog_sky_affect = 0.15
+volumetric_fog_sky_affect = 0.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_8q6pl"]
 height = 3.493164
@@ -100,7 +127,7 @@ radius = 22.165527
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ytfl"]
 shader = ExtResource("7_5t7yc")
-shader_parameter/base_density = 1.50000007125
+shader_parameter/base_density = 1.0
 shader_parameter/fog_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
 shader_parameter/noise_texture = SubResource("NoiseTexture3D_08pfp")
 shader_parameter/fog_height_max = 2.0
@@ -133,6 +160,7 @@ shape = SubResource("CapsuleShape3D_3ytfl")
 [node name="Camera3D" type="Camera3D" parent="Boat" unique_id=133628626]
 transform = Transform3D(1, 0, 0, 0, 0.9251595, 0.37957862, 0, -0.37957862, 0.9251595, 0, 3.1473308, 7.023223)
 keep_aspect = 0
+current = true
 
 [node name="FogController" type="Node3D" parent="Boat" unique_id=1609239132 node_paths=PackedStringArray("water_fog_volume")]
 script = ExtResource("4_ngcqm")
@@ -184,8 +212,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.05, -0.09)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1491661626]
 environment = SubResource("Environment_3ytfl")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1902198615]
-transform = Transform3D(1, 0, 0, 0, -0.54062665, 0.84126276, 0, -0.84126276, -0.54062665, 0, 10.071228, 0)
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=874708600]
+transform = Transform3D(-0.24268275, -0.11181368, 0.9636406, 0.73605484, 0.62583333, 0.25798473, -0.63192445, 0.77190065, -0.069577985, 0, 0, 0)
+shadow_enabled = true
 
 [node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0915494, 6.2088985)
@@ -203,13 +232,22 @@ size = Vector3(3.4447556, 4.4262466, 4.316284)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
 
-[node name="Area3D" type="Area3D" parent="Rock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume")]
+[node name="Area3D" type="Area3D" parent="Rock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume", "boat_camera", "closeup_camera", "memory_content", "hand_skeleton", "boat")]
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
+boat_camera = NodePath("../../Boat/Camera3D")
+closeup_camera = NodePath("../MemoryContent/CloseupCamera")
+memory_content = NodePath("../MemoryContent")
+hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1/Area3D" unique_id=208269092]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
 shape = SubResource("SphereShape3D_3ytfl")
+
+[node name="MemoryContent" parent="Rock1" unique_id=463860088 instance=ExtResource("16_memory")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 1.2500596, -7.918788)
+reveal_delay = 0.0
 
 [node name="Rock2" type="StaticBody3D" parent="." unique_id=1901283999]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5300884, 0.25525117, 10.41245)
@@ -298,5 +336,8 @@ material = SubResource("ShaderMaterial_3ytfl")
 [node name="WaveDetector" type="Node" parent="." unique_id=1461835097 node_paths=PackedStringArray("fog_remover")]
 script = ExtResource("14_6bwvt")
 fog_remover = NodePath("../Rock1/Area3D")
+
+[node name="HandSkeletonHUD" type="CanvasLayer" parent="." unique_id=1859727097]
+script = ExtResource("17_hand_hud")
 
 [editable path="Boat/GhostSeat/ghostwithoutbone"]
