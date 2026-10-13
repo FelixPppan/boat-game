@@ -296,7 +296,11 @@ var last_diag: String = ""
 ## 它算解析出来的字段、而不是传输层记账,因为拆数字这件事本来就是解析器在做。
 var seq: int = -1
 
-var _manager: GdSerialManager
+## Untyped on purpose: if Windows Smart App Control blocks gdserial.dll the
+## GdSerialManager class never registers, and a typed reference would stop this
+## autoload (and the whole project) from loading. UDP still works without it.
+
+var _manager = null
 var _port: String = ""
 var _overlay: CanvasLayer
 var _label: Label
@@ -336,12 +340,17 @@ var _hello_msec: int = 0
 # -------------------------------------------------------------- Lifecycle --
 # -------------------------------------------------------------- 生命周期 --
 func _ready() -> void:
-	_manager = GdSerialManager.new()
-	_manager.data_received.connect(_on_data)
-	_manager.port_disconnected.connect(_on_disconnected)
+	if ClassDB.class_exists("GdSerialManager"):
+		_manager = ClassDB.instantiate("GdSerialManager")
+		_manager.data_received.connect(_on_data)
+		_manager.port_disconnected.connect(_on_disconnected)
+	else:
+		_status = "serial DLL blocked/missing (UDP only)"
+		push_warning("[SensorInput] GdSerialManager is unavailable -- gdserial.dll failed to load (often Windows Smart App Control). USB serial is off; wireless UDP still works if you join the oar AP.")
 	_open_udp()
 	_build_overlay()
-	_open_port()
+	if _manager != null:
+		_open_port()
 
 
 func _exit_tree() -> void:
@@ -542,6 +551,9 @@ func _note_wifi_seq(board_seq: int) -> void:
 # ------------------------------------------------------------ Serial port --
 # ------------------------------------------------------------ 串口 --
 func _open_port() -> void:
+	if _manager == null:
+		return
+
 	var candidates := _candidate_ports()
 	if candidates.is_empty():
 		_status = "no serial port (retrying)"
@@ -554,10 +566,12 @@ func _open_port() -> void:
 	# Try them in order; each candidate also gets an automatic macOS
 	# /dev/cu. variant.
 	# 按顺序逐个试;每个候选还会自动加上一个 macOS 的 /dev/cu. 变体。
+	# MODE_LINE_BUFFERED == 1 (see addons/gdserial docs); numeric so this file
+	# still parses when the GdSerialManager class is absent.
+	const MODE_LINE_BUFFERED := 1
 	var tried: Array[String] = []
 	for cand in candidates:
-		if _manager.open(cand, BAUD_RATE, READ_TIMEOUT_MS,
-				GdSerialManager.MODE_LINE_BUFFERED):
+		if _manager.open(cand, BAUD_RATE, READ_TIMEOUT_MS, MODE_LINE_BUFFERED):
 			_port = cand
 			port_open = true
 			_open_failure_reported = false
