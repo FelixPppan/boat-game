@@ -209,40 +209,7 @@ void vertex() {
 	vec3 tangent_z = right_point + get_displacement(right_point.xz / size_of_plane + 0.5) - VERTEX.xyz;
 	
 	NORMAL = normalize(cross(tangent_z, tangent_x));
-	
-	
-	/*
-	vec3 tangent = vec3(1,0,0);
-	vec3 binormal = vec3(0,0,1);
-	
-	//vec3 tangent_x = x_vec + get_displacement(x_vec.xz / size_of_plane + 0.5) - VERTEX.xyz;
-	//vec3 tangent_z = z_vec + get_displacement(z_vec.xz / size_of_plane + 0.5) - VERTEX.xyz;
-	
-	
-	// NORMAL = normalize(cross(tangent_z, tangent_x));
-	
-	vec3 x_vec = point + vec3(1,0,0);
-	vec3 z_vec = point + vec3(0,0,1);
 
-	create_wave(point, tangent, binormal);
-	
-	// Approximating tangents in x and z directions
-	//vec3 x_vec = point + vec3(1,0,0); // Point moved in x direction
-	//vec3 z_vec = point + vec3(0,0,1); // Point moved in z direction
-	
-	vec3 temp = vec3(0,0,0);
-	create_wave(x_vec, temp, temp);
-	create_wave(z_vec, temp, temp);
-	
-	vec3 tangent_x = x_vec - point;
-	vec3 tangent_z = z_vec - point;
-	vec3 normal = normalize(cross(tangent_z, tangent_x));
-
-	// vec3 normal = normalize(cross(binormal, tangent));
-	VERTEX.xyz = point;
-	NORMAL = normal;
-	*/
-	
 	// History mask is painted in world XZ — sample the surface's current world XZ
 	// (after Gerstner), not rest-pose, or troughs sample empty mask cells.
 	trail_xz = (MODEL_MATRIX * vec4(point, 1.0)).xz;
