@@ -78,6 +78,10 @@ var _rowing_animation: StringName = &"idle"
 ## How quickly the hull tracks the wave height (larger = snappier).
 ## 船体跟随浪高的快慢(越大越跟手)。
 @export var wave_follow_smoothing: float = 8.0
+## How quickly the hull follows an external lift such as a water jet, and
+## falls back once it stops (larger = snappier).
+## 被水柱等外力顶起、以及失去顶力后落回水面的快慢(越大越跟手)。
+@export var lift_smoothing: float = 4.0
 
 @export_group("Debug UI")
 ## Show the top-right FORWARD SWEEP gyro tuning panel.
@@ -110,6 +114,11 @@ var _camera_tilt := 0.0
 ## Camera local Y from the scene, used to cancel wave bob on the view.
 ## 从场景里取来的相机局部 Y,用来抵消镜头上的浪涌起伏。
 var _camera_rest_local_y: float = 0.0
+## Current height above the waves from external lift, and the strongest lift
+## requested since the last physics frame.
+## 外力顶起的当前高度(相对波面),以及上一物理帧以来收到的最大顶升请求。
+var _lift := 0.0
+var _lift_request := 0.0
 var _oar
 var _trail
 var _recorder
@@ -120,6 +129,7 @@ func _ready() -> void:
 	# (no gravity, no snapping to a floor).
 	# 船是漂着的:没有地面这个概念,所以用 floating 模式(无重力、不吸到地面)。
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
+	add_to_group("player_boat")
 	_camera_rest_local_y = camera.position.y
 
 	# The controller is created in code so the scene file needs no edits.
@@ -248,10 +258,19 @@ func _physics_process(delta: float) -> void:
 		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
 
 
+## Push the boat up to `height` metres above the waves for this physics frame.
+## Call every frame to hold it there; stop calling and it falls back.
+## 本物理帧把船顶到波面以上 `height` 米。每帧调用才能保持住;不再调用就会落回去。
+func add_lift(height: float) -> void:
+	_lift_request = maxf(_lift_request, height)
+
+
 func _follow_wave_height(delta: float) -> void:
+	_lift = lerpf(_lift, _lift_request, 1.0 - exp(-lift_smoothing * delta))
+	_lift_request = 0.0
 	if _water == null or not _water.has_method("get_height"):
 		return
-	var target_y := float_height + float(_water.get_height(global_position))
+	var target_y := float_height + _lift + float(_water.get_height(global_position))
 	var t := 1.0 - exp(-wave_follow_smoothing * delta)
 	global_position.y = lerpf(global_position.y, target_y, t)
 
@@ -266,7 +285,7 @@ func _stabilize_camera_height() -> void:
 		return
 	# global_y = boat.y + local_y  (boat only yaws) → lock to calm height.
 	# global_y = 船的 y + 局部 y(船只会偏航),于是锁到平静高度。
-	camera.position.y = _camera_rest_local_y + float_height - global_position.y
+	camera.position.y = _camera_rest_local_y + float_height + _lift - global_position.y
 
 
 func _update_camera_tilt(delta: float) -> void:
