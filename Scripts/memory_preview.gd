@@ -47,8 +47,8 @@ func _ready() -> void:
 		if child is MeshInstance3D:
 			picture_layers.append(child)
 			child.material_override = _make_dissolve_material(child)
-			# 1 = Alpha transparency (enum name unavailable in this Godot build).
-			child.transparency = 1
+			# Visibility is animated by the dissolve shader.
+			child.transparency = 0.0
 			child.material_override.set_shader_parameter("progress", 1.0)
 
 	memory_layers.position = picture_offset

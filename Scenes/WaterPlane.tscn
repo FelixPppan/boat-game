@@ -3,9 +3,9 @@
 [ext_resource type="Material" uid="uid://cipaepuetlh6q" path="res://Shaders/Water.tres" id="1_66nk0"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_3ytfl"]
-size = Vector2(100, 100)
-subdivide_width = 1024
-subdivide_depth = 1024
+size = Vector2(150, 150)
+subdivide_width = 1536
+subdivide_depth = 1536
 orientation = 1
 
 [node name="WaterPlane" type="MeshInstance3D" unique_id=1136176607]

@@ -65,7 +65,12 @@ func _add(n: Node) -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if _done or not body.is_in_group("player_boat"):
+	if body.is_in_group("player_boat"):
+		complete()
+
+
+func complete() -> void:
+	if _done:
 		return
 	_done = true
 	visible = false

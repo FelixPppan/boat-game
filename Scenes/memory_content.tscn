@@ -104,8 +104,6 @@ size = Vector3(2.6, 2.6, 1.4)
 [node name="MemoryContent" type="Node3D" unique_id=1051232619]
 script = ExtResource("1_preview")
 use_external_fog = true
-picture_offset = Vector3(0, -0.6384554, 0)
-screen_fill = 0.85
 
 [node name="Memorylayers" type="Node3D" parent="." unique_id=917358702]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6384554, 0)
@@ -113,17 +111,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6384554, 0)
 [node name="Background" type="MeshInstance3D" parent="Memorylayers" unique_id=190211426]
 material_override = SubResource("ShaderMaterial_bg")
 mesh = SubResource("QuadMesh_1")
-transparency = 1
 
 [node name="HiddenClue" type="MeshInstance3D" parent="Memorylayers" unique_id=588548822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0.1)
 material_override = SubResource("ShaderMaterial_mid")
 mesh = SubResource("PlaneMesh_1")
-transparency = 1
 
 [node name="Foreground" type="MeshInstance3D" parent="Memorylayers" unique_id=1700858500]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.2)
-transparency = 1
 material_override = SubResource("ShaderMaterial_fg")
 mesh = SubResource("PlaneMesh_2")
 script = ExtResource("3_fg")
@@ -152,3 +147,4 @@ spark_lifetime = 1.4
 
 [node name="CloseupCamera" type="Camera3D" parent="." unique_id=1987602688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6384554, 3.1373806)
+current = true

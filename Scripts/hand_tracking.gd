@@ -4,9 +4,24 @@ const PORT: int = 4242
 const TIMEOUT: float = 0.5
 # MediaPipe landmark ids
 const WRIST: int = 0
+const THUMB_MCP: int = 2
+const THUMB_IP: int = 3
 const THUMB_TIP: int = 4
+const INDEX_MCP: int = 5
+const INDEX_PIP: int = 6
 const INDEX_TIP: int = 8
 const MIDDLE_MCP: int = 9
+const MIDDLE_PIP: int = 10
+const MIDDLE_TIP: int = 12
+const RING_PIP: int = 14
+const RING_TIP: int = 16
+const PINKY_PIP: int = 18
+const PINKY_TIP: int = 20
+
+const CURLED_FINGERS := [
+	[INDEX_TIP, INDEX_PIP], [MIDDLE_TIP, MIDDLE_PIP],
+	[RING_TIP, RING_PIP], [PINKY_TIP, PINKY_PIP],
+]
 
 # 21 points per hand
 # Empty when the hand is not visible.
@@ -63,6 +78,27 @@ func get_pinch_ratio(hand: Array[Vector3]) -> float:
 	var palm_size := _flat(hand[WRIST]).distance_to(_flat(hand[MIDDLE_MCP]))
 	var pinch_distance := _flat(hand[THUMB_TIP]).distance_to(_flat(hand[INDEX_TIP]))
 	return pinch_distance / maxf(palm_size, 0.001)
+
+# Thumb pointing up above a closed fist. Image y grows downward, so "up" means a smaller y.
+func is_thumbs_up(hand: Array[Vector3]) -> bool:
+	var wrist := _flat(hand[WRIST])
+	var palm_size := wrist.distance_to(_flat(hand[MIDDLE_MCP]))
+	if palm_size < 0.001:
+		return false
+	var tip := _flat(hand[THUMB_TIP])
+	var ip := _flat(hand[THUMB_IP])
+	var mcp := _flat(hand[THUMB_MCP])
+	if tip.y > ip.y or ip.y > mcp.y:
+		return false
+	var rise := mcp.y - tip.y
+	if rise < 0.6 * palm_size or absf(tip.x - mcp.x) > rise * 0.7:
+		return false
+	if tip.y > _flat(hand[INDEX_MCP]).y - 0.3 * palm_size:
+		return false
+	for finger in CURLED_FINGERS:
+		if wrist.distance_to(_flat(hand[finger[0]])) > wrist.distance_to(_flat(hand[finger[1]])):
+			return false
+	return true
 
 func _flat(landmark: Vector3) -> Vector2:
 	return Vector2(landmark.x, landmark.y)
