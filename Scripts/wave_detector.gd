@@ -1,5 +1,5 @@
 extends Node
-## Either hand can reveal or dismiss a memory; each phase starts a fresh gesture.
+## Either hand can wave to clear the fog; dismissing is handled by ThumbDetector.
 @export var min_swing: float = 0.07
 @export var swings_needed: int = 2
 @export var wave_window: float = 1.8
@@ -14,9 +14,9 @@ func _process(delta: float) -> void:
 	var target: Node = null
 	var phase := 0
 	for trigger in get_tree().get_nodes_in_group("memory_triggers"):
-		phase = trigger.get_wave_phase()
-		if phase != 0:
+		if trigger.get_wave_phase() == 1:
 			target = trigger
+			phase = 1
 			break
 	if target != _target or phase != _phase:
 		_hands.clear()

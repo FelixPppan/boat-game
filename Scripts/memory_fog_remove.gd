@@ -93,7 +93,7 @@ func _engage() -> void:
 	hand_skeleton.set_mode("hidden")
 
 
-# 0: ignore gestures during transitions; 1: clear fog; 2: dismiss the picture.
+# 0: ignore gestures during transitions; 1: wave clears fog; 2: thumbs-up dismisses the picture.
 func get_wave_phase() -> int:
 	if not _engaged or _locking or _session_done:
 		return 0
@@ -103,11 +103,13 @@ func get_wave_phase() -> int:
 
 
 func handle_wave() -> void:
-	match get_wave_phase():
-		1:
-			trigger_dispel()
-		2:
-			memory_content.dissolve_memory()
+	if get_wave_phase() == 1:
+		trigger_dispel()
+
+
+func confirm_memory() -> void:
+	if get_wave_phase() == 2:
+		memory_content.dissolve_memory()
 
 
 func trigger_dispel() -> void:
