@@ -1,50 +1,56 @@
 extends Node
-# Detects a waving hand and tells the fog to dissolve.
+## Either hand can reveal or dismiss a memory; each phase starts a fresh gesture.
+@export var min_swing: float = 0.07
+@export var swings_needed: int = 2
+@export var wave_window: float = 1.8
 
-const MIN_SWING: float = 0.1  # sideways distance that counts as a swing (0.1 = 10% of the image width)
-const SWINGS_NEEDED: int = 3
-const WINDOW: float = 1.0  # the swings must happen within this many seconds
+var _time := 0.0
+var _hands: Dictionary = {}
+var _target: Node
+var _phase := 0
 
-@export var fog_remover: Node  # the node with memory_fog_remove.gd
-
-var _direction: int = 0  # -1 moving left, 1 moving right, 0 not moving yet
-var _extreme_x: float = 0.0  # furthest x reached in the current direction
-var _swing_times: Array[float] = []
-
-func _process(_delta: float) -> void:
-	var hand := HandTracking.get_hand("right")
-	if hand.is_empty():
-		hand = HandTracking.get_hand("left")
-	if hand.is_empty():
-		_reset()
+func _process(delta: float) -> void:
+	_time += delta
+	var target: Node = null
+	var phase := 0
+	for trigger in get_tree().get_nodes_in_group("memory_triggers"):
+		phase = trigger.get_wave_phase()
+		if phase != 0:
+			target = trigger
+			break
+	if target != _target or phase != _phase:
+		_hands.clear()
+		_target = target
+		_phase = phase
+	if target == null:
 		return
+	for side in ["left", "right"]:
+		var hand := HandTracking.get_hand(side)
+		if hand.is_empty():
+			_hands.erase(side)
+			continue
+		if _sample(side, hand[HandTracking.MIDDLE_MCP].x, _time):
+			target.handle_wave()
+			_hands.clear()
+			return
 
-	var x := hand[HandTracking.MIDDLE_MCP].x
-	var moved := x - _extreme_x
-
-	if _direction == 0:
-		if absf(moved) > MIN_SWING:
-			_direction = 1 if moved > 0.0 else -1
-			_extreme_x = x
-	elif moved * _direction > 0.0:
-		# still moving the same way, follow the hand
-		_extreme_x = x
-	elif absf(moved) > MIN_SWING:
-		# moved back far enough, that is one swing
-		_direction = -_direction
-		_extreme_x = x
-		_swing_times.append(Time.get_ticks_msec() / 1000.0)
-	_check_wave()
-
-func _check_wave() -> void:
-	var now := Time.get_ticks_msec() / 1000.0
-	while not _swing_times.is_empty() and now - _swing_times[0] > WINDOW:
-		_swing_times.pop_front()
-
-	if _swing_times.size() >= SWINGS_NEEDED:
-		fog_remover.trigger_dispel()
-		_reset()
-
-func _reset() -> void:
-	_direction = 0
-	_swing_times.clear()
+func _sample(side: String, x: float, now: float) -> bool:
+	if not _hands.has(side):
+		_hands[side] = {"direction": 0, "extreme": x, "turns": []}
+		return false
+	var motion: Dictionary = _hands[side]
+	var turns: Array = motion.turns
+	while not turns.is_empty() and now - turns[0] > wave_window:
+		turns.pop_front()
+	var moved: float = x - motion.extreme
+	if motion.direction == 0:
+		if absf(moved) >= min_swing:
+			motion.direction = signf(moved)
+			motion.extreme = x
+	elif moved * motion.direction > 0.0:
+		motion.extreme = x
+	elif absf(moved) >= min_swing:
+		motion.direction = -motion.direction
+		motion.extreme = x
+		turns.append(now)
+	return turns.size() >= swings_needed
