@@ -23,12 +23,22 @@
 [ext_resource type="Texture2D" uid="uid://c61g6fih4llf" path="res://Figure/whitefilter.png" id="16_nitb1"]
 [ext_resource type="Script" uid="uid://cipc8lquyqa38" path="res://Scripts/hand_skeleton_hud.gd" id="17_hand_hud"]
 [ext_resource type="PackedScene" uid="uid://bgfyt38h4dmyg" path="res://Scenes/first_person_hands.tscn" id="18_hands"]
-[ext_resource type="Script" path="res://Scripts/Levels/collect_target.gd" id="18_target"]
-[ext_resource type="Script" path="res://Scripts/Levels/rotating_ring.gd" id="20_ring"]
-[ext_resource type="Script" path="res://Scripts/Levels/water_jet.gd" id="21_jet"]
-[ext_resource type="Script" path="res://Scripts/Levels/jet_group.gd" id="22_jet_group"]
-[ext_resource type="Script" path="res://Scripts/Levels/reef.gd" id="23_reef"]
-[ext_resource type="Script" path="res://Scripts/Levels/level_progress.gd" id="24_progress"]
+[ext_resource type="Script" uid="uid://sy657kq6seii" path="res://Scripts/Levels/collect_target.gd" id="18_target"]
+[ext_resource type="Shader" uid="uid://cy0r7ncmks8w6" path="res://Shaders/memory_dissolve.gdshader" id="19_wpsl1"]
+[ext_resource type="Texture2D" uid="uid://doutrno60s5si" path="res://Figure/holdup1.png" id="20_fhpwq"]
+[ext_resource type="Script" uid="uid://b64xwt3mfdh8t" path="res://Scripts/Levels/rotating_ring.gd" id="20_ring"]
+[ext_resource type="Texture2D" uid="uid://0tdrqxaa0awi" path="res://Figure/holdup2.png" id="21_b5ur4"]
+[ext_resource type="Script" uid="uid://5ltoijbgod4p" path="res://Scripts/Levels/water_jet.gd" id="21_jet"]
+[ext_resource type="Texture2D" uid="uid://b8b6oupj3js7v" path="res://Figure/toy1.png" id="22_bhdqs"]
+[ext_resource type="Script" uid="uid://dkqtic8vt6dhw" path="res://Scripts/Levels/jet_group.gd" id="22_jet_group"]
+[ext_resource type="Texture2D" uid="uid://c71kliqgf486t" path="res://Figure/toy2.png" id="23_7kl1s"]
+[ext_resource type="Script" uid="uid://b8o5xgrl6e4iq" path="res://Scripts/Levels/reef.gd" id="23_reef"]
+[ext_resource type="Texture2D" uid="uid://b28fgoej366nc" path="res://Figure/toy3.png" id="24_3nddx"]
+[ext_resource type="Script" uid="uid://ducj2we038lan" path="res://Scripts/Levels/level_progress.gd" id="24_progress"]
+[ext_resource type="Script" uid="uid://cn2suljucxo2n" path="res://Scripts/foreground.gd" id="25_clue_slide"]
+[ext_resource type="Texture2D" uid="uid://dbrcpnoenfk1p" path="res://Figure/family1.png" id="26_y3rqg"]
+[ext_resource type="Texture2D" uid="uid://b300o3ykxrgca" path="res://Figure/family3.png" id="27_bnu4f"]
+[ext_resource type="Texture2D" uid="uid://b31jbi4gcs7th" path="res://Figure/family2.png" id="28_ov5w8"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_bjqgx"]
 size = Vector3(0.42, 2.975, 3.757285)
@@ -127,6 +137,116 @@ shader_parameter/noise_texture = SubResource("NoiseTexture3D_08pfp")
 shader_parameter/dissolve_factor = 1.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3ytfl"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1"]
+noise = SubResource("FastNoiseLite_1")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bhdqs"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("20_fhpwq")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3"]
+frequency = 0.015
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3"]
+noise = SubResource("FastNoiseLite_3")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7kl1s"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("21_b5ur4")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_3")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5cwcx"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("22_bhdqs")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_2"]
+frequency = 0.015
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_2")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y3rqg"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("23_7kl1s")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_2")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bnu4f"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("24_3nddx")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_3")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ckgix"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("26_y3rqg")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t8u3c"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("27_bnu4f")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_2")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n5cpx"]
+render_priority = 0
+shader = ExtResource("19_wpsl1")
+shader_parameter/picture = ExtResource("28_ov5w8")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_3")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_a2mn1"]
 height = 2.6542969
@@ -239,26 +359,26 @@ environment = SubResource("Environment_3ytfl")
 transform = Transform3D(-0.24268275, -0.11181368, 0.9636406, 0.73605484, 0.62583333, 0.25798473, -0.63192445, 0.77190065, -0.069577985, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Rock1" type="StaticBody3D" parent="." unique_id=1032482503]
+[node name="MemoryRock1" type="StaticBody3D" parent="." unique_id=1032482503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0915494, -4.536254)
 
-[node name="Rock Forms 2" parent="Rock1" unique_id=278137896 instance=ExtResource("5_xicox")]
+[node name="Rock Forms 2" parent="MemoryRock1" unique_id=278137896 instance=ExtResource("5_xicox")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4589539, 0.7876282, -7.6241455)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1" unique_id=1364764406]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock1" unique_id=1364764406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
 
-[node name="FogVolume" type="FogVolume" parent="Rock1" unique_id=1647548799]
+[node name="FogVolume" type="FogVolume" parent="MemoryRock1" unique_id=1647548799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
 
-[node name="ViewPoint" type="Marker3D" parent="Rock1" unique_id=1378155850]
+[node name="ViewPoint" type="Marker3D" parent="MemoryRock1" unique_id=1378155850]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="Rock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/SubViewportContainer/SubViewport/MemoryContent")
@@ -271,43 +391,115 @@ view_point = NodePath("../ViewPoint")
 first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1/Area3D" unique_id=208269092]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock1/Area3D" unique_id=208269092]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
 shape = SubResource("SphereShape3D_3ytfl")
 
-[node name="Rock1" type="StaticBody3D" parent="Rock1" unique_id=328985195]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0915494, 21.32251)
+[node name="MemoryRock2" type="StaticBody3D" parent="." unique_id=328985195]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1830988, 16.786255)
 
-[node name="Rock Forms 2" parent="Rock1/Rock1" unique_id=322021674 instance=ExtResource("5_xicox")]
+[node name="Rock Forms 2" parent="MemoryRock2" unique_id=322021674 instance=ExtResource("5_xicox")]
 transform = Transform3D(2.045, 0, 0, 0, 2.045, 0, 0, 0, 2.045, -1.4589539, 0.7876282, -7.6241455)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1/Rock1" unique_id=586251355]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock2" unique_id=586251355]
 transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
 
-[node name="FogVolume" type="FogVolume" parent="Rock1/Rock1" unique_id=601661895]
+[node name="FogVolume" type="FogVolume" parent="MemoryRock2" unique_id=601661895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
 
-[node name="ViewPoint" type="Marker3D" parent="Rock1/Rock1" unique_id=64721071]
+[node name="ViewPoint" type="Marker3D" parent="MemoryRock2" unique_id=64721071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="Rock1/Rock1" unique_id=1116070251 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock2" unique_id=1116070251 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
-memory_content = NodePath("../../../MemoryOverlay/SecondMemory/SubViewport/MemoryContent")
-overlay = NodePath("../../../MemoryOverlay/SecondMemory")
-hand_skeleton = NodePath("../../../HandSkeletonHUD")
-boat = NodePath("../../../Boat")
-boat_camera = NodePath("../../../Boat/Camera3D")
-closeup_camera = NodePath("../../../MemoryCamera")
+memory_content = NodePath("../../MemoryOverlay/SecondMemory/SubViewport/MemoryContent")
+overlay = NodePath("../../MemoryOverlay/SecondMemory")
+hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
+boat_camera = NodePath("../../Boat/Camera3D")
+closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
-first_person_hands = NodePath("../../../FirstPersonHands")
-white_mist = NodePath("../../../MemoryOverlay/WhiteMist")
+first_person_hands = NodePath("../../FirstPersonHands")
+white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Rock1/Rock1/Area3D" unique_id=2136460324]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock2/Area3D" unique_id=2136460324]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
+shape = SubResource("SphereShape3D_3ytfl")
+
+[node name="MemoryRock3" type="StaticBody3D" parent="." unique_id=379064858]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.026266, 0.1830988, 16.786255)
+
+[node name="Rock Forms 2" parent="MemoryRock3" unique_id=707620997 instance=ExtResource("5_xicox")]
+transform = Transform3D(2.045, 0, 0, 0, 2.045, 0, 0, 0, 2.045, -1.4589539, 0.7876282, -7.6241455)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock3" unique_id=1737365058]
+transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
+shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="FogVolume" type="FogVolume" parent="MemoryRock3" unique_id=2098338150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
+size = Vector3(3.4447556, 4.4262466, 4.316284)
+shape = 0
+material = SubResource("ShaderMaterial_8q6pl")
+
+[node name="ViewPoint" type="Marker3D" parent="MemoryRock3" unique_id=838525271]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
+
+[node name="Area3D" type="Area3D" parent="MemoryRock3" unique_id=2092863899 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+script = ExtResource("7_xicox")
+memory_fog_volume = NodePath("../FogVolume")
+memory_content = NodePath("../../MemoryOverlay/ThirdMemory/SubViewport/MemoryContent")
+overlay = NodePath("../../MemoryOverlay/ThirdMemory")
+hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
+boat_camera = NodePath("../../Boat/Camera3D")
+closeup_camera = NodePath("../../MemoryCamera")
+view_point = NodePath("../ViewPoint")
+first_person_hands = NodePath("../../FirstPersonHands")
+white_mist = NodePath("../../MemoryOverlay/WhiteMist")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock3/Area3D" unique_id=1047763873]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
+shape = SubResource("SphereShape3D_3ytfl")
+
+[node name="MemoryRock4" type="StaticBody3D" parent="." unique_id=858736334]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.903774, 0.1830988, 16.786255)
+
+[node name="Rock Forms 2" parent="MemoryRock4" unique_id=2145610652 instance=ExtResource("5_xicox")]
+transform = Transform3D(2.045, 0, 0, 0, 2.045, 0, 0, 0, 2.045, -1.4589539, 0.7876282, -7.6241455)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock4" unique_id=760499140]
+transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
+shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="FogVolume" type="FogVolume" parent="MemoryRock4" unique_id=2034506341]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
+size = Vector3(3.4447556, 4.4262466, 4.316284)
+shape = 0
+material = SubResource("ShaderMaterial_8q6pl")
+
+[node name="ViewPoint" type="Marker3D" parent="MemoryRock4" unique_id=855456378]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
+
+[node name="Area3D" type="Area3D" parent="MemoryRock4" unique_id=1239911234 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+script = ExtResource("7_xicox")
+memory_fog_volume = NodePath("../FogVolume")
+memory_content = NodePath("../../MemoryOverlay/FourthMemory/SubViewport/MemoryContent")
+overlay = NodePath("../../MemoryOverlay/FourthMemory")
+hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
+boat_camera = NodePath("../../Boat/Camera3D")
+closeup_camera = NodePath("../../MemoryCamera")
+view_point = NodePath("../ViewPoint")
+first_person_hands = NodePath("../../FirstPersonHands")
+white_mist = NodePath("../../MemoryOverlay/WhiteMist")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock4/Area3D" unique_id=1648518539]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -1.3874762, 0, -7.835865)
 shape = SubResource("SphereShape3D_3ytfl")
 
@@ -367,6 +559,79 @@ render_target_update_mode = 0
 
 [node name="MemoryContent" parent="MemoryOverlay/SecondMemory/SubViewport" unique_id=358672833 instance=ExtResource("16_memory")]
 reveal_delay = 0.0
+
+[node name="Background" parent="MemoryOverlay/SecondMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(358672833, 917358702) index="0" unique_id=190211426]
+material_override = SubResource("ShaderMaterial_bhdqs")
+
+[node name="HiddenClue" parent="MemoryOverlay/SecondMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(358672833, 917358702) index="1" unique_id=588548822]
+visible = false
+
+[node name="Foreground" parent="MemoryOverlay/SecondMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(358672833, 917358702) index="2" unique_id=1700858500]
+material_override = SubResource("ShaderMaterial_7kl1s")
+
+[node name="ThirdMemory" type="SubViewportContainer" parent="MemoryOverlay" unique_id=1139386993]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MemoryOverlay/ThirdMemory" unique_id=2069725462]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 0
+
+[node name="MemoryContent" parent="MemoryOverlay/ThirdMemory/SubViewport" unique_id=1051232619 instance=ExtResource("16_memory")]
+reveal_delay = 0.0
+
+[node name="Background" parent="MemoryOverlay/ThirdMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1051232619, 917358702) index="0" unique_id=190211426]
+material_override = SubResource("ShaderMaterial_5cwcx")
+
+[node name="HiddenClue" parent="MemoryOverlay/ThirdMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1051232619, 917358702) index="1" unique_id=588548822]
+material_override = SubResource("ShaderMaterial_y3rqg")
+script = ExtResource("25_clue_slide")
+slide_distance = 0.2
+auto_move_delay = 0.2
+slide_duration = 0.4
+
+[node name="Foreground" parent="MemoryOverlay/ThirdMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1051232619, 917358702) index="2" unique_id=1700858500]
+material_override = SubResource("ShaderMaterial_bnu4f")
+
+[node name="FourthMemory" type="SubViewportContainer" parent="MemoryOverlay" unique_id=394376213]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MemoryOverlay/FourthMemory" unique_id=1111465749]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 0
+
+[node name="MemoryContent" parent="MemoryOverlay/FourthMemory/SubViewport" unique_id=1572660638 instance=ExtResource("16_memory")]
+reveal_delay = 0.0
+
+[node name="Background" parent="MemoryOverlay/FourthMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1572660638, 917358702) index="0" unique_id=190211426]
+material_override = SubResource("ShaderMaterial_ckgix")
+
+[node name="HiddenClue" parent="MemoryOverlay/FourthMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1572660638, 917358702) index="1" unique_id=588548822]
+material_override = SubResource("ShaderMaterial_t8u3c")
+script = ExtResource("25_clue_slide")
+slide_distance = 0.2
+auto_move_delay = 0.2
+slide_duration = 0.4
+
+[node name="Foreground" parent="MemoryOverlay/FourthMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1572660638, 917358702) index="2" unique_id=1700858500]
+material_override = SubResource("ShaderMaterial_n5cpx")
 
 [node name="Rock2" type="StaticBody3D" parent="." unique_id=1901283999]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.653488, 0.25525117, 10.41245)
@@ -485,49 +750,6 @@ script = ExtResource("18_target")
 level_name = "Level 1"
 
 [node name="Reefs" type="Node3D" parent="Level1" unique_id=1720385013]
-
-[node name="Level2" type="Node3D" parent="." unique_id=1720385021]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 25)
-
-[node name="Target" type="Area3D" parent="Level2" unique_id=1720385022]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-script = ExtResource("18_target")
-level_name = "Level 2"
-
-[node name="InnerRing" type="AnimatableBody3D" parent="Level2" unique_id=1720385023]
-script = ExtResource("20_ring")
-speed_degrees = 20.0
-clockwise = true
-radius = 5.0
-gap_degrees = 40.0
-
-[node name="OuterRing" type="AnimatableBody3D" parent="Level2" unique_id=1720385024]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
-script = ExtResource("20_ring")
-speed_degrees = 12.0
-clockwise = false
-radius = 10.0
-gap_degrees = 30.0
-segments = 72
-
-[node name="Level3" type="Node3D" parent="." unique_id=1720385031]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, -30)
-
-[node name="Target" type="Area3D" parent="Level3" unique_id=1720385032]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
-script = ExtResource("18_target")
-level_name = "Level 3"
-
-[node name="CenterJet" type="Node3D" parent="Level3" unique_id=1720385033]
-script = ExtResource("21_jet")
-jet_height = 7.0
-
-[node name="Jets" type="Node3D" parent="Level3" unique_id=1720385034]
-script = ExtResource("22_jet_group")
-jet_height = 7.0
-
-[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041]
-script = ExtResource("24_progress")
 
 [node name="Reef01" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390001]
 transform = Transform3D(-0.1829, 0, 0.9831, 0, 1, 0, -0.9831, 0, -0.1829, 7.4, 0, -4.042)
@@ -879,6 +1101,40 @@ transform = Transform3D(-0.9119, 0, 0.4103, 0, 1, 0, -0.4103, 0, -0.9119, 7.428,
 script = ExtResource("23_reef")
 size = Vector3(1.34, 2.41, 3.87)
 
+[node name="Level2" type="Node3D" parent="." unique_id=1720385021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 25)
+
+[node name="Target" type="Area3D" parent="Level2" unique_id=1720385022]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("18_target")
+level_name = "Level 2"
+
+[node name="InnerRing" type="AnimatableBody3D" parent="Level2" unique_id=1720385023]
+script = ExtResource("20_ring")
+
+[node name="OuterRing" type="AnimatableBody3D" parent="Level2" unique_id=1720385024]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+script = ExtResource("20_ring")
+speed_degrees = 12.0
+clockwise = false
+radius = 10.0
+gap_degrees = 30.0
+segments = 72
+
+[node name="Level3" type="Node3D" parent="." unique_id=1720385031]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, -30)
+
+[node name="Target" type="Area3D" parent="Level3" unique_id=1720385032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+script = ExtResource("18_target")
+level_name = "Level 3"
+
+[node name="CenterJet" type="Node3D" parent="Level3" unique_id=1720385033]
+script = ExtResource("21_jet")
+
+[node name="Jets" type="Node3D" parent="Level3" unique_id=1720385034]
+script = ExtResource("22_jet_group")
+
 [node name="Jet01" type="Node3D" parent="Level3/Jets" unique_id=1720390071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.033, 0, -10.369)
 script = ExtResource("21_jet")
@@ -935,4 +1191,11 @@ script = ExtResource("21_jet")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.395, 0, -6.446)
 script = ExtResource("21_jet")
 
+[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041]
+script = ExtResource("24_progress")
+
 [editable path="Boat/GhostSeat/ghostwithoutbone"]
+[editable path="MemoryOverlay/SubViewportContainer/SubViewport/MemoryContent"]
+[editable path="MemoryOverlay/SecondMemory/SubViewport/MemoryContent"]
+[editable path="MemoryOverlay/ThirdMemory/SubViewport/MemoryContent"]
+[editable path="MemoryOverlay/FourthMemory/SubViewport/MemoryContent"]

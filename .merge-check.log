@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: [FMOD WARN] C:\buildagent1\work\c1c3f17eb167c494\core_api\platforms\win\src\fmod_output_wasapi.cpp in OutputWASAPI::mixerThread(): Starvation detected in WASAPI output buffer!
+
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+FMOD Sound System: Successfully initialized
+FMOD Sound System: Live update enabled!
+[SensorInput] Listening for the oar's wireless stream on udp/4210 (data) and udp/4211 (diagnostics).
+[SensorInput] === available ports ===
+  (none)
+WARNING: [SensorInput] No serial ports found. Plug in the Arduino, close the Serial Monitor, then rerun. (Retrying every 2 s.)
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] _open_port (res://Scripts/sensor_input.gd:563)
+       [1] _ready (res://Scripts/sensor_input.gd:353)
+[FogController] Ready: volume=/root/Map/FogVolume, material=(res://Scenes/Map.tscn::ShaderMaterial_3ytfl):<ShaderMaterial#-9223371995532491104>, initial boat_position=(0.0, 0.0, 0.0)
