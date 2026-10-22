@@ -78,10 +78,37 @@ var _rowing_animation: StringName = &"idle"
 ## How quickly the hull tracks the wave height (larger = snappier).
 ## 船体跟随浪高的快慢(越大越跟手)。
 @export var wave_follow_smoothing: float = 8.0
-## How quickly the hull follows an external lift such as a water jet, and
-## falls back once it stops (larger = snappier).
-## 被水柱等外力顶起、以及失去顶力后落回水面的快慢(越大越跟手)。
+## How quickly the hull rises to an external lift such as a water jet
+## (larger = snappier).
+## 被水柱等外力顶起时跟随的快慢(越大越跟手)。
 @export var lift_smoothing: float = 4.0
+
+@export_group("Falling & capsizing")
+## Gravity once the lift lets go (m/s^2).
+## 失去顶力后下落的重力加速度(m/s²)。
+@export var fall_gravity: float = 9.8
+## Random tumble speed picked when the boat starts to fall (deg/s, min..max).
+## Full strength from a 3 m drop up; lower drops tumble proportionally less.
+## Faster tumble = more likely to land upside down.
+## 开始下落时随机抽取的翻滚速度(度/秒,最小..最大)。3 米以上满额,
+## 更低的落差按比例减小。翻得越快越容易扣着落水。
+@export var fall_tumble_degrees: Vector2 = Vector2(30.0, 150.0)
+## Landing tilted more than this counts as capsized (degrees).
+## 落水时倾斜超过这个角度就算翻船(度)。
+@export_range(10.0, 180.0, 1.0) var capsize_angle: float = 75.0
+## Buoyancy torque that rights small tilts by itself.
+## 小角度倾斜时浮力自动回正的力度。
+@export var self_right_stiffness: float = 12.0
+@export var self_right_damping: float = 6.0
+## Auto-righting after a capsize: wait, then lift and flip back upright.
+## 翻船后的自动扶正:先等待,再把船抬起翻回正位。
+@export_range(0.0, 10.0, 0.1) var auto_right_delay: float = 2.0
+@export_range(0.1, 10.0, 0.1) var auto_right_duration: float = 1.2
+@export_range(0.0, 5.0, 0.1) var auto_right_hop: float = 1.0
+## Nodes that tilt with the hull. The body itself only ever yaws, so the
+## camera and collision shape stay level.
+## 跟船体一起倾斜的节点。船身本体只会偏航,所以相机和碰撞体保持水平。
+@export var hull_visuals: Array[NodePath] = [NodePath("boat"), NodePath("GhostSeat")]
 
 @export_group("Debug UI")
 ## Show the top-right FORWARD SWEEP gyro tuning panel.
@@ -119,6 +146,21 @@ var _camera_rest_local_y: float = 0.0
 ## 外力顶起的当前高度(相对波面),以及上一物理帧以来收到的最大顶升请求。
 var _lift := 0.0
 var _lift_request := 0.0
+var _brake_request := 0.0
+var _falling := false
+var _fall_speed := 0.0
+## Hull tilt relative to the yawing body, and its angular velocity (body frame).
+## 船体相对偏航本体的倾斜,以及它的角速度(本体坐标)。
+var _tilt := Basis.IDENTITY
+var _tilt_vel := Vector3.ZERO
+var _capsized := false
+var _capsized_time := 0.0
+var _righting := false
+var _righting_time := 0.0
+var _righting_from := Quaternion.IDENTITY
+var _hop := 0.0
+var _hull_nodes: Array[Node3D] = []
+var _hull_rest: Array[Transform3D] = []
 var _oar
 var _trail
 var _recorder
@@ -131,6 +173,11 @@ func _ready() -> void:
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	add_to_group("player_boat")
 	_camera_rest_local_y = camera.position.y
+	for path in hull_visuals:
+		var n := get_node_or_null(path) as Node3D
+		if n != null:
+			_hull_nodes.append(n)
+			_hull_rest.append(n.transform)
 
 	# The controller is created in code so the scene file needs no edits.
 	# 控制器用代码建,所以场景文件不用改。
@@ -201,6 +248,12 @@ func _physics_process(delta: float) -> void:
 			turn_input -= 1.0
 		yaw_torque = turn_input * keyboard_turn * max_thrust
 
+	# No paddling in mid-air or while capsized.
+	# 空中或翻船时划不了桨。
+	if _falling or _capsized:
+		thrust_local = Vector3.ZERO
+		yaw_torque = 0.0
+
 	_update_rowing_animation(thrust_local, yaw_torque)
 
 	# --- 2. Rotate the thrust into world space ---------------------------
@@ -215,7 +268,11 @@ func _physics_process(delta: float) -> void:
 	_vel += thrust_world / mass * delta
 
 	var speed := _vel.length()
-	if speed > 0.001:
+	if _falling:
+		# Airborne: keep the momentum it left the jet with.
+		# 在空中:保持离开水柱时的动量。
+		pass
+	elif speed > 0.001:
 		# Drag = linear term + quadratic term, always opposing the velocity.
 		# This is what gives the boat a natural top speed (it stops
 		# accelerating once thrust and drag balance out).
@@ -223,8 +280,10 @@ func _physics_process(delta: float) -> void:
 		# 推力和阻力打平之后就不再加速。
 		var drag_mag := linear_drag * speed + quadratic_drag * speed * speed
 		_vel -= _vel / speed * (drag_mag / mass) * delta
+		_vel *= exp(-_brake_request * delta)
 	else:
 		_vel = Vector3.ZERO
+	_brake_request = 0.0
 
 	# --- 4. Turning: torque -> angular accel -> yaw rate -----------------
 	# --- 4. 转向:力矩 -> 角加速度 -> 偏航角速度
@@ -254,6 +313,7 @@ func _physics_process(delta: float) -> void:
 	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
 	# Buoyancy Boat 用的是力;这里只是把 Y 贴/插值到同一个高度场。
 	_follow_wave_height(delta)
+	_update_hull_tilt(delta)
 
 	_update_camera_tilt(delta)
 	_stabilize_camera_height()
@@ -263,20 +323,114 @@ func _physics_process(delta: float) -> void:
 
 
 ## Push the boat up to `height` metres above the waves for this physics frame.
-## Call every frame to hold it there; stop calling and it falls back.
-## 本物理帧把船顶到波面以上 `height` 米。每帧调用才能保持住;不再调用就会落回去。
+## Call every frame to hold it there; stop calling and it falls freely.
+## A push from below the hull is ignored, so a falling boat is only caught
+## once the push reaches it.
+## 本物理帧把船顶到波面以上 `height` 米。每帧调用才能保持住;不再调用就会自由落下。
+## 低于船底的顶力会被忽略,所以正在下落的船要等顶力够到它才会被接住。
 func add_lift(height: float) -> void:
 	_lift_request = maxf(_lift_request, height)
 
 
+## Extra exponential slowing (1/s) for this physics frame, e.g. from a zone
+## that helps the player stop. Call every frame to keep it on.
+## 本物理帧额外的指数减速(1/秒),例如帮玩家停船的区域。每帧调用才持续生效。
+func add_brake(strength: float) -> void:
+	_brake_request = maxf(_brake_request, strength)
+
+
+## How far below the hull a push may start and still catch it (m).
+## 顶力比船低多少以内仍能接住船(米)。
+const LIFT_CATCH_MARGIN := 0.3
+
+
 func _follow_wave_height(delta: float) -> void:
-	_lift = lerpf(_lift, _lift_request, 1.0 - exp(-lift_smoothing * delta))
+	var held := _lift_request > 0.0 and _lift_request >= _lift - LIFT_CATCH_MARGIN
+	if held:
+		_falling = false
+		_fall_speed = 0.0
+		_lift = lerpf(_lift, _lift_request, 1.0 - exp(-lift_smoothing * delta))
+	elif _lift > 0.0:
+		if not _falling:
+			_start_fall()
+		_fall_speed += fall_gravity * delta
+		_lift = maxf(0.0, _lift - _fall_speed * delta)
+		if _lift <= 0.0:
+			_land()
 	_lift_request = 0.0
-	if _water == null or not _water.has_method("get_height"):
-		return
-	var target_y := float_height + _lift + float(_water.get_height(global_position))
-	var t := 1.0 - exp(-wave_follow_smoothing * delta)
-	global_position.y = lerpf(global_position.y, target_y, t)
+
+	var wave := 0.0
+	if _water != null and _water.has_method("get_height"):
+		wave = float(_water.get_height(global_position))
+	# Fade the waves out over the first metre of lift so a raised boat does not bob.
+	# 顶起的第一米内逐渐去掉浪高,这样被顶起的船不会跟着浪上下晃。
+	var target_y := float_height + _lift + _hop + wave * clampf(1.0 - _lift, 0.0, 1.0)
+	if _lift > 0.0:
+		global_position.y = target_y
+	else:
+		var t := 1.0 - exp(-wave_follow_smoothing * delta)
+		global_position.y = lerpf(global_position.y, target_y, t)
+
+
+func _start_fall() -> void:
+	_falling = true
+	_fall_speed = 0.0
+	var spin := deg_to_rad(randf_range(fall_tumble_degrees.x, fall_tumble_degrees.y))
+	spin *= clampf(_lift / 3.0, 0.0, 1.0)
+	var axis := Vector2.from_angle(randf() * TAU)
+	_tilt_vel += Vector3(axis.x, 0.0, axis.y) * spin
+
+
+func _land() -> void:
+	_falling = false
+	_fall_speed = 0.0
+	_lift = 0.0
+	_tilt_vel *= 0.3
+	var up_y := (_tilt * Vector3.UP).y
+	if acos(clampf(up_y, -1.0, 1.0)) > deg_to_rad(capsize_angle):
+		_capsized = true
+		_capsized_time = 0.0
+
+
+func _update_hull_tilt(delta: float) -> void:
+	if _righting:
+		_righting_time += delta
+		var t := clampf(_righting_time / auto_right_duration, 0.0, 1.0)
+		_tilt = Basis(_righting_from.slerp(Quaternion.IDENTITY, smoothstep(0.0, 1.0, t)))
+		_hop = sin(PI * t) * auto_right_hop
+		if t >= 1.0:
+			_righting = false
+			_capsized = false
+			_tilt = Basis.IDENTITY
+			_tilt_vel = Vector3.ZERO
+			_hop = 0.0
+	elif _capsized:
+		_capsized_time += delta
+		_tilt_vel = _tilt_vel.lerp(Vector3.ZERO, 1.0 - exp(-4.0 * delta))
+		if _capsized_time >= auto_right_delay:
+			_righting = true
+			_righting_time = 0.0
+			_righting_from = _tilt.get_rotation_quaternion()
+	elif not _falling:
+		# Buoyancy: a damped spring pulling the hull back upright.
+		# 浮力:一个带阻尼的弹簧把船体拉回正位。
+		var q := _tilt.get_rotation_quaternion()
+		var angle := q.get_angle()
+		var restore := Vector3.ZERO
+		if angle > 0.0001:
+			var axis := q.get_axis()
+			if angle > PI:
+				angle = TAU - angle
+				axis = -axis
+			restore = -axis * angle * self_right_stiffness
+		_tilt_vel += (restore - _tilt_vel * self_right_damping) * delta
+
+	if not _righting and _tilt_vel.length_squared() > 1e-10:
+		_tilt = (Basis(_tilt_vel.normalized(), _tilt_vel.length() * delta) * _tilt).orthonormalized()
+
+	var hull_xf := Transform3D(_tilt, Vector3.ZERO)
+	for i in _hull_nodes.size():
+		_hull_nodes[i].transform = hull_xf * _hull_rest[i]
 
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel

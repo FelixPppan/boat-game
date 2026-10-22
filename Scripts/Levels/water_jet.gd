@@ -2,10 +2,12 @@
 extends Node3D
 ## Level 3: a water jet (cylinder placeholder). When the player's boat touches
 ## the marked zone on the water, a column shoots up and lifts the boat to the
-## top. The jet keeps spraying while the boat is on it, then dies down
-## hold_time seconds after the boat leaves.
+## top, then holds it there for as long as the boat stays within the jet's
+## horizontal range. Once the boat sails out of range it falls freely, and the
+## column dies down hold_time seconds later.
 ## 第三关:水柱(先用圆柱体占位)。玩家的船碰到水面上标出的区域就会喷起水柱,
-## 把船顶到柱顶。船在水柱上时持续喷射,离开后 hold_time 秒才落下。
+## 把船顶到柱顶,并且只要船还在水柱的水平范围内就一直托住不掉。
+## 船驶离范围后自由落下,水柱在 hold_time 秒后才落下。
 
 ## Spray height (m above the water).
 ## 喷射高度(水面以上,米)。
@@ -26,6 +28,20 @@ extends Node3D
 ## Seconds the jet keeps spraying after the boat leaves it.
 ## 船离开后水柱继续喷射的秒数。
 @export_range(0.0, 30.0, 0.1) var hold_time: float = 1.5
+## Extra distance beyond the column radius at which the boat still counts as
+## on the jet (m), roughly half the hull's width.
+## 超出水柱半径多远船仍算在水柱上(米),大约是船宽的一半。
+@export_range(0.0, 5.0, 0.05) var hold_margin: float = 0.5
+## A boat this far above the column top is out of reach: the jet neither
+## triggers nor pushes it, so a boat falling from above is caught only once
+## the column gets to it.
+## 船高出柱顶超过这个距离就够不着:水柱既不会被触发也顶不到它,
+## 所以从上方落下的船要等水柱够到它才会被接住。
+@export_range(0.1, 10.0, 0.1) var reach_margin: float = 1.5
+## Extra slowing applied to the boat while it is on the jet (1/s), to make
+## stopping on it easier. 0 disables it; the boat can still paddle out.
+## 船在水柱范围内时额外的减速(1/秒),方便停船。设为 0 关闭;船仍能划出去。
+@export_range(0.0, 10.0, 0.05) var brake_strength: float = 1.0
 @export var jet_color: Color = Color(0.6, 0.85, 1.0, 0.55):
 	set(value):
 		jet_color = value
@@ -35,14 +51,9 @@ extends Node3D
 		zone_color = value
 		_queue_rebuild()
 
-## Margin above jet_height the trigger column extends, so a boat riding the
-## top is still counted as on the jet.
-## 触发柱比 jet_height 再高出的余量,船骑在柱顶时仍算在水柱上。
-const AREA_HEADROOM := 3.0
 const ZONE_Y := 0.15
 
 var _container: Node3D
-var _area: Area3D
 var _column: MeshInstance3D
 var _pending := false
 var _boat: Node3D
@@ -63,7 +74,6 @@ func _queue_rebuild() -> void:
 
 func _rebuild() -> void:
 	_pending = false
-	_boat = null
 	if _container != null:
 		_container.queue_free()
 	_container = Node3D.new()
@@ -95,19 +105,6 @@ func _rebuild() -> void:
 	# 编辑器里预览完整水柱,方便目测调高度。
 	_set_column(jet_height if Engine.is_editor_hint() else _current_height)
 
-	_area = Area3D.new()
-	var shape := CylinderShape3D.new()
-	shape.radius = radius
-	shape.height = jet_height + AREA_HEADROOM + 1.0
-	var col := CollisionShape3D.new()
-	col.shape = shape
-	col.position.y = shape.height * 0.5 - 1.0
-	_area.add_child(col)
-	_container.add_child(_area)
-	if not Engine.is_editor_hint():
-		_area.body_entered.connect(_on_body_entered)
-		_area.body_exited.connect(_on_body_exited)
-
 
 func _translucent(c: Color) -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
@@ -128,7 +125,11 @@ func _set_column(h: float) -> void:
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
-	if _boat != null:
+	if _boat == null:
+		_boat = get_tree().get_first_node_in_group("player_boat") as Node3D
+
+	var on_jet := _boat_on_jet()
+	if on_jet:
 		_spray_timer = hold_time
 	else:
 		_spray_timer = maxf(0.0, _spray_timer - delta)
@@ -139,15 +140,15 @@ func _physics_process(delta: float) -> void:
 		_current_height = move_toward(_current_height, 0.0, fall_speed * delta)
 	_set_column(_current_height)
 
-	if _boat != null and _boat.has_method("add_lift"):
+	if on_jet and _boat.has_method("add_lift"):
 		_boat.add_lift(_current_height)
+		_boat.add_brake(brake_strength)
 
 
-func _on_body_entered(body: Node) -> void:
-	if body.is_in_group("player_boat"):
-		_boat = body
-
-
-func _on_body_exited(body: Node) -> void:
-	if body == _boat:
-		_boat = null
+func _boat_on_jet() -> bool:
+	if _boat == null:
+		return false
+	var p := to_local(_boat.global_position)
+	if Vector2(p.x, p.z).length() > radius + hold_margin:
+		return false
+	return p.y <= _current_height + reach_margin
