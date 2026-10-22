@@ -204,6 +204,7 @@ func reveal_memory() -> void:
 	await tween.finished
 
 	memory_fog.hide()
+	await _after_picture_revealed()
 	state = MemoryState.EXPLORING
 	memory_ready = true
 	reveal_finished.emit()
@@ -226,7 +227,16 @@ func dissolve_memory() -> void:
 		tween.tween_property(
 			material, "shader_parameter/progress", 1.0, dissolve_duration
 		)
+	_add_dissolve_animation(tween)
 	await tween.finished
 	memory_layers.hide()
 	state = MemoryState.FINISHED
 	dissolve_finished.emit()
+
+
+func _after_picture_revealed() -> void:
+	pass
+
+
+func _add_dissolve_animation(_tween: Tween) -> void:
+	pass

@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dtfay7xe5f2rr"]
+
+[ext_resource type="Shader" uid="uid://byw0bqhiym3m8" path="res://Shaders/memory_prism_glass.gdshader" id="1_glass"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_glass")
+shader_parameter/glass_tint = Color(0.7487787, 0.94053555, 0.9501186, 1)
+shader_parameter/rainbow_strength = 0.7990000379525
+shader_parameter/rainbow_scale = 3.00600013952512
+shader_parameter/color_speed = 0.2090000099275
+shader_parameter/refraction_strength = 0.018
+shader_parameter/dispersion = 0.004
+shader_parameter/center_opacity = 0.762000036195
+shader_parameter/edge_opacity = 0.9170000435575
+shader_parameter/gradient_strength = 0.4150000197125
+shader_parameter/glow_strength = 0.45
+shader_parameter/roughness = 0.2490000118275
