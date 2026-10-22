@@ -6,7 +6,7 @@ https://www.youtube.com/watch?v=_R2KDcAp1YQ
 extends RigidBody3D
 
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-@onready var water = get_node("/root/Map/WaterPlane")
+@onready var water = get_node_or_null("../WaterPlane")
 @onready var buoyancyPoints = $BuoyancyPoints.get_children()
 
 @export var float_force: float = 1.0
@@ -17,7 +17,9 @@ var submerged: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	if water == null or not water.has_method("get_height"):
+		push_error("Buoyancy requires a sibling WaterPlane with get_height().")
+		set_physics_process(false)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

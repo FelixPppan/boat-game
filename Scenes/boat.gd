@@ -102,7 +102,7 @@ const StrokeRecorderScript := preload("res://Scripts/stroke_recorder.gd")
 const TrailScript := preload("res://Scripts/trail.gd")
 
 @onready var camera: Camera3D = $Camera3D
-@onready var _water: Node = get_node_or_null("/root/Map/WaterPlane")
+@onready var _water: Node = get_node_or_null("../WaterPlane")
 
 ## Planar velocity in world space (only x/z are used).
 ## 世界坐标下的平面速度(只用 x/z)。
@@ -238,7 +238,11 @@ func _physics_process(delta: float) -> void:
 	# --- 5. Hand it to the physics engine --------------------------------
 	# --- 5. 交给物理引擎
 	velocity = _vel
+	# Obstacle triangles can redirect horizontal sliding downward. Vertical
+	# motion belongs to wave/lift following, not to obstacle contact normals.
+	var height_before_collision := global_position.y
 	move_and_slide()
+	global_position.y = height_before_collision
 	# Hitting an island or rock makes the engine rewrite velocity; sync it
 	# back so the boat cannot keep banking speed while stuck in an obstacle.
 	# 撞到岛或石头时引擎会改写 velocity,同步回来,免得船卡在障碍里还在攒速度。

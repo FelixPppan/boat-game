@@ -6,6 +6,10 @@ extends Area3D
 
 signal collected
 
+## Complete only after this memory interaction finishes. Unassigned targets
+## retain the original boat pickup behavior.
+@export var memory_trigger: Area3D
+
 ## Shown on screen when the goal is collected.
 ## 收集到时屏幕上显示的关卡名。
 @export var level_name: String = "Level"
@@ -28,7 +32,12 @@ func _ready() -> void:
 	_rebuild()
 	if not Engine.is_editor_hint():
 		add_to_group("level_target")
-		body_entered.connect(_on_body_entered)
+		if memory_trigger:
+			visible = false
+			monitoring = false
+			memory_trigger.connect("interaction_finished", complete)
+		else:
+			body_entered.connect(_on_body_entered)
 
 
 func _rebuild() -> void:

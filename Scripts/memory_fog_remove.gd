@@ -1,5 +1,7 @@
 extends Area3D
 
+signal interaction_finished
+
 @export var memory_fog_volume: FogVolume
 @export var memory_content: Node3D
 @export var overlay: SubViewportContainer
@@ -20,6 +22,7 @@ var _locking := false
 var _exploring := false
 var _hand_timer := 0.0
 var _boat_process_mode: int
+var _boat_was_visible: bool
 var _wait_for_hand_release := false
 
 
@@ -86,6 +89,10 @@ func _engage() -> void:
 			return
 	_engaged = true
 	_boat_process_mode = boat.process_mode
+	# GhostSeat is a child of the boat, so hiding the boat hides both models.
+	# First-person hands live outside this hierarchy and remain visible.
+	_boat_was_visible = boat.visible
+	boat.hide()
 	boat.process_mode = Node.PROCESS_MODE_DISABLED
 	closeup_camera.global_transform = view_point.global_transform
 	closeup_camera.make_current()
@@ -139,14 +146,18 @@ func _on_exploration_ended() -> void:
 
 
 func _on_dissolve_finished() -> void:
+	if _session_done:
+		return
 	overlay.hide()
 	_session_done = true
 	_leave_closeup()
+	interaction_finished.emit()
 
 
 func _leave_closeup() -> void:
 	hand_skeleton.set_mode("hidden")
 	boat_camera.make_current()
 	first_person_hands.set_active(false)
+	boat.visible = _boat_was_visible
 	boat.process_mode = _boat_process_mode
 	_engaged = false
