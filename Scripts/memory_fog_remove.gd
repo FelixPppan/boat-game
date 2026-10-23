@@ -13,6 +13,8 @@ signal interaction_finished
 @export var first_person_hands: CanvasLayer
 @export var hand_stable_sec: float = 0.25
 @export var white_mist: TextureRect
+## If true, block engage / fog clear until every level_target is done (e.g. 3/3).
+@export var require_all_levels: bool = false
 
 var is_boat_near := false
 var is_cleared := false
@@ -82,7 +84,18 @@ func _process(delta: float) -> void:
 		_engage()
 
 
+func _can_interact() -> bool:
+	if not require_all_levels:
+		return true
+	for t in get_tree().get_nodes_in_group("level_target"):
+		if not t._done:
+			return false
+	return true
+
+
 func _engage() -> void:
+	if not _can_interact():
+		return
 	# Only one memory may own the boat and the overlay interaction at a time.
 	for trigger in get_tree().get_nodes_in_group("memory_triggers"):
 		if trigger != self and trigger._engaged:
@@ -102,6 +115,8 @@ func _engage() -> void:
 
 # 0: ignore gestures during transitions; 1: wave clears fog; 2: thumbs-up dismisses the picture.
 func get_wave_phase() -> int:
+	if not _can_interact():
+		return 0
 	if not _engaged or _locking or _session_done:
 		return 0
 	if _exploring:

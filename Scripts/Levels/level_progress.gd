@@ -1,9 +1,9 @@
 extends CanvasLayer
 ## On-screen "collected / total" counter for every level goal in the scene
-## (anything in the "level_target" group). While a level is being played the sun
-## slowly turns towards that level's limit and waits there.
+## (anything in the "level_target" group). The sun stays put until a level is
+## completed, then slowly turns to that stage and waits.
 ## 屏幕上的「已收集 / 总数」计数,统计场景里所有关卡目标(在 "level_target" 分组里的节点)。
-## 每一关进行中,太阳慢慢转向这一关的上限角度,到了就停住等待。
+## 太阳在关卡完成前不动,完成后慢慢转到对应角度并停住。
 
 @export var font_size: int = 40
 ## Debug shortcut: completes the next unfinished level.
@@ -12,14 +12,13 @@ extends CanvasLayer
 
 @export_group("Sun")
 @export var sun: DirectionalLight3D
-## Sun rotation (degrees): game start, the limit of each level, then all levels done.
-## 太阳角度(度):开局、每一关的上限,最后一项是全部完成。
+## Sun rotation (degrees): game start (held until level 1), then after each level done.
+## 太阳角度(度):开局(第 1 关完成前一直停在这),之后每一关完成转到下一项。
 @export var sun_stages: Array[Vector3] = [
 	Vector3(38.0, 95.0, 54.0),
-	Vector3(18.0, 96.0, 52.0),
-	Vector3(4.0, 97.0, 50.0),
-	Vector3(-8.0, 98.0, 48.0),
-	Vector3(-70.0, 101.6, 40.0),
+	Vector3(0.0, 94.0, 52.0),
+	Vector3(-8.0, 94.0, 51.0),
+	Vector3(-45.0, 101.6, 40.0),
 ]
 ## Seconds the sun takes to reach the next stage. Larger is slower.
 ## 太阳转到下一个角度所用的秒数,越大越慢。
@@ -76,7 +75,6 @@ func _connect_targets() -> void:
 	for t in _targets:
 		t.collected.connect(_on_collected)
 	_refresh()
-	_turn_sun()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -99,7 +97,7 @@ func _on_collected() -> void:
 func _turn_sun() -> void:
 	if sun == null or sun_stages.is_empty():
 		return
-	var target: Vector3 = sun_stages[mini(_collected + 1, sun_stages.size() - 1)]
+	var target: Vector3 = sun_stages[mini(_collected, sun_stages.size() - 1)]
 	if _sun_tween:
 		_sun_tween.kill()
 	_sun_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
