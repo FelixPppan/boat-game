@@ -47,13 +47,24 @@ extends AnimatableBody3D
 		_queue_rebuild()
 
 const SUNK_DEPTH := 1.0
+const GENERATED_META := "_ring_generated"
+const COLLISION_META := "_ring_model_collision"
 
 var _generated: Array[Node] = []
 var _pending := false
+var _model_collisions: Array[CollisionShape3D] = []
+var _mesh_snapshot: Array = []
 
 
 func _ready() -> void:
 	_rebuild()
+	_sync_models()
+
+
+func _process(_delta: float) -> void:
+	if _generated.is_empty():
+		_rebuild()
+	_sync_models()
 
 
 func _physics_process(delta: float) -> void:
@@ -74,9 +85,17 @@ func _queue_rebuild() -> void:
 
 func _rebuild() -> void:
 	_pending = false
-	for n in _generated:
-		n.queue_free()
+	# Tool script reloads can reset arrays while leaving preview children alive.
+	for n in get_children():
+		var legacy_box := n.owner == null and str(n.name).begins_with("@") and (
+			(n is MeshInstance3D and n.mesh is BoxMesh)
+			or (n is CollisionShape3D and n.shape is BoxShape3D))
+		if _generated.has(n) or n.has_meta(GENERATED_META) or n.has_meta(COLLISION_META) or legacy_box:
+			remove_child(n)
+			n.queue_free()
 	_generated.clear()
+	_model_collisions.clear()
+	_mesh_snapshot.clear()
 
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color
@@ -114,8 +133,60 @@ func _rebuild() -> void:
 		col.shape = shape
 		col.transform = xf
 		_add(col)
+	_sync_models()
+
+
+## Imported child models replace the boxes; their transforms also drive collision.
+func _collect_meshes(node: Node, relative: Transform3D, records: Array) -> void:
+	if node.is_queued_for_deletion() or _generated.has(node):
+		return
+	if node is CollisionShape3D and _model_collisions.has(node):
+		return
+	if node is Node3D:
+		relative = relative * node.transform
+	if node is MeshInstance3D and node.mesh:
+		records.append([node.get_instance_id(), node.mesh, relative])
+	for child in node.get_children():
+		_collect_meshes(child, relative, records)
+
+
+func _sync_models() -> void:
+	var records: Array = []
+	for child in get_children():
+		_collect_meshes(child, Transform3D.IDENTITY, records)
+	var has_model := not records.is_empty()
+	for node in _generated:
+		if node is MeshInstance3D:
+			node.visible = not has_model
+		elif node is CollisionShape3D and node.disabled != has_model:
+			node.set_deferred("disabled", has_model)
+	if records == _mesh_snapshot:
+		return
+	_mesh_snapshot = records
+	for collision in _model_collisions:
+		remove_child(collision)
+		collision.queue_free()
+	_model_collisions.clear()
+	for record in records:
+		var mesh: Mesh = record[1]
+		var relative: Transform3D = record[2]
+		var faces := mesh.get_faces()
+		if faces.is_empty():
+			continue
+		for index in faces.size():
+			faces[index] = relative * faces[index]
+		var shape := ConcavePolygonShape3D.new()
+		shape.backface_collision = true
+		shape.set_faces(faces)
+		var collision := CollisionShape3D.new()
+		collision.name = "ModelCollision"
+		collision.shape = shape
+		collision.set_meta(COLLISION_META, true)
+		add_child(collision)
+		_model_collisions.append(collision)
 
 
 func _add(n: Node) -> void:
+	n.set_meta(GENERATED_META, true)
 	add_child(n)
 	_generated.append(n)

@@ -8,6 +8,8 @@ signal dissolve_finished
 ## 主场景用外部 FogVolume 消雾时设为 true，跳过自身 FogVolume 动画。
 ## When clearing fog in the main scene using an external FogVolume, skip the FogVolume's own animation.
 @export var use_external_fog: bool = false
+@export var ambient_audio: AudioStream
+@export_range(-40.0, 6.0) var ambient_volume_db: float = -12.0
 @export_group("Picture Layout")
 ## Position of the illustration relative to MemoryContent
 @export var picture_offset: Vector3 = Vector3(0, -0.6384554, 0):
@@ -39,9 +41,14 @@ const PICTURE_ASPECT := 4.0 / 3.0
 
 var picture_layers: Array[MeshInstance3D] = []
 var memory_ready: bool = false
+var _audio: AudioStreamPlayer
 
 
 func _ready() -> void:
+	_audio = AudioStreamPlayer.new()
+	_audio.stream = ambient_audio
+	_audio.volume_db = ambient_volume_db
+	add_child(_audio)
 	
 	for child in memory_layers.get_children():
 		if child is MeshInstance3D:
@@ -235,8 +242,11 @@ func dissolve_memory() -> void:
 
 
 func _after_picture_revealed() -> void:
-	pass
+	if ambient_audio:
+		_audio.play()
 
 
-func _add_dissolve_animation(_tween: Tween) -> void:
-	pass
+func _add_dissolve_animation(tween: Tween) -> void:
+	if _audio.playing:
+		tween.tween_property(_audio, "volume_db", -60.0, dissolve_duration)
+		tween.finished.connect(_audio.stop)
