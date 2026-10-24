@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c7aksus6kmxnp"]
+
+[node name="MusicManager" type="Node" unique_id=1065787900]
+
+[node name="FmodEventEmitter2D" type="FmodEventEmitter2D" parent="." unique_id=710320685]
+event_name = "event:/seaofmemoriesmusic"
+event_guid = "{ed74f338-745d-47aa-8bc7-820c2086cf12}"
+autoplay = true
+volume = 0.2
