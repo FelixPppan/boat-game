@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dtrisfc510g5w"]
+
+[node name="FmodBankLoader" type="Node" unique_id=620303955]
+
+[node name="FmodBankLoader" type="FmodBankLoader" parent="." unique_id=1850788557]
+bank_paths = ["res://FMODBanks/Desktop/Master.bank", "res://FMODBanks/Desktop/Master.strings.bank", "res://FMODBanks/Desktop/SFX.bank", "res://FMODBanks/Desktop/Ambience.bank", "res://FMODBanks/Desktop/Music.bank"]

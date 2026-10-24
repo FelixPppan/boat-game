@@ -24,6 +24,8 @@ config/icon="res://icon.svg"
 SensorInput="*res://Scripts/sensor_input.gd"
 HandTracking="*uid://d2blqpvsn7td8"
 FmodManager="*uid://cds10pm7hwn3p"
+FmodBankLoaderGlobal="*uid://dtrisfc510g5w"
+MusicManager="*uid://c7aksus6kmxnp"
 
 [display]
 
