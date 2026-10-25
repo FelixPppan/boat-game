@@ -1,0 +1,150 @@
+[gd_scene format=3 uid="uid://jde7riagek37"]
+
+[ext_resource type="Script" uid="uid://cp3njg8dkogbv" path="res://Scripts/memory_preview.gd" id="1_preview"]
+[ext_resource type="Shader" uid="uid://cy0r7ncmks8w6" path="res://Shaders/memory_dissolve.gdshader" id="2_dissolve"]
+[ext_resource type="Script" uid="uid://cn2suljucxo2n" path="res://Scripts/foreground.gd" id="3_fg"]
+[ext_resource type="Texture2D" uid="uid://ch2e2qamfxt15" path="res://Figure/cat1.png" id="4_cat1"]
+[ext_resource type="Texture2D" uid="uid://cceib65st0q62" path="res://Figure/cat2.png" id="5_cat2"]
+[ext_resource type="Texture2D" uid="uid://bte0rj0f34cdx" path="res://Figure/cat3.png" id="6_cat3"]
+[ext_resource type="Script" uid="uid://clyccjhsuqfkh" path="res://Scripts/memory_particles.gd" id="7_particles"]
+[ext_resource type="Shader" uid="uid://chbboahvyd03b" path="res://Shaders/memory_fog.gdshader" id="8_fog"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1"]
+noise = SubResource("FastNoiseLite_1")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+render_priority = 0
+shader = ExtResource("2_dissolve")
+shader_parameter/picture = ExtResource("4_cat1")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_1"]
+size = Vector2(5.45, 4.09)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_2"]
+frequency = 0.015
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_2")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mid"]
+render_priority = 0
+shader = ExtResource("2_dissolve")
+shader_parameter/picture = ExtResource("5_cat2")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_2")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1"]
+size = Vector2(5.45, 4.09)
+orientation = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3"]
+frequency = 0.015
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3"]
+noise = SubResource("FastNoiseLite_3")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fg"]
+render_priority = 0
+shader = ExtResource("2_dissolve")
+shader_parameter/picture = ExtResource("6_cat3")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_3")
+shader_parameter/progress = 1.0
+shader_parameter/noise_scale = 1.5
+shader_parameter/edge_width = 0.04
+shader_parameter/edge_strength = 2.0
+shader_parameter/edge_color = Color(0.65, 0.8, 1, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2"]
+size = Vector2(5.45, 4.09)
+orientation = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fog"]
+seed = 17
+frequency = 0.055
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_fog"]
+noise = SubResource("FastNoiseLite_fog")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fog"]
+shader = ExtResource("8_fog")
+shader_parameter/cloud_noise = SubResource("NoiseTexture3D_fog")
+shader_parameter/fog_color = Color(0.65, 0.76, 0.92, 1)
+shader_parameter/density = 1.4
+shader_parameter/flow_speed = 0.015
+shader_parameter/detail_scale = 1.3
+shader_parameter/warp_strength = 0.18
+shader_parameter/fog_opacity = 1.0
+shader_parameter/glow_strength = 0.35
+shader_parameter/grain_strength = 0.4
+shader_parameter/grain_scale = 2.0
+shader_parameter/contrast = 1.4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.6, 2.6, 1.4)
+
+[node name="MemoryContent" type="Node3D" unique_id=1051232619]
+script = ExtResource("1_preview")
+use_external_fog = true
+
+[node name="Memorylayers" type="Node3D" parent="." unique_id=917358702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6384554, 0)
+
+[node name="Background" type="MeshInstance3D" parent="Memorylayers" unique_id=190211426]
+material_override = SubResource("ShaderMaterial_bg")
+mesh = SubResource("QuadMesh_1")
+
+[node name="HiddenClue" type="MeshInstance3D" parent="Memorylayers" unique_id=588548822]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0.1)
+material_override = SubResource("ShaderMaterial_mid")
+mesh = SubResource("PlaneMesh_1")
+
+[node name="Foreground" type="MeshInstance3D" parent="Memorylayers" unique_id=1700858500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.2)
+material_override = SubResource("ShaderMaterial_fg")
+mesh = SubResource("PlaneMesh_2")
+script = ExtResource("3_fg")
+slide_distance = 0.2
+auto_move_delay = 0.2
+slide_duration = 0.4
+
+[node name="MemoryFog" type="Area3D" parent="." unique_id=987588042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.3)
+
+[node name="FogVisual" type="FogVolume" parent="MemoryFog" unique_id=552121007]
+visible = false
+size = Vector3(4.5, 3.5, 1.8)
+shape = 0
+material = SubResource("ShaderMaterial_fog")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryFog" unique_id=36807005]
+shape = SubResource("BoxShape3D_1")
+
+[node name="MemoryParticles" type="GPUParticles3D" parent="." unique_id=379865108]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.4)
+script = ExtResource("7_particles")
+spark_count = 220
+spark_size = 0.015
+spark_lifetime = 1.4
+
+[node name="CloseupCamera" type="Camera3D" parent="." unique_id=1987602688]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6384554, 3.1373806)
+current = true

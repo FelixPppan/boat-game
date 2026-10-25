@@ -8,6 +8,10 @@
 
 config_version=5
 
+[Fmod]
+
+General/banks_path="res://FMODBanks/Desktop"
+
 [application]
 
 config/name="Paddle game"
@@ -19,6 +23,9 @@ config/icon="res://icon.svg"
 
 SensorInput="*res://Scripts/sensor_input.gd"
 HandTracking="*uid://d2blqpvsn7td8"
+FmodManager="*uid://cds10pm7hwn3p"
+FmodBankLoaderGlobal="*uid://dtrisfc510g5w"
+MusicManager="*uid://c7aksus6kmxnp"
 
 [display]
 
@@ -37,7 +44,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdserial/plugin.cfg")
+enabled=PackedStringArray("res://addons/fmod/plugin.cfg", "res://addons/gdserial/plugin.cfg")
 
 [physics]
 

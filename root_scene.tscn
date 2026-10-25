@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cq4er6myv4ut"]
+
+[ext_resource type="PackedScene" uid="uid://bfmqnux5s5rju" path="res://model/map_Level1/Damaged Iron fence.glb" id="1_itajj"]
+
+[node name="Root Scene" unique_id=1768962132 instance=ExtResource("1_itajj")]

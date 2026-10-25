@@ -12,6 +12,7 @@ const FOLLOW_SPEED: float = 40.0
 @export var camera: Camera3D
 @export var block: Node3D
 @export var cursor: Node3D
+@export var pickupSound: FmodEventEmitter3D
 
 var _main_side: String = ""
 var _grabbing: bool = false
@@ -42,6 +43,7 @@ func _process(delta: float) -> void:
 		_grabbing = true
 		_grab_offset = block.global_position - pos
 		_release_timer = 0.0
+		pickupSound.play_one_shot()
 
 
 # The first hand in the picture becomes the main hand and stays it until it has been gone for a moment
