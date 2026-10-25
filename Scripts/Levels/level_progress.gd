@@ -11,6 +11,7 @@ extends CanvasLayer
 @export var final_message_text: String = "The final memory fragment has appeared. Follow the guide to find it."
 @export var message_font: Font
 @export var message_duration: float = 3.0
+@export var house_reveal: Node3D
 @export_range(0.0, 0.5) var message_top_ratio: float = 0.12
 ## Debug shortcut: completes the next unfinished level.
 ## 调试快捷键:完成下一个还没完成的关卡。
@@ -89,6 +90,8 @@ func _ready() -> void:
 	# Targets join their group in their own _ready, which may run after ours.
 	# 目标在自己的 _ready 里进分组,可能比这里晚。
 	_connect_targets.call_deferred()
+	if house_reveal:
+		house_reveal.connect("reveal_finished", _show_message)
 
 
 func _connect_targets() -> void:
@@ -113,9 +116,14 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _on_collected() -> void:
 	_collected += 1
 	_refresh()
+	if _collected < _total or house_reveal == null:
+		_show_message()
+	_turn_sun()
+
+
+func _show_message() -> void:
 	_label.show()
 	_message_timer.start(message_duration)
-	_turn_sun()
 
 
 func _turn_sun() -> void:

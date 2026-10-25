@@ -85,6 +85,8 @@ func _process(delta: float) -> void:
 
 
 func _can_interact() -> bool:
+	if get_tree().get_first_node_in_group("memory_cinematic") != null:
+		return false
 	if not require_all_levels:
 		return true
 	for t in get_tree().get_nodes_in_group("level_target"):
