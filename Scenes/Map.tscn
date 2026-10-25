@@ -4416,22 +4416,6 @@ metadata/_reef_generated = true
 shape = SubResource("ConcavePolygonShape3D_ihwf0")
 metadata/_reef_generated = true
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53" unique_id=790079818]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
-visible = false
-mesh = SubResource("BoxMesh_blv3p")
-metadata/_reef_generated = true
-
-[node name="ReefCollision" type="CollisionShape3D" parent="Level1/Reefs/Reef53" unique_id=1662809219]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
-shape = SubResource("BoxShape3D_o48kq")
-disabled = true
-metadata/_reef_generated = true
-
-[node name="ModelCollision" type="CollisionShape3D" parent="Level1/Reefs/Reef53" unique_id=518430169]
-shape = SubResource("ConcavePolygonShape3D_18jgf")
-metadata/_reef_generated = true
-
 [node name="@CollisionShape3D@48982" type="CollisionShape3D" parent="Level1/Reefs/Reef53" unique_id=1626798258]
 shape = SubResource("ConcavePolygonShape3D_sxrei")
 metadata/_reef_generated = true
