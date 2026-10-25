@@ -4,6 +4,7 @@ extends Node3D
 @export var water_height: float = 0.0
 @export var clearance: float = 0.2
 @export var upright_rotation: Vector3 = Vector3.ZERO
+@export var rumble_sound: FmodEventEmitter3D
 
 var _emerged := false
 
@@ -24,6 +25,7 @@ func _on_level_completed() -> void:
 		if not target._done:
 			return
 	_emerged = true
+	rumble_sound.play()
 	var upright_basis := Basis.from_euler(upright_rotation * PI / 180.0).scaled(scale)
 	var final_transform := get_parent_node_3d().global_transform * Transform3D(upright_basis, position)
 	var bottom := _mesh_bottom(self, final_transform)
