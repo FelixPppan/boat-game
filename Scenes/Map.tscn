@@ -88,6 +88,7 @@
 [ext_resource type="Texture2D" uid="uid://b12corftrabqj" path="res://Figure/memory 2.png" id="101_mem2"]
 [ext_resource type="Texture2D" uid="uid://n8n4vt1fiqry" path="res://Figure/memory 3.png" id="101_mem3"]
 [ext_resource type="Texture2D" uid="uid://bsceikj1n5kr" path="res://Figure/memory 4.png" id="101_mem4"]
+[ext_resource type="AudioStream" uid="uid://c1377148ddy4r" path="res://voiceandmusic/Sea_of_Memories_Happy_Music.mp3" id="101_happy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -147,7 +148,7 @@ height = 12.65
 radius = 6.98
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_sa8uj"]
-radius = 3.852
+radius = 10.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_mtfgr"]
 radius = 0.33212817
@@ -2156,7 +2157,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.52
 shape = SubResource("CylinderShape3D_hdaqt")
 
 [node name="FogVolume" type="FogVolume" parent="MemoryRock4" unique_id=2034506341]
-transform = Transform3D(2.3814287, 0, 0, 0, 2.325717, 0, 0, 0, 1.6539134, -1.6027918, 0.50575995, -7.738307)
+transform = Transform3D(4.76, 0, 0, 0, 4.65, 0, 0, 0, 3.31, -1.6027918, 0.50575995, -7.738307)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
@@ -2361,7 +2362,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="EndingManager" type="Node" parent="." unique_id=485570083 node_paths=PackedStringArray("boat", "boat_camera", "cutscene_camera", "ending_ui", "overlay", "photo_root", "photo_mask", "photo_image", "photo_background", "subtitle", "end_label", "trigger")]
+[node name="EndingManager" type="Node" parent="." unique_id=485570083 node_paths=PackedStringArray("boat", "boat_camera", "cutscene_camera", "ending_ui", "overlay", "photo_root", "photo_mask", "photo_image", "photo_background", "subtitle", "end_label", "trigger", "ending_music_player")]
 script = ExtResource("101_ending")
 boat = NodePath("../Boat")
 boat_camera = NodePath("../Boat/Camera3D")
@@ -2381,6 +2382,13 @@ subtitle_hold_3 = 6.0
 subtitle_hold_4 = 6.0
 subtitle_hold_5 = 4.0
 subtitle_font = ExtResource("41_earqg")
+ending_music = ExtResource("101_happy")
+ending_music_player = NodePath("EndingMusic")
+music_crossfade_duration = 3.0
+
+[node name="EndingMusic" type="AudioStreamPlayer" parent="EndingManager" unique_id=485570084]
+stream = ExtResource("101_happy")
+volume_db = -40.0
 
 [node name="EndingUI" type="CanvasLayer" parent="EndingManager" unique_id=654736537]
 layer = 30
