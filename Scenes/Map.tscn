@@ -1746,9 +1746,10 @@ current = true
 script = ExtResource("4_ngcqm")
 water_fog_volume = NodePath("../../FogVolume")
 
-[node name="GhostSeat" type="Node3D" parent="Boat" unique_id=770449023]
+[node name="GhostSeat" type="Node3D" parent="Boat" unique_id=770449023 node_paths=PackedStringArray("model")]
 transform = Transform3D(4.9073634e-08, 0, -0.65, 0, 0.65, 0, 0.65, 0, 4.9073634e-08, 0, -0.13, 0.98)
 script = ExtResource("15_passenger")
+model = NodePath("ghostwithoutbone")
 
 [node name="ghostwithoutbone" parent="Boat/GhostSeat" unique_id=854424610 instance=ExtResource("9_uylqo")]
 transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
