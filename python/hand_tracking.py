@@ -100,7 +100,7 @@ def run_hand_tracking_server(server_ip: str, server_port: int) -> None:
     """Run the hand tracking and send the hand coordinates via UDP."""
     ensure_model()
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     with create_landmarker() as landmarker:
         while cap.isOpened():

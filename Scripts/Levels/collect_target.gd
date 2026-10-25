@@ -10,9 +10,9 @@ signal collected
 ## retain the original boat pickup behavior.
 @export var memory_trigger: Area3D
 
-## Shown on screen when the goal is collected.
-## 收集到时屏幕上显示的关卡名。
-@export var level_name: String = "Level"
+## Full banner text shown when the goal is collected.
+## 收集到时屏幕上显示的完整文案。
+@export var level_name: String = "Memory fragment collected!"
 ## Sphere radius (m). The pickup area is slightly larger than the visible ball.
 ## 球的半径(米)。拾取范围比看得见的球略大一点。
 @export_range(0.1, 10.0, 0.05) var radius: float = 1.0:
@@ -85,18 +85,4 @@ func complete() -> void:
 	visible = false
 	set_deferred("monitoring", false)
 	print("[%s] %s complete!" % [get_parent().name, level_name])
-	_show_banner()
 	collected.emit()
-
-
-func _show_banner() -> void:
-	var layer := CanvasLayer.new()
-	var label := Label.new()
-	label.text = "%s Complete!" % level_name
-	label.add_theme_font_size_override("font_size", 56)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	label.offset_top = 80.0
-	layer.add_child(label)
-	get_tree().root.add_child(layer)
-	get_tree().create_timer(3.0).timeout.connect(layer.queue_free)
