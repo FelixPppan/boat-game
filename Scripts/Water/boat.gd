@@ -330,7 +330,7 @@ func _physics_process(delta: float) -> void:
 	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
 	# Buoyancy Boat 用的是力;这里只是把 Y 贴/插值到同一个高度场。
 	_follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
-	_update_hull_tilt(delta)
+	#_update_hull_tilt(delta)
 
 	#_update_camera_tilt(delta)
 	#_stabilize_camera_height()
@@ -396,6 +396,9 @@ func _start_fall() -> void:
 	spin *= clampf(_lift / 3.0, 0.0, 1.0)
 	var axis := Vector2.from_angle(randf() * TAU)
 	_tilt_vel += Vector3(axis.x, 0.0, axis.y) * spin
+	
+	# Duct tape solution to fix incompatibilites between water jet system and buoyancy.gd
+	get_node("/root/Map/Boat/RigidBody3D").base_water_height = 0.0 
 
 
 func _land() -> void:

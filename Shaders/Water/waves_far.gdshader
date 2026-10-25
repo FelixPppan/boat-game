@@ -51,11 +51,14 @@ vec3 gerstner(float wavelength, float steepness, vec2 dir, vec3 p, inout vec3 ta
 	return vec3(d.x * (a * cos(f)), a * sin(f) + wave_noise, d.y * (a * cos(f)));
 }
 
+
 void vertex() {
 	vec3 point = VERTEX.xyz;
 	vec3 tangent = vec3(1, 0, 0);
 	vec3 binormal = vec3(0, 0, 1);
 	point += gerstner(gerstner_wave.x, gerstner_wave.y, vec2(gerstner_wave.z, gerstner_wave.w), point, tangent, binormal);
+	point += gerstner(gerstner_wave.x * 0.8, gerstner_wave.y * 0.5, vec2(gerstner_wave.z * 0.5, gerstner_wave.w *1.5), point, tangent, binormal);
+	
 	VERTEX.xyz = point;
 	NORMAL = normalize(cross(binormal, tangent));
 	world_pos = (MODEL_MATRIX * vec4(point, 1.0)).xyz;
@@ -70,13 +73,4 @@ void fragment() {
 	RIM = 0.5;
 	float edge_dist = max(abs(world_pos.x), abs(world_pos.z));
 	ALPHA = 1.0 - smoothstep(fade_start, fade_end, edge_dist);
-}
-
-void light() {
-	if (LIGHT_IS_AREA) {
-		DIFFUSE_LIGHT += LIGHT_AREA_DIFFUSE_MULTIPLIER * ATTENUATION * LIGHT_COLOR;
-		SPECULAR_LIGHT += LIGHT_AREA_SPECULAR_MULTIPLIER * ATTENUATION * LIGHT_COLOR * SPECULAR_AMOUNT;
-	} else {
-		DIFFUSE_LIGHT += clamp(dot(NORMAL, LIGHT), 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;
-	}
 }
