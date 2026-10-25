@@ -54,4 +54,5 @@ enabled=PackedStringArray("res://addons/fmod/plugin.cfg", "res://addons/gdserial
 
 rendering_device/driver.windows="d3d12"
 anti_aliasing/quality/msaa_3d=1
+global_illumination/gi/use_half_resolution=true
 environment/volumetric_fog/volume_size=128

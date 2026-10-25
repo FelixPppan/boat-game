@@ -349,6 +349,15 @@ func add_lift(height: float) -> void:
 	_lift_request = maxf(_lift_request, height)
 
 
+## Which side the oar is on: +1 port (left), -1 starboard (right), 0 unknown
+## (no sensor yet, or keyboard play).
+## 桨在哪一舷:+1 左舷,-1 右舷,0 未知(还没有传感器数据或在用键盘)。
+func oar_side() -> float:
+	if _oar == null or not _oar.sensor_ready:
+		return 0.0
+	return _oar.side
+
+
 ## Extra exponential slowing (1/s) for this physics frame, e.g. from a zone
 ## that helps the player stop. Call every frame to keep it on.
 ## 本物理帧额外的指数减速(1/秒),例如帮玩家停船的区域。每帧调用才持续生效。
