@@ -6,6 +6,12 @@ extends CanvasLayer
 ## 太阳在关卡完成前不动,完成后慢慢转到对应角度并停住。
 
 @export var font_size: int = 40
+## {found} and {total} are replaced with the current memory counts.
+@export var message_text: String = "已找到 {found}/{total} 的记忆碎片"
+@export var final_message_text: String = "The final memory fragment has appeared. Follow the guide to find it."
+@export var message_font: Font
+@export var message_duration: float = 3.0
+@export_range(0.0, 0.5) var message_top_ratio: float = 0.12
 ## Debug shortcut: completes the next unfinished level.
 ## 调试快捷键:完成下一个还没完成的关卡。
 @export var debug_complete_key: Key = KEY_C
@@ -43,6 +49,7 @@ extends CanvasLayer
 @export_range(0.1, 45.0, 0.1) var moon_gone_at_sun_elevation: float = 7.5
 
 var _label: Label
+var _message_timer: Timer
 var _collected := 0
 var _total := 0
 var _targets: Array[Node] = []
@@ -52,12 +59,27 @@ var _sun_start_elevation: float
 
 
 func _ready() -> void:
+	var layout := Control.new()
+	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(layout)
 	_label = Label.new()
+	layout.add_child(_label)
 	_label.add_theme_font_size_override("font_size", font_size)
+	if message_font:
+		_label.add_theme_font_override("font", message_font)
 	_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	_label.add_theme_constant_override("outline_size", 8)
-	_label.position = Vector2(24, 16)
-	add_child(_label)
+	_label.anchor_top = message_top_ratio
+	_label.anchor_bottom = message_top_ratio
+	_label.anchor_right = 1.0
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_label.hide()
+	_message_timer = Timer.new()
+	_message_timer.one_shot = true
+	_message_timer.timeout.connect(_label.hide)
+	add_child(_message_timer)
 	if sun and not sun_stages.is_empty():
 		sun.rotation_degrees = sun_stages[0]
 	if sun:
@@ -91,6 +113,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _on_collected() -> void:
 	_collected += 1
 	_refresh()
+	_label.show()
+	_message_timer.start(message_duration)
 	_turn_sun()
 
 
@@ -131,4 +155,7 @@ static func _elevation(light: Node3D) -> float:
 
 
 func _refresh() -> void:
-	_label.text = "%d/%d" % [_collected, _total]
+	if _total > 0 and _collected == _total:
+		_label.text = final_message_text
+	else:
+		_label.text = message_text.format({"found": _collected, "total": _total})
