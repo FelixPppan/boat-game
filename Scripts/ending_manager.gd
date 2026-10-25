@@ -78,6 +78,16 @@ extends Node
 @export_range(0, 20, 1) var subtitle_glyph_spacing: int = 3
 @export_range(0, 20, 1) var subtitle_space_spacing: int = 2
 
+@export_group("Audio")
+## Happy ending track (e.g. Sea_of_Memories_Happy_Music.mp3). Leave empty to skip.
+@export var ending_music: AudioStream
+@export var ending_music_player: AudioStreamPlayer
+@export_range(-40.0, 6.0, 0.5) var ending_music_volume_db: float = -6.0
+## How many times to play the ending track (no infinite loop).
+@export_range(1, 10, 1) var ending_music_play_count: int = 2
+## Crossfade length between FMOD BGM and ending music.
+@export_range(0.5, 10.0, 0.1) var music_crossfade_duration: float = 3.0
+
 enum Phase { IDLE, RISE, CAROUSEL, SUBTITLES, WHITE, DONE }
 
 var _playing: bool = false
@@ -86,7 +96,9 @@ var _carousel_index: int = -1
 var _subtitle_index: int = -1
 var _boat_process_mode: Node.ProcessMode = Node.PROCESS_MODE_INHERIT
 var _tween: Tween
+var _music_fade_tween: Tween
 var _frame_size: Vector2 = Vector2(720, 540)
+var _ending_music_plays_left: int = 0
 
 
 func _ready() -> void:
@@ -138,6 +150,7 @@ func play_ending() -> void:
 	if subtitle:
 		subtitle.text = ""
 
+	_start_ending_music_crossfade()
 	_start_rise()
 
 
@@ -324,6 +337,80 @@ func _prepare_ui() -> void:
 	if end_label:
 		end_label.visible = false
 	_apply_subtitle_style()
+	_prepare_ending_music()
+
+
+func _prepare_ending_music() -> void:
+	if ending_music_player == null:
+		ending_music_player = AudioStreamPlayer.new()
+		ending_music_player.name = "EndingMusic"
+		add_child(ending_music_player)
+	if ending_music != null:
+		ending_music_player.stream = ending_music
+	if ending_music_player.stream is AudioStreamMP3:
+		(ending_music_player.stream as AudioStreamMP3).loop = false
+	if not ending_music_player.finished.is_connected(_on_ending_music_finished):
+		ending_music_player.finished.connect(_on_ending_music_finished)
+	ending_music_player.volume_db = -40.0
+	ending_music_player.stop()
+	_ending_music_plays_left = 0
+
+
+func _start_ending_music_crossfade() -> void:
+	_prepare_ending_music()
+	if ending_music_player == null or ending_music_player.stream == null:
+		return
+
+	if _music_fade_tween:
+		_music_fade_tween.kill()
+		_music_fade_tween = null
+
+	var bgm := _get_fmod_bgm_emitter()
+	var fade := maxf(music_crossfade_duration, 0.05)
+	_music_fade_tween = create_tween()
+	_music_fade_tween.set_parallel(true)
+	_music_fade_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	if bgm != null:
+		var from_vol := 0.2
+		if "volume" in bgm:
+			from_vol = float(bgm.volume)
+		_music_fade_tween.tween_property(bgm, "volume", 0.0, fade).from(from_vol)
+
+	_ending_music_plays_left = maxi(ending_music_play_count, 1)
+	ending_music_player.volume_db = -40.0
+	if not ending_music_player.playing:
+		ending_music_player.play()
+		_ending_music_plays_left -= 1
+	_music_fade_tween.tween_property(
+		ending_music_player, "volume_db", ending_music_volume_db, fade
+	).from(-40.0)
+
+	_music_fade_tween.set_parallel(false)
+	_music_fade_tween.tween_callback(_stop_fmod_bgm.bind(bgm))
+
+
+func _on_ending_music_finished() -> void:
+	if _ending_music_plays_left <= 0 or ending_music_player == null:
+		return
+	_ending_music_plays_left -= 1
+	ending_music_player.play()
+
+
+func _get_fmod_bgm_emitter() -> Node:
+	var mgr := get_node_or_null("/root/MusicManager")
+	if mgr == null:
+		return null
+	return mgr.get_node_or_null("FmodEventEmitter2D")
+
+
+func _stop_fmod_bgm(bgm: Node) -> void:
+	if bgm == null:
+		return
+	if bgm.has_method("stop"):
+		bgm.call("stop")
+	elif "volume" in bgm:
+		bgm.volume = 0.0
 
 
 func _setup_photo_mask() -> void:
