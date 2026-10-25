@@ -1,7 +1,8 @@
 extends MeshInstance3D
 
 var shader_material
-var time: float = 0
+var time: float = 0.0
+var speed: float = 1.0
 
 
 # Displacement map
@@ -39,7 +40,7 @@ func gerstner(wavelength: float, steepness: float, dir: Vector2, p: Vector3):
 	
 	var d: Vector2 = dir.normalized() # Direction
 	
-	var f: float = k * d.dot(Vector2(p.x, p.z)) - c * time; # Function inside sin/cos wave	
+	var f: float = k * d.dot(Vector2(p.x, p.z)) - c * time * speed; # Function inside sin/cos wave	
 	var a: float = steepness / k;
 	
 	var wave_noise: float = 0 # = texture(noise, p.xz / 100.0 + dir * time * 0.01).r * noise_intensity - noise_intensity / 2.0;
@@ -65,3 +66,4 @@ func _process(delta: float) -> void:
 	time += delta
 	if shader_material != null:
 		shader_material.set_shader_parameter("time", time)
+		shader_material.set_shader_parameter("speed", speed)

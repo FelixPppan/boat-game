@@ -119,8 +119,12 @@ var _trail
 var _recorder
 
 # Used for rotating camera in circle with RigidBody3D buoyancy movements
-var dif_z
-var dif_rot_y
+var dif_pos_camera
+var dif_rot_camera
+
+# Used for keeping track of changes in rotation/position caused by buoyancy
+var dif_pos_boat
+var old_rot_boat 
 
 func _ready() -> void:
 	# The boat floats: there is no notion of ground, so use floating mode
@@ -159,8 +163,10 @@ func _ready() -> void:
 	add_child(_recorder)
 	
 	# Used for rotating camera in circle with RigidBody3D buoyancy movements
-	dif_z = camera.position.z - rigidBody.position.z # Radius of circle
-	dif_rot_y = camera.rotation.y - rigidBody.rotation.y # Rotation angle
+	dif_pos_camera = camera.position - rigidBody.position # dif_pos.z = Radius of circle
+	dif_rot_camera = camera.rotation - rigidBody.rotation # dif_rot.y = Rotation angle
+	
+	old_rot_boat = rigidBody.rotation
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -265,13 +271,12 @@ func _follow_wave_height(delta: float) -> void:
 	var t := 1.0 - exp(-wave_follow_smoothing * delta)
 	global_position.y = lerpf(global_position.y, target_y, t)
 
-func _process(delta: float) -> void:
+func _process(delta: float) -> void:	
 	# Rotation & movement of camera to follow buoyancy movements
 	var angle = rigidBody.rotation.y
-	
-	camera.position.x = lerp(camera.position.x, dif_z * sin(angle), camera_speed * delta)
-	camera.position.z = lerp(camera.position.z, dif_z * cos(angle), camera_speed * delta)
-	camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_y + rigidBody.rotation.y, camera_speed * delta)
+	camera.position.x = lerp(camera.position.x, dif_pos_camera.z * sin(angle), camera_speed * delta)
+	camera.position.z = lerp(camera.position.z, dif_pos_camera.z * cos(angle), camera_speed * delta)
+	camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_camera.y + rigidBody.rotation.y, camera_speed * delta)
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
 ## the wave offset on its local Y so the view does not bob.
