@@ -85,21 +85,4 @@ func complete() -> void:
 	visible = false
 	set_deferred("monitoring", false)
 	print("[%s] %s complete!" % [get_parent().name, level_name])
-	_show_banner()
 	collected.emit()
-
-
-func _show_banner() -> void:
-	var layer := CanvasLayer.new()
-	var label := Label.new()
-	label.text = level_name
-	var font := load("res://font/SueEllenFrancisco-Regular.ttf") as Font
-	if font:
-		label.add_theme_font_override("font", font)
-	label.add_theme_font_size_override("font_size", 56)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	label.offset_top = 80.0
-	layer.add_child(label)
-	get_tree().root.add_child(layer)
-	get_tree().create_timer(3.0).timeout.connect(layer.queue_free)
