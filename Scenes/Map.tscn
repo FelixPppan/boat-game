@@ -3275,6 +3275,9 @@ shape = SubResource("RestoredManual_BoxShape3D_idxhk")
 transform = Transform3D(0.9998108, 0.0017278008, 0.019004464, -0.0017208457, 0.9999952, -0.00039704144, -0.01899989, 0.0003649965, 0.9998074, -0.0007343292, 0.73730373, 0.03774643)
 shape = SubResource("RestoredManual_BoxShape3D_xbb3b")
 
+[node name="Reef54" type="StaticBody3D" parent="Level1/Reefs"]
+transform = Transform3D(0.9068713, 0.019985959, 0.42090893, -0.019044098, 0.9997979, -0.0064412206, -0.42095256, -0.0021754578, 0.9070686, 12.590614, 0.23715535, -2.0187054)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef54" unique_id=146068098]
 transform = Transform3D(1.0000014, 6.604823e-07, 1.4901161e-07, 6.4389315e-07, 1.0000421, 1.5902333e-07, -2.861023e-06, -1.6018748e-07, 1.0000011, -0.014391899, 0.5803361, -0.06823349)
 shape = SubResource("RestoredManual_BoxShape3D_mop80")
