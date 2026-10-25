@@ -77,9 +77,9 @@
 [ext_resource type="AudioStream" uid="uid://cywl8dvrflhip" path="res://voiceandmusic/confuse.mp3" id="45_71s36"]
 [ext_resource type="PackedScene" uid="uid://tuxcy8oojhmv" path="res://model/Sail Ship.glb" id="45_r3cnf"]
 [ext_resource type="PackedScene" uid="uid://bvyv1bxwefl4a" path="res://model/map_level4family/Apartment building.glb" id="45_wh5hq"]
+[ext_resource type="AudioStream" uid="uid://31n1sgf8fixp" path="res://voiceandmusic/family.mp3" id="52_0j2y5"]
 [ext_resource type="PackedScene" uid="uid://kcyu4d3gvxjl" path="res://model/map_level2/level2.glb" id="64_u5e0s"]
 [ext_resource type="PackedScene" uid="uid://2fsk8td0hat6" path="res://model/map_level2/level22.glb" id="65_0almc"]
-[ext_resource type="PackedScene" uid="uid://c7hxdehtle2p" path="res://model/map_level2/Merry go 'round.glb" id="69_ln8i8"]
 [ext_resource type="PackedScene" uid="uid://dlyok8y1skwca" path="res://model/map_level2/Slide.glb" id="70_2gtna"]
 [ext_resource type="PackedScene" uid="uid://dkcieq73d2eq3" path="res://model/map_level2/frisbee.glb" id="71_rwrj0"]
 [ext_resource type="Script" uid="uid://dfncud42ya5h3" path="res://Scenes/fragment_guide.gd" id="76_n8xla"]
@@ -99,10 +99,10 @@ subdivide_width = 1536
 subdivide_depth = 1536
 orientation = 1
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_0j2y5"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_b0dg3"]
 viewport_path = NodePath("../DisplacementViewport")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_4r6w0"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_0j2y5"]
 viewport_path = NodePath("../FoamViewport")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_6kno7"]
@@ -119,7 +119,7 @@ colors = PackedColorArray(0.99999994, 0.7012559, 0.06396211, 1, 0, 0.8199626, 0.
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_trail"]
 gradient = SubResource("Gradient_trail")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hh2hw"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4r6w0"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("4_dms03")
@@ -131,8 +131,8 @@ shader_parameter/metallic = 0.0
 shader_parameter/roughness = 0.10000000475
 shader_parameter/noise = SubResource("NoiseTexture2D_uylqo")
 shader_parameter/noise_intensity = 0.400000019
-shader_parameter/displacement_map = SubResource("ViewportTexture_0j2y5")
-shader_parameter/foam_map = SubResource("ViewportTexture_4r6w0")
+shader_parameter/displacement_map = SubResource("ViewportTexture_b0dg3")
+shader_parameter/foam_map = SubResource("ViewportTexture_0j2y5")
 shader_parameter/size_of_plane = 150.0
 shader_parameter/time = 0.0
 shader_parameter/trail_world_center = Vector2(0, 0)
@@ -364,8 +364,14 @@ shader_parameter/shadow_lift = 0.70000003325
 shader_parameter/noise_texture = SubResource("NoiseTexture3D_08pfp")
 shader_parameter/dissolve_factor = 1.0
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_0j2y5"]
+radius = 4.0
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_3ytfl"]
-radius = 0.555
+radius = 4.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_4r6w0"]
+radius = 4.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hdaqt"]
 height = 12.65
@@ -374,8 +380,14 @@ radius = 4.782
 [sub_resource type="SphereShape3D" id="SphereShape3D_sa8uj"]
 radius = 4.951
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_hh2hw"]
+radius = 4.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ofxdy"]
+radius = 4.0
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_mtfgr"]
-radius = 0.33212817
+radius = 4.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_1"]
 
@@ -605,369 +617,49 @@ size = Vector3(100, 4, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_ew"]
 size = Vector3(1, 4, 100)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ofxdy"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_r7pbr"]
-material = SubResource("StandardMaterial3D_ofxdy")
-size = Vector3(1.21, 2.69, 3.36)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1urx5"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_wngbx"]
-material = SubResource("StandardMaterial3D_1urx5")
-size = Vector3(0.86, 3.1, 3.87)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bu5gs"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_i2lx1"]
-material = SubResource("StandardMaterial3D_bu5gs")
-size = Vector3(0.97, 3.01, 3.22)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xe3ev"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_nhu4q"]
-material = SubResource("StandardMaterial3D_xe3ev")
-size = Vector3(1.08, 2.17, 2.11)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u737w"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_n2qkd"]
-material = SubResource("StandardMaterial3D_u737w")
-size = Vector3(1.52, 2.75, 2.41)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0knc5"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_0a12v"]
-material = SubResource("StandardMaterial3D_0knc5")
-size = Vector3(1.37, 3.28, 3.76)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bro66"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_cur1b"]
-material = SubResource("StandardMaterial3D_bro66")
-size = Vector3(1.47, 1.9, 2.07)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4kwcx"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_mdnuw"]
-material = SubResource("StandardMaterial3D_4kwcx")
-size = Vector3(1.04, 3.01, 3.86)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1dmxh"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_ihybg"]
-material = SubResource("StandardMaterial3D_1dmxh")
-size = Vector3(1.03, 3.24, 2.7)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ewb3w"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_gwm47"]
-material = SubResource("StandardMaterial3D_ewb3w")
-size = Vector3(1.22, 1.93, 1.78)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghsuk"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_c6ixj"]
-material = SubResource("StandardMaterial3D_ghsuk")
-size = Vector3(1.33, 3.11, 2.95)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ecsdq"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_fdxpn"]
-material = SubResource("StandardMaterial3D_ecsdq")
-size = Vector3(1.39, 2.97, 1.7)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cmpsr"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_iaoaq"]
-material = SubResource("StandardMaterial3D_cmpsr")
-size = Vector3(1.58, 1.86, 2.14)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bhnkl"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_2o871"]
-material = SubResource("StandardMaterial3D_bhnkl")
-size = Vector3(1.09, 2.43, 3.9)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1st2a"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_ba86g"]
-material = SubResource("StandardMaterial3D_1st2a")
-size = Vector3(1.55, 3.04, 1.83)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_re2mn"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_0g3gy"]
-material = SubResource("StandardMaterial3D_re2mn")
-size = Vector3(0.85, 3.3, 2)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wxdqk"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_v12m4"]
-material = SubResource("StandardMaterial3D_wxdqk")
-size = Vector3(0.98, 2.26, 3.27)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xhd04"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_1evi2"]
-material = SubResource("StandardMaterial3D_xhd04")
-size = Vector3(1.29, 2.2, 2.59)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eh7ty"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_igx3h"]
-material = SubResource("StandardMaterial3D_eh7ty")
-size = Vector3(1.03, 2.91, 3.95)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qoro0"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_omsev"]
-material = SubResource("StandardMaterial3D_qoro0")
-size = Vector3(1.43, 2.08, 2.87)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ey1b0"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_c1qnu"]
-material = SubResource("StandardMaterial3D_ey1b0")
-size = Vector3(0.96, 2.36, 3.01)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jfxsi"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_620kk"]
-material = SubResource("StandardMaterial3D_jfxsi")
-size = Vector3(1.36, 2.11, 2.83)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wgtgr"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_k1x2i"]
-material = SubResource("StandardMaterial3D_wgtgr")
-size = Vector3(1.16, 2.09, 3.82)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n0fjk"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_5o42g"]
-material = SubResource("StandardMaterial3D_n0fjk")
-size = Vector3(0.89, 2.56, 2.41)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u02gm"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_06hq5"]
-material = SubResource("StandardMaterial3D_u02gm")
-size = Vector3(1.53, 3.31, 3.67)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_256w3"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_jd78v"]
-material = SubResource("StandardMaterial3D_256w3")
-size = Vector3(1.49, 2.85, 2.26)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uck13"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_meems"]
-material = SubResource("StandardMaterial3D_uck13")
-size = Vector3(0.83, 3.04, 2.97)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hgxsv"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_2cphl"]
-material = SubResource("StandardMaterial3D_hgxsv")
-size = Vector3(1.6, 2.78, 2.51)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k8jkb"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_bhdo1"]
-material = SubResource("StandardMaterial3D_k8jkb")
-size = Vector3(0.95, 2.34, 3.05)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_63svj"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_f3sxs"]
-material = SubResource("StandardMaterial3D_63svj")
-size = Vector3(1.52, 2.68, 3.94)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hkau8"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_cydvj"]
-material = SubResource("StandardMaterial3D_hkau8")
-size = Vector3(1.14, 3.38, 2.81)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pc0i2"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_02kgq"]
-material = SubResource("StandardMaterial3D_pc0i2")
-size = Vector3(1.03, 2.67, 2.77)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qive3"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_cmt7r"]
-material = SubResource("StandardMaterial3D_qive3")
-size = Vector3(1.12, 2.8, 3.41)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4s3j"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_to8ay"]
-material = SubResource("StandardMaterial3D_b4s3j")
-size = Vector3(1.47, 2.51, 2.89)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0lcnk"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_0aads"]
-material = SubResource("StandardMaterial3D_0lcnk")
-size = Vector3(1.47, 2.51, 2.89)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bnaod"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_wr1os"]
-material = SubResource("StandardMaterial3D_bnaod")
-size = Vector3(1.03, 1.98, 3.59)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytpxy"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_2xeje"]
-material = SubResource("StandardMaterial3D_ytpxy")
-size = Vector3(1.42, 1.82, 2.97)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mmgrh"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_ye0b6"]
-material = SubResource("StandardMaterial3D_mmgrh")
-size = Vector3(0.89, 2.72, 2.32)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ixg6x"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_wi3wp"]
-material = SubResource("StandardMaterial3D_ixg6x")
-size = Vector3(1.02, 2.46, 2.33)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xdwc7"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_vj77h"]
-material = SubResource("StandardMaterial3D_xdwc7")
-size = Vector3(0.87, 2.43, 3.26)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6fbpr"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_qdpg2"]
-material = SubResource("StandardMaterial3D_6fbpr")
-size = Vector3(0.89, 2.02, 2.64)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5wwfi"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_8ap2n"]
-material = SubResource("StandardMaterial3D_5wwfi")
-size = Vector3(1.23, 2.44, 3.68)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a7p2e"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_4cgm3"]
-material = SubResource("StandardMaterial3D_a7p2e")
-size = Vector3(1.15, 2.75, 2.22)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ju4d6"]
-albedo_color = Color(0.32, 0.3, 0.3, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_bfqix"]
-material = SubResource("StandardMaterial3D_ju4d6")
-size = Vector3(1.32, 2.2, 3.65)
-
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_btfpm"]
 size = Vector3(0.2109375, 2.0424805, 4.189331)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hh2hw"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ofxdy"]
+material = SubResource("StandardMaterial3D_hh2hw")
+size = Vector3(1.21, 2.69, 3.36)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_unnkj"]
 size = Vector3(0.7314453, 2.0064087, 3.559082)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r7pbr"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_1urx5"]
+material = SubResource("StandardMaterial3D_r7pbr")
+size = Vector3(0.86, 3.1, 3.87)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_w1wla"]
 size = Vector3(0.26904297, 2.960083, 2.7805176)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wngbx"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_bu5gs"]
+material = SubResource("StandardMaterial3D_wngbx")
+size = Vector3(0.97, 3.01, 3.22)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_gouir"]
 size = Vector3(0.6694336, 2.333496, 2.8948975)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i2lx1"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_xe3ev"]
+material = SubResource("StandardMaterial3D_i2lx1")
+size = Vector3(1.08, 2.17, 2.11)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_midaf"]
 size = Vector3(0.89172363, 1.4276123, 6.553711)
@@ -978,107 +670,427 @@ size = Vector3(1.0075684, 6.552368, 1)
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_inrm0"]
 size = Vector3(3.9580688, 2.8583984, 0.7077637)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nhu4q"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_u737w"]
+material = SubResource("StandardMaterial3D_nhu4q")
+size = Vector3(1.52, 2.75, 2.41)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_ooefh"]
 size = Vector3(0.2397461, 2.1842346, 4.029785)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n2qkd"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_0knc5"]
+material = SubResource("StandardMaterial3D_n2qkd")
+size = Vector3(1.37, 3.28, 3.76)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_xenyc"]
 size = Vector3(0.61035156, 1.513794, 3.0746155)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0a12v"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_bro66"]
+material = SubResource("StandardMaterial3D_0a12v")
+size = Vector3(1.47, 1.9, 2.07)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_gism2"]
 size = Vector3(3.1489258, 1, 0.6833496)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cur1b"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_4kwcx"]
+material = SubResource("StandardMaterial3D_cur1b")
+size = Vector3(1.04, 3.01, 3.86)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_dew4t"]
 size = Vector3(0.63720703, 1.9633789, 3.0640259)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdnuw"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_1dmxh"]
+material = SubResource("StandardMaterial3D_mdnuw")
+size = Vector3(1.03, 3.24, 2.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ihybg"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ewb3w"]
+material = SubResource("StandardMaterial3D_ihybg")
+size = Vector3(1.22, 1.93, 1.78)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_0thhy"]
 size = Vector3(0.23968506, 2.5565186, 4.311096)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gwm47"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ghsuk"]
+material = SubResource("StandardMaterial3D_gwm47")
+size = Vector3(1.33, 3.11, 2.95)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_e1414"]
 size = Vector3(0.22825623, 2.6036377, 4.14563)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c6ixj"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ecsdq"]
+material = SubResource("StandardMaterial3D_c6ixj")
+size = Vector3(1.39, 2.97, 1.7)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_ftv8u"]
 size = Vector3(0.25375748, 2.395996, 4.0210876)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fdxpn"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_cmpsr"]
+material = SubResource("StandardMaterial3D_fdxpn")
+size = Vector3(1.58, 1.86, 2.14)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_kg2av"]
 size = Vector3(0.22045898, 2.6582642, 2.6228333)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iaoaq"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_bhnkl"]
+material = SubResource("StandardMaterial3D_iaoaq")
+size = Vector3(1.09, 2.43, 3.9)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_fod30"]
 size = Vector3(0.20465088, 2.3778076, 2.25589)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2o871"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_1st2a"]
+material = SubResource("StandardMaterial3D_2o871")
+size = Vector3(1.55, 3.04, 1.83)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ba86g"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_re2mn"]
+material = SubResource("StandardMaterial3D_ba86g")
+size = Vector3(0.85, 3.3, 2)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_3uvog"]
 size = Vector3(0.2512207, 1.8652344, 3.958252)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0g3gy"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wxdqk"]
+material = SubResource("StandardMaterial3D_0g3gy")
+size = Vector3(0.98, 2.26, 3.27)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_2x0ns"]
 size = Vector3(0.32666016, 2.4803467, 2.6020508)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v12m4"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_xhd04"]
+material = SubResource("StandardMaterial3D_v12m4")
+size = Vector3(1.29, 2.2, 2.59)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_h33un"]
 size = Vector3(0.2319336, 2.0292969, 2.0635986)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1evi2"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_eh7ty"]
+material = SubResource("StandardMaterial3D_1evi2")
+size = Vector3(1.03, 2.91, 3.95)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_bt7y8"]
 size = Vector3(2.8856812, 2.6761475, 0.6994629)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_igx3h"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_qoro0"]
+material = SubResource("StandardMaterial3D_igx3h")
+size = Vector3(1.43, 2.08, 2.87)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_4vts1"]
 size = Vector3(0.24438477, 2.380371, 2.5830078)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_omsev"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ey1b0"]
+material = SubResource("StandardMaterial3D_omsev")
+size = Vector3(0.96, 2.36, 3.01)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1qnu"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_jfxsi"]
+material = SubResource("StandardMaterial3D_c1qnu")
+size = Vector3(1.36, 2.11, 2.83)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_620kk"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_wgtgr"]
+material = SubResource("StandardMaterial3D_620kk")
+size = Vector3(1.16, 2.09, 3.82)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_680g3"]
 size = Vector3(0.21902466, 1.4365234, 2.6958008)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k1x2i"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_n0fjk"]
+material = SubResource("StandardMaterial3D_k1x2i")
+size = Vector3(0.89, 2.56, 2.41)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_wyj0h"]
 size = Vector3(0.23373413, 2.8475952, 4.088318)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5o42g"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_u02gm"]
+material = SubResource("StandardMaterial3D_5o42g")
+size = Vector3(1.53, 3.31, 3.67)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_ntyjw"]
 size = Vector3(0.18450928, 2.8354492, 4.0788574)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_06hq5"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_256w3"]
+material = SubResource("StandardMaterial3D_06hq5")
+size = Vector3(1.49, 2.85, 2.26)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_2wh32"]
 size = Vector3(0.9246826, 2.6516724, 3.4347534)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jd78v"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_uck13"]
+material = SubResource("StandardMaterial3D_jd78v")
+size = Vector3(0.83, 3.04, 2.97)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_45crg"]
 size = Vector3(0.2567749, 2.3461304, 4.1643066)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_meems"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_hgxsv"]
+material = SubResource("StandardMaterial3D_meems")
+size = Vector3(1.6, 2.78, 2.51)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_hdson"]
 size = Vector3(1, 2.7440186, 3.5026245)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2cphl"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_k8jkb"]
+material = SubResource("StandardMaterial3D_2cphl")
+size = Vector3(0.95, 2.34, 3.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bhdo1"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_63svj"]
+material = SubResource("StandardMaterial3D_bhdo1")
+size = Vector3(1.52, 2.68, 3.94)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_k66bb"]
 size = Vector3(0.23565674, 1.7348633, 3.5449219)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f3sxs"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_hkau8"]
+material = SubResource("StandardMaterial3D_f3sxs")
+size = Vector3(1.14, 3.38, 2.81)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_i0clt"]
 size = Vector3(0.24072266, 2.5428772, 4.6967773)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cydvj"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_pc0i2"]
+material = SubResource("StandardMaterial3D_cydvj")
+size = Vector3(1.03, 2.67, 2.77)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_idxhk"]
 size = Vector3(0.9023514, 2.5789795, 3.5344543)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02kgq"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_qive3"]
+material = SubResource("StandardMaterial3D_02kgq")
+size = Vector3(1.12, 2.8, 3.41)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cmt7r"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_b4s3j"]
+material = SubResource("StandardMaterial3D_cmt7r")
+size = Vector3(1.47, 2.51, 2.89)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_xbb3b"]
 size = Vector3(0.20324707, 2.4746094, 4.019287)
 
-[sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_mop80"]
-size = Vector3(0.23144531, 3.2612305, 4.240967)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_to8ay"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_0lcnk"]
+material = SubResource("StandardMaterial3D_to8ay")
+size = Vector3(1.47, 2.51, 2.89)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_m5nte"]
 size = Vector3(0.27427673, 3.7817383, 4.589966)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0aads"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_bnaod"]
+material = SubResource("StandardMaterial3D_0aads")
+size = Vector3(1.03, 1.98, 3.59)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_8p2kq"]
 size = Vector3(4.0614624, 4.3241577, 0.2668457)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wr1os"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ytpxy"]
+material = SubResource("StandardMaterial3D_wr1os")
+size = Vector3(1.42, 1.82, 2.97)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_ex8gk"]
 size = Vector3(0.2685547, 3.6607056, 2.3880615)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xeje"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_mmgrh"]
+material = SubResource("StandardMaterial3D_2xeje")
+size = Vector3(0.89, 2.72, 2.32)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_xxo5k"]
 size = Vector3(0.21246338, 3.500061, 2.2850342)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ye0b6"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ixg6x"]
+material = SubResource("StandardMaterial3D_ye0b6")
+size = Vector3(1.02, 2.46, 2.33)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_jre5i"]
 size = Vector3(0.31591797, 1.8945923, 0.4677124)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wi3wp"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_xdwc7"]
+material = SubResource("StandardMaterial3D_wi3wp")
+size = Vector3(0.87, 2.43, 3.26)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_1xlpn"]
 size = Vector3(0.20898438, 3.329956, 2.7648392)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vj77h"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_6fbpr"]
+material = SubResource("StandardMaterial3D_vj77h")
+size = Vector3(0.89, 2.02, 2.64)
 
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_8jovo"]
 size = Vector3(0.21728516, 3.456787, 4.7054443)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qdpg2"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_5wwfi"]
+material = SubResource("StandardMaterial3D_qdpg2")
+size = Vector3(1.23, 2.44, 3.68)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_bjqgx"]
 size = Vector3(0.5305176, 2.1540527, 3.4187012)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ap2n"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_a7p2e"]
+material = SubResource("StandardMaterial3D_8ap2n")
+size = Vector3(1.15, 2.75, 2.22)
+
 [sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_uqv50"]
 size = Vector3(2.682495, 2.171875, 0.2265625)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4cgm3"]
+albedo_color = Color(0.32, 0.3, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_ju4d6"]
+material = SubResource("StandardMaterial3D_4cgm3")
+size = Vector3(1.32, 2.2, 3.65)
+
+[sub_resource type="BoxShape3D" id="RestoredManual_BoxShape3D_mop80"]
+size = Vector3(0.23144531, 3.2612305, 4.240967)
 
 [node name="Map" type="Node3D" unique_id=1130590225]
 
@@ -1087,7 +1099,7 @@ size = Vector3(2.682495, 2.171875, 0.2265625)
 [node name="WaterPlane" parent="Water" unique_id=1136176607 instance=ExtResource("1_00287")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("QuadMesh_ejakq")
-surface_material_override/0 = SubResource("ShaderMaterial_hh2hw")
+surface_material_override/0 = SubResource("ShaderMaterial_4r6w0")
 script = ExtResource("2_ngcqm")
 
 [node name="DisplacementViewport" type="SubViewport" parent="Water" unique_id=1844021646]
@@ -1149,13 +1161,13 @@ script = ExtResource("15_passenger")
 [node name="ghostwithoutbone" parent="Boat/RigidBody3D/Model/GhostSeat" unique_id=1352133115 instance=ExtResource("9_uylqo")]
 transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
 
-[node name="left_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 1770877031) index="1" unique_id=117643734]
+[node name="left_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 672248459) index="1" unique_id=146559431]
 material_override = ExtResource("9_bjq7f")
 
-[node name="white_body" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 1770877031) index="2" unique_id=572450861]
+[node name="white_body" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 672248459) index="2" unique_id=1688189662]
 material_override = ExtResource("9_bjq7f")
 
-[node name="right_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=2126417965]
+[node name="right_hand" parent="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=867505476]
 material_override = ExtResource("9_bjq7f")
 
 [node name="Collision Cube" type="CollisionShape3D" parent="Boat/RigidBody3D" unique_id=312301187]
@@ -1285,7 +1297,7 @@ visible = false
 transform = Transform3D(0.375, 0, 0, 0, 0.375, 0, 0, 0, 0.375, -1.3963623, 0.27441406, -7.654358)
 script = ExtResource("15_nr4qj")
 
-[node name="ColorMaterial" parent="MemoryRock1/paw" index="0" unique_id=1759268493]
+[node name="ColorMaterial" parent="MemoryRock1/paw" index="0" unique_id=1081280659]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock1" unique_id=1364764406]
@@ -1316,8 +1328,7 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock1/Area3D" unique_id=208269092]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
-shape = SubResource("SphereShape3D_3ytfl")
+shape = SubResource("SphereShape3D_0j2y5")
 
 [node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="MemoryRock1" unique_id=791976488]
 event_name = "event:/chimes"
@@ -1331,11 +1342,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.198837, 0.1830988, 32.9227
 transform = Transform3D(0.605, 0, 0, 0, 0.605, 0, 0, 0, 0.605, -1.203392, 0, -7.9060345)
 script = ExtResource("15_nr4qj")
 
-[node name="Tennis_Ball" parent="MemoryRock2/Tennis Ball" index="0" unique_id=705171066]
+[node name="Tennis_Ball" parent="MemoryRock2/Tennis Ball" index="0" unique_id=1380859345]
 material_override = ExtResource("19_t5mar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock2" unique_id=586251355]
-transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
+transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.1869774, 0.19086695, -7.954958)
 shape = SubResource("CylinderShape3D_8q6pl")
 
 [node name="FogVolume" type="FogVolume" parent="MemoryRock2" unique_id=601661895]
@@ -1362,7 +1373,6 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock2/Area3D" unique_id=2136460324]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
 shape = SubResource("SphereShape3D_3ytfl")
 
 [node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="MemoryRock2" unique_id=1639883068]
@@ -1402,7 +1412,7 @@ shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
 
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock3" unique_id=838525271]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595409, -2.6265545, -2.668127)
 
 [node name="Area3D" type="Area3D" parent="MemoryRock3" unique_id=2092863899 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2098649, -1.8020693, -7.2452636)
@@ -1419,8 +1429,7 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock3/Area3D" unique_id=1047763873]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
-shape = SubResource("SphereShape3D_3ytfl")
+shape = SubResource("SphereShape3D_4r6w0")
 
 [node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="MemoryRock3" unique_id=587725882]
 event_name = "event:/chimes"
@@ -1434,34 +1443,33 @@ transform = Transform3D(-0.6196549, 0, 0.7848744, 0, 1, 0, -0.7848744, 0, -0.619
 transform = Transform3D(2.045, 0, 0, 0, 2.045, 0, 0, 0, 2.045, -1.4589539, 0.7876282, -7.6241455)
 visible = false
 
-[node name="House & Car" parent="MemoryRock4" unique_id=321613720 node_paths=PackedStringArray("rumble_sound", "reveal_camera", "boat", "camera_start", "camera_via", "camera_end") instance=ExtResource("18_x5akl")]
+[node name="House & Car" parent="MemoryRock4" unique_id=321613720 node_paths=PackedStringArray("reveal_camera", "boat", "camera_start", "camera_via", "camera_end", "rumble_sound") instance=ExtResource("18_x5akl")]
 transform = Transform3D(0.7391074, 0.15409511, 0, -0.15409511, 0.7391074, 0, 0, 0, 0.755, -3.471405, -4.682953, -5.5317993)
 script = ExtResource("99_house_emerge")
 clearance = 0.15
-rumble_sound = NodePath("FmodEventEmitter3D")
 reveal_camera = NodePath("../../HouseRevealCamera")
 boat = NodePath("../../Boat")
 camera_start = NodePath("../HouseCameraPath/Start")
 camera_via = NodePath("../HouseCameraPath/Via")
 camera_end = NodePath("../HouseCameraPath/End")
 camera_transition = 5.0
+rumble_sound = NodePath("FmodEventEmitter3D")
 
 [node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="MemoryRock4/House & Car" unique_id=995219813]
-event_name = "event:/rumblesound"
 event_guid = "{0d565c69-9bc3-4216-8cd7-f367b16b2b1d}"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock4" unique_id=760499140]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8856297, 0.19086695, -5.8233833)
 shape = SubResource("CylinderShape3D_hdaqt")
 
 [node name="FogVolume" type="FogVolume" parent="MemoryRock4" unique_id=2034506341]
-transform = Transform3D(2.3814287, 0, 0, 0, 2.325717, 0, 1.1920929e-07, 0, 1.6539133, -2.2061768, 0.50575995, -8.308094)
+transform = Transform3D(2.3814287, 0, 0, 0, 2.325717, 0, 1.1920929e-07, 0, 1.6539133, -3.3964596, 0.50575995, -5.9701195)
 size = Vector3(4.8101635, 4.4262466, 6.96994)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
 
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock4" unique_id=855456378]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5904007, 0.6116042, 0.3826294)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.016527, 0.6116042, 3.059616)
 
 [node name="Area3D" type="Area3D" parent="MemoryRock4" unique_id=1239911234 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, -1.6969743, -0.6813779, -7.2563467)
@@ -1479,8 +1487,19 @@ white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 require_all_levels = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock4/Area3D" unique_id=1648518539]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5247936, -1.0993719, 1.1920128)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9642534, -1.0993719, 1.7486458)
 shape = SubResource("SphereShape3D_sa8uj")
+
+[node name="HouseCameraPath" type="Node3D" parent="MemoryRock4" unique_id=1548934912]
+
+[node name="Start" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=283478068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 10, 28)
+
+[node name="Via" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=1547444998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 8, 24)
+
+[node name="End" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=2063100820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 7, 20)
 
 [node name="MemoryRock5" type="StaticBody3D" parent="." unique_id=141288193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.017066956, 0.1830988, -27.710064)
@@ -1489,7 +1508,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.017066956, 0.1830988, -27.7
 transform = Transform3D(7.9615397, -2.1624942, 0, 2.1624942, 7.9615397, 0, 0, 0, 8.25, -1.535, 0.25, -7.836)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube" parent="MemoryRock5/textFragment1" index="0" unique_id=152349557]
+[node name="Cube" parent="MemoryRock5/textFragment1" index="0" unique_id=1664762645]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock5" unique_id=1198924378]
@@ -1530,8 +1549,8 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock5/Area3D" unique_id=1898648901]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, -0.17323494, 0, 0.07874298)
-shape = SubResource("SphereShape3D_3ytfl")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17323494, 0, 0.36338806)
+shape = SubResource("SphereShape3D_hh2hw")
 
 [node name="MemoryRock6" type="StaticBody3D" parent="." unique_id=12231760]
 transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.99997544, 28.969154, 0.1830988, 7.1245613)
@@ -1540,7 +1559,7 @@ transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.
 transform = Transform3D(8.5, 0, 0, 0, 8.5, 0, 0, 0, 8.5, -1.5079994, 2.126709, -7.453)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube_001" parent="MemoryRock6/textFragment2" index="0" unique_id=142460512]
+[node name="Cube_001" parent="MemoryRock6/textFragment2" index="0" unique_id=1850156094]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock6" unique_id=1240784343]
@@ -1581,8 +1600,8 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock6/Area3D" unique_id=251825905]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 1.1969643, 0, -1.6293845)
-shape = SubResource("SphereShape3D_3ytfl")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16767502, 0, 0.36632925)
+shape = SubResource("SphereShape3D_ofxdy")
 
 [node name="MemoryRock7" type="StaticBody3D" parent="." unique_id=376441770]
 transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.99997544, -9.377222, 0.1830988, 19.03482)
@@ -1591,7 +1610,7 @@ transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.
 transform = Transform3D(8.250009, 0, 2.9802322e-08, 0, 8.25, 0, -2.9802322e-08, 0, 8.250009, -2.2490215, 1.4048767, -7.641428)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube_005" parent="MemoryRock7/textFragment3" index="0" unique_id=511780973]
+[node name="Cube_005" parent="MemoryRock7/textFragment3" index="0" unique_id=1479293]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock7" unique_id=1779151001]
@@ -1632,19 +1651,8 @@ first_person_hands = NodePath("../../FirstPersonHands")
 white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock7/Area3D" unique_id=753129865]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 1.1145039, 0, -1.8718319)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012239456, 0, -0.11933708)
 shape = SubResource("SphereShape3D_mtfgr")
-
-[node name="HouseCameraPath" type="Node3D" parent="MemoryRock4" unique_id=1548934912]
-
-[node name="Start" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=283478068]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 10, 28)
-
-[node name="Via" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=1547444998]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 8, 24)
-
-[node name="End" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=2063100820]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 7, 20)
 
 [node name="HouseRevealCamera" type="Camera3D" parent="." unique_id=1240949095]
 fov = 60.0
@@ -1954,6 +1962,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 0
 
 [node name="MemoryContent" parent="MemoryOverlay/FourthMemory/SubViewport" unique_id=1572660638 instance=ExtResource("16_memory")]
+ambient_audio = ExtResource("52_0j2y5")
 reveal_delay = 0.0
 
 [node name="Background" parent="MemoryOverlay/FourthMemory/SubViewport/MemoryContent/Memorylayers" parent_id_path=PackedInt32Array(1572660638, 917358702) index="0" unique_id=190211426]
@@ -2405,10 +2414,14 @@ size = Vector3(1.21, 2.69, 3.36)
 [node name="Root Scene" parent="Level1/Reefs/Reef01" unique_id=1109494001 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(-0.009351909, 0, -0.999956, 0, 1, 0, 0.999956, 0, -0.009351909, 0, -0.5273144, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef01" unique_id=2119573004]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef01" unique_id=210189860]
+transform = Transform3D(1, 0, -1.4901161e-07, 0, 1, 0, 1.4901161e-07, 0, 1, -0.0078125, 0.52124023, -0.018615723)
+shape = SubResource("RestoredManual_BoxShape3D_btfpm")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef01" unique_id=1309453260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34500003, 0)
 visible = false
-mesh = SubResource("BoxMesh_r7pbr")
+mesh = SubResource("BoxMesh_ofxdy")
 metadata/_reef_generated = true
 
 [node name="Reef02" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390002]
@@ -2419,10 +2432,14 @@ size = Vector3(0.86, 3.1, 3.87)
 [node name="Root Scene" parent="Level1/Reefs/Reef02" unique_id=1605911806 instance=ExtResource("40_0j5ni")]
 transform = Transform3D(-0.06674141, 0.5926023, -2.4278326, 0.15679386, 2.424906, 0.5875779, 2.4941864, -0.13658133, -0.10190332, 0, -0.58361816, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef02" unique_id=1640054571]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef02" unique_id=1312081353]
+transform = Transform3D(0.9677155, 0.2518758, -0.009250939, -0.25159475, 0.96752775, 0.024292454, 0.015068978, -0.021179989, 0.9996623, 0.23809433, 0.39840722, -0.015787125)
+shape = SubResource("RestoredManual_BoxShape3D_unnkj")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef02" unique_id=1295516687]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54999995, 0)
 visible = false
-mesh = SubResource("BoxMesh_wngbx")
+mesh = SubResource("BoxMesh_1urx5")
 metadata/_reef_generated = true
 
 [node name="Reef05" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390005]
@@ -2433,10 +2450,14 @@ size = Vector3(0.97, 3.01, 3.22)
 [node name="RandomFence" parent="Level1/Reefs/Reef05" unique_id=1452682692 instance=ExtResource("42_j7f23")]
 transform = Transform3D(-0.12174639, 0.24499346, -1.1169852, 0.08321399, 1.1222178, 0.23707119, 1.1405057, -0.05572716, -0.13653293, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef05" unique_id=2145172499]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef05" unique_id=940157049]
+transform = Transform3D(0.9833631, 0.15254952, -0.09871154, -0.15360378, 0.98812747, -0.00312638, 0.097062096, 0.018236645, 0.99511665, 0.2973957, 0.93101287, -0.91832733)
+shape = SubResource("RestoredManual_BoxShape3D_w1wla")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef05" unique_id=1530203123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
 visible = false
-mesh = SubResource("BoxMesh_i2lx1")
+mesh = SubResource("BoxMesh_bu5gs")
 metadata/_reef_generated = true
 
 [node name="Reef11" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390011]
@@ -2447,10 +2468,14 @@ size = Vector3(1.08, 2.17, 2.11)
 [node name="Root Scene" parent="Level1/Reefs/Reef11" unique_id=1879568619 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(1.7632937, 0.46450233, 1.710273, 0.091401786, 2.3855548, -0.74214125, -1.7698704, 0.58597386, 1.6655915, 0, -0.11425781, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef11" unique_id=1038180819]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef11" unique_id=1865327040]
+transform = Transform3D(0.67735696, 0.24291843, -0.6943911, -0.28228986, 0.9574764, 0.05958845, 0.6793388, 0.15565711, 0.7171267, 0.011219025, 0.6024932, 0.40176392)
+shape = SubResource("RestoredManual_BoxShape3D_gouir")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef11" unique_id=191850525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08500004, 0)
 visible = false
-mesh = SubResource("BoxMesh_nhu4q")
+mesh = SubResource("BoxMesh_xe3ev")
 metadata/_reef_generated = true
 
 [node name="Reef12" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390012]
@@ -2467,10 +2492,22 @@ transform = Transform3D(-0.79378265, -1.6526325, 0.15593275, -0.47582036, 0.3921
 [node name="Thorny Vine" parent="Level1/Reefs/Reef12/Thorny Vine/Thorny Vine" unique_id=259808779 instance=ExtResource("44_2gi4k")]
 transform = Transform3D(-0.7715103, -1.2310538, 0.079394534, -0.5153233, 0.40670013, 1.2984844, -1.1208205, 0.6603988, -0.6516591, 1.7110476, -0.93333817, -8.604233)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef12" unique_id=1862120290]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=2025598156]
+transform = Transform3D(0.76372105, 0, -0.64554644, 0, 1, 0, 0.64554644, 0, 0.76372105, 0.36757755, 0.21380615, -0.66453743)
+shape = SubResource("RestoredManual_BoxShape3D_midaf")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=1282083653]
+transform = Transform3D(0.6207676, 0.2715008, -0.7354828, -0.5081378, 0.853734, -0.11372937, 0.59702903, 0.44432613, 0.66793054, -17.372753, 2.105697, -16.785385)
+shape = SubResource("RestoredManual_BoxShape3D_fmc0y")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=1848375917]
+transform = Transform3D(0.9935038, 0, -0.113800734, 0, 1, 0, 0.113800734, 0, 0.9935038, 6.0170326, 0.9291992, -28.321407)
+shape = SubResource("RestoredManual_BoxShape3D_inrm0")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef12" unique_id=1154904627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 visible = false
-mesh = SubResource("BoxMesh_n2qkd")
+mesh = SubResource("BoxMesh_u737w")
 metadata/_reef_generated = true
 
 [node name="Reef13" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390013]
@@ -2481,10 +2518,14 @@ size = Vector3(1.37, 3.28, 3.76)
 [node name="Root Scene" parent="Level1/Reefs/Reef13" unique_id=288148833 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(0.026516676, 0.48717034, -0.8729043, 0.05167086, 0.87137616, 0.48788705, 0.9983121, -0.058040783, -0.0020665526, 0, -0.3464502, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef13" unique_id=2081060072]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef13" unique_id=14661697]
+transform = Transform3D(0.86641085, 0.49025768, 0.09474057, -0.49928573, 0.84813404, 0.17714994, 0.006496787, -0.20078714, 0.9796126, 0.52082443, 0.5326912, -0.14359093)
+shape = SubResource("RestoredManual_BoxShape3D_ooefh")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef13" unique_id=2084171843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)
 visible = false
-mesh = SubResource("BoxMesh_0a12v")
+mesh = SubResource("BoxMesh_0knc5")
 metadata/_reef_generated = true
 
 [node name="Reef15" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390015]
@@ -2495,10 +2536,14 @@ size = Vector3(1.47, 1.9, 2.07)
 [node name="RandomFence" parent="Level1/Reefs/Reef15" unique_id=155099280 instance=ExtResource("40_0j5ni")]
 transform = Transform3D(-0.0567302, 0.50371194, -2.0636578, 0.13327478, 2.06117, 0.4994412, 2.1200585, -0.11609413, -0.08661782, 0, -0.58361816, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef15" unique_id=952208501]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef15" unique_id=1010542050]
+transform = Transform3D(0.9754293, 0.21894252, -0.024536133, -0.21864355, 0.97569996, 0.014298156, 0.027070224, -0.008582123, 0.99959683, 0.25889206, 0.46054026, -0.06851196)
+shape = SubResource("RestoredManual_BoxShape3D_xenyc")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef15" unique_id=1100771602]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.050000012, 0)
 visible = false
-mesh = SubResource("BoxMesh_cur1b")
+mesh = SubResource("BoxMesh_bro66")
 metadata/_reef_generated = true
 
 [node name="Reef16" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390016]
@@ -2509,10 +2554,14 @@ size = Vector3(1.04, 3.01, 3.86)
 [node name="Root Scene" parent="Level1/Reefs/Reef16" unique_id=1399368815 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(-1.7724425, 0.5280769, 1.6821362, 0.7643985, 2.3795552, 0.05841648, -1.5887549, 0.5557449, -1.8485143, -0.9196625, 0, 0.0624218)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef16" unique_id=1317497363]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef16" unique_id=774726855]
+transform = Transform3D(0.7624533, 0.17243221, -0.6236648, -0.05930073, 0.9784035, 0.1980153, 0.64434004, -0.11399424, 0.75621134, -0.50385284, 1.2656505, 0.6044693)
+shape = SubResource("RestoredManual_BoxShape3D_gism2")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef16" unique_id=1227231137]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
 visible = false
-mesh = SubResource("BoxMesh_mdnuw")
+mesh = SubResource("BoxMesh_4kwcx")
 metadata/_reef_generated = true
 
 [node name="Reef18" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390018]
@@ -2523,10 +2572,14 @@ size = Vector3(1.03, 3.24, 2.7)
 [node name="Root Scene" parent="Level1/Reefs/Reef18" unique_id=2025511192 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(1.1842407, -0.21688882, -2.1910129, -0.0477293, 2.484727, -0.27176136, 2.201204, 0.1705625, 1.1728647, 0, -0.51519775, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef18" unique_id=1463353509]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef18" unique_id=259414266]
+transform = Transform3D(0.85138875, -0.007076115, 0.5245018, 0.0281896, 0.999081, -0.03227953, -0.5237914, 0.042267412, 0.8508057, -0.2080555, 0.47955474, -0.16622543)
+shape = SubResource("RestoredManual_BoxShape3D_dew4t")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef18" unique_id=1163780798]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0)
 visible = false
-mesh = SubResource("BoxMesh_ihybg")
+mesh = SubResource("BoxMesh_1dmxh")
 metadata/_reef_generated = true
 
 [node name="Reef19" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390019]
@@ -2537,10 +2590,10 @@ size = Vector3(1.22, 1.93, 1.78)
 [node name="Rose bush" parent="Level1/Reefs/Reef19" unique_id=613359892 instance=ExtResource("43_0j5ni")]
 transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0.08035278, 0, -0.03824997)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef19" unique_id=207915236]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef19" unique_id=310913723]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035000026, 0)
 visible = false
-mesh = SubResource("BoxMesh_gwm47")
+mesh = SubResource("BoxMesh_ewb3w")
 metadata/_reef_generated = true
 
 [node name="Reef20" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390020]
@@ -2551,10 +2604,14 @@ size = Vector3(1.33, 3.11, 2.95)
 [node name="Root Scene" parent="Level1/Reefs/Reef20" unique_id=1768962132 instance=ExtResource("40_ai02y")]
 transform = Transform3D(0.015532434, 0, 0.99987936, 0, 1, 0, -0.99987936, 0, 0.015532434, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef20" unique_id=1565008355]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef20" unique_id=797746690]
+transform = Transform3D(0.99999976, -2.5331974e-07, 0, -8.940697e-08, 1, 2.9802322e-08, -1.1920929e-07, -2.9802322e-08, 0.9999999, 0.074622154, 0.7782593, 0.08182526)
+shape = SubResource("RestoredManual_BoxShape3D_0thhy")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef20" unique_id=419188231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55499995, 0)
 visible = false
-mesh = SubResource("BoxMesh_c6ixj")
+mesh = SubResource("BoxMesh_ghsuk")
 metadata/_reef_generated = true
 
 [node name="Reef21" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390021]
@@ -2565,10 +2622,14 @@ size = Vector3(1.39, 2.97, 1.7)
 [node name="Root Scene" parent="Level1/Reefs/Reef21" unique_id=1976642287 instance=ExtResource("40_ai02y")]
 transform = Transform3D(-0.04867518, 0, -0.9988146, 0, 1, 0, 0.9988146, 0, -0.04867518, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef21" unique_id=2135586460]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef21" unique_id=267592054]
+transform = Transform3D(0.9992863, 0, -0.037775993, 0, 1, 0, 0.037775993, 0, 0.9992863, -0.030485153, 0.80181885, 0.015727997)
+shape = SubResource("RestoredManual_BoxShape3D_e1414")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef21" unique_id=1390607568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.485, 0)
 visible = false
-mesh = SubResource("BoxMesh_fdxpn")
+mesh = SubResource("BoxMesh_ecsdq")
 metadata/_reef_generated = true
 
 [node name="Reef23" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390023]
@@ -2579,10 +2640,14 @@ size = Vector3(1.58, 1.86, 2.14)
 [node name="Root Scene" parent="Level1/Reefs/Reef23" unique_id=1860009840 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(0.025913686, 0, 0.99966425, 0, 1, 0, -0.99966425, 0, 0.025913686, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef23" unique_id=718498433]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef23" unique_id=529199863]
+transform = Transform3D(0.99942786, -0.0047751814, -0.033474565, 0.004579589, 0.9999708, -0.005921647, 0.03350222, 0.005765274, 0.9994216, 0.019496918, 0.69785404, 0.01677227)
+shape = SubResource("RestoredManual_BoxShape3D_ftv8u")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef23" unique_id=1925043142]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06999999, 0)
 visible = false
-mesh = SubResource("BoxMesh_iaoaq")
+mesh = SubResource("BoxMesh_cmpsr")
 metadata/_reef_generated = true
 
 [node name="Reef24" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390024]
@@ -2593,10 +2658,14 @@ size = Vector3(1.09, 2.43, 3.9)
 [node name="fence half2" parent="Level1/Reefs/Reef24" unique_id=1995538021 instance=ExtResource("41_g3s50")]
 transform = Transform3D(-0.0113577545, 0, 0.9999355, 0, 1, 0, -0.9999355, 0, -0.0113577545, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef24" unique_id=1852765713]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef24" unique_id=914649234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007461548, 0.76864624, 0.71213436)
+shape = SubResource("RestoredManual_BoxShape3D_kg2av")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef24" unique_id=1028170358]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21500003, 0)
 visible = false
-mesh = SubResource("BoxMesh_2o871")
+mesh = SubResource("BoxMesh_bhnkl")
 metadata/_reef_generated = true
 
 [node name="Reef25" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390025]
@@ -2607,10 +2676,14 @@ size = Vector3(1.55, 3.04, 1.83)
 [node name="RandomFence" parent="Level1/Reefs/Reef25" unique_id=1705684624 instance=ExtResource("41_g3s50")]
 transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0.00965409, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef25" unique_id=627582673]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef25" unique_id=230658858]
+transform = Transform3D(0.99999934, 0.0010914678, 3.9041042e-06, -0.001091467, 0.9999737, 0.0071942285, 3.9488077e-06, -0.007194236, 0.99997395, 0.007972717, 0.6889038, 0.6016197)
+shape = SubResource("RestoredManual_BoxShape3D_fod30")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef25" unique_id=414247577]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
 visible = false
-mesh = SubResource("BoxMesh_ba86g")
+mesh = SubResource("BoxMesh_1st2a")
 metadata/_reef_generated = true
 
 [node name="Reef26" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390026]
@@ -2621,10 +2694,10 @@ size = Vector3(0.85, 3.3, 2)
 [node name="Thorny Vine" parent="Level1/Reefs/Reef26" unique_id=1880726697 instance=ExtResource("44_2gi4k")]
 transform = Transform3D(0.54, 0, -1.4901161e-08, 0, 0.54, 0, 1.4901161e-08, 0, 0.54, 0, 0.5534668, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef26" unique_id=370606781]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef26" unique_id=1086861742]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 visible = false
-mesh = SubResource("BoxMesh_0g3gy")
+mesh = SubResource("BoxMesh_re2mn")
 metadata/_reef_generated = true
 
 [node name="Reef28" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390028]
@@ -2635,10 +2708,14 @@ size = Vector3(0.98, 2.26, 3.27)
 [node name="Root Scene" parent="Level1/Reefs/Reef28" unique_id=246232657 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(0.009116739, 0, -0.99995834, 0, 1, 0, 0.99995834, 0, 0.009116739, 0, 0.13, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef28" unique_id=1128098028]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef28" unique_id=1163869363]
+transform = Transform3D(0.9999978, 2.8312206e-07, -3.2782555e-07, 1.937151e-07, 0.9999811, -3.0100346e-06, 8.940697e-07, 2.95043e-06, 0.99997544, 0.026519775, 1.2515383, -0.09950638)
+shape = SubResource("RestoredManual_BoxShape3D_3uvog")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef28" unique_id=966879923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 visible = false
-mesh = SubResource("BoxMesh_v12m4")
+mesh = SubResource("BoxMesh_wxdqk")
 metadata/_reef_generated = true
 
 [node name="Reef29" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390029]
@@ -2649,10 +2726,14 @@ size = Vector3(1.29, 2.2, 2.59)
 [node name="fence half" parent="Level1/Reefs/Reef29" unique_id=722243369 instance=ExtResource("42_j7f23")]
 transform = Transform3D(-0.10586643, 0.2130378, -0.9712915, 0.07235999, 0.9758415, 0.20614886, 0.9917441, -0.0484584, -0.11872429, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef29" unique_id=512172695]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef29" unique_id=869215218]
+transform = Transform3D(0.9853393, 0.14031743, -0.09704362, -0.13654822, 0.9896343, 0.044481266, 0.10227923, -0.030577976, 0.9942857, 0.26446152, 0.74514055, -0.80476)
+shape = SubResource("RestoredManual_BoxShape3D_2x0ns")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef29" unique_id=2140112316]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000024, 0)
 visible = false
-mesh = SubResource("BoxMesh_1evi2")
+mesh = SubResource("BoxMesh_xhd04")
 metadata/_reef_generated = true
 
 [node name="Reef30" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390030]
@@ -2663,10 +2744,14 @@ size = Vector3(1.03, 2.91, 3.95)
 [node name="fence half" parent="Level1/Reefs/Reef30" unique_id=474582724 instance=ExtResource("42_j7f23")]
 transform = Transform3D(0.0030616522, -9.88555e-09, -0.9999953, -9.778887e-09, 1, -1.4901161e-08, 0.9999953, 3.6470251e-09, 0.0030617118, 3.8146973e-06, -0.4938525, 9.536743e-06)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef30" unique_id=1579900511]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef30" unique_id=59290032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0012226105, 0.51464844, -1.0077362)
+shape = SubResource("RestoredManual_BoxShape3D_h33un")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef30" unique_id=484615716]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45500004, 0)
 visible = false
-mesh = SubResource("BoxMesh_igx3h")
+mesh = SubResource("BoxMesh_eh7ty")
 metadata/_reef_generated = true
 
 [node name="Reef32" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390032]
@@ -2677,10 +2762,14 @@ size = Vector3(1.43, 2.08, 2.87)
 [node name="Root Scene" parent="Level1/Reefs/Reef32" unique_id=538371261 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(2.2454848, 0.43275538, -1.0102106, -0.3562389, 2.4605565, 0.26221275, 1.0396614, -0.09156739, 2.2717223, 0.378973, 0, 0.19681358)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef32" unique_id=2013494820]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef32" unique_id=606570760]
+transform = Transform3D(0.8939469, 0.018448794, -0.44780824, 0.031212524, 0.99416393, 0.10326693, 0.44709864, -0.10629134, 0.88815486, 0.26250267, 0.84625024, 0.0070972443)
+shape = SubResource("RestoredManual_BoxShape3D_bt7y8")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef32" unique_id=1053536799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03999996, 0)
 visible = false
-mesh = SubResource("BoxMesh_omsev")
+mesh = SubResource("BoxMesh_qoro0")
 metadata/_reef_generated = true
 
 [node name="Reef35" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390035]
@@ -2691,10 +2780,14 @@ size = Vector3(0.96, 2.36, 3.01)
 [node name="fence half2" parent="Level1/Reefs/Reef35" unique_id=1439791087 instance=ExtResource("41_g3s50")]
 transform = Transform3D(0.027571082, 0, -0.9996197, 0, 1, 0, 0.9996197, 0, 0.027571082, 0.05341339, 0, 0.7649002)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef35" unique_id=231009896]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef35" unique_id=275650518]
+transform = Transform3D(1.0000004, 2.803281e-07, 0, 2.0116568e-07, 1.0000026, 0, -4.61936e-07, -2.30968e-07, 1, 0.076768875, 0.69018936, 0.0515213)
+shape = SubResource("RestoredManual_BoxShape3D_4vts1")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef35" unique_id=1177086496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17999995, 0)
 visible = false
-mesh = SubResource("BoxMesh_c1qnu")
+mesh = SubResource("BoxMesh_ey1b0")
 metadata/_reef_generated = true
 
 [node name="Reef37" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390037]
@@ -2705,10 +2798,10 @@ size = Vector3(1.36, 2.11, 2.83)
 [node name="Rose bush" parent="Level1/Reefs/Reef37" unique_id=1484352856 instance=ExtResource("43_0j5ni")]
 transform = Transform3D(0.12398578, 0.01589081, -4.283758e-05, -0.015890809, 0.123983994, -0.0006711962, -4.283758e-05, 0.00067119626, 0.12499817, -0.010662079, 0.013916016, 0.25239563)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef37" unique_id=2019087625]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef37" unique_id=80742287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.054999948, 0)
 visible = false
-mesh = SubResource("BoxMesh_620kk")
+mesh = SubResource("BoxMesh_jfxsi")
 metadata/_reef_generated = true
 
 [node name="Reef38" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390038]
@@ -2720,10 +2813,10 @@ size = Vector3(1.16, 2.09, 3.82)
 [node name="RandomFence" parent="Level1/Reefs/Reef38" unique_id=504695590 instance=ExtResource("40_ai02y")]
 transform = Transform3D(0.0178623, 0, 1.1498612, 0, 1.15, 0, -1.1498612, 0, 0.0178623, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef38" unique_id=1345541759]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef38" unique_id=478027703]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044999957, 0)
 visible = false
-mesh = SubResource("BoxMesh_k1x2i")
+mesh = SubResource("BoxMesh_wgtgr")
 metadata/_reef_generated = true
 
 [node name="Reef40" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390040]
@@ -2734,10 +2827,14 @@ size = Vector3(0.89, 2.56, 2.41)
 [node name="fence half2" parent="Level1/Reefs/Reef40" unique_id=1545100919 instance=ExtResource("41_g3s50")]
 transform = Transform3D(-0.102998674, 0.08176239, -0.99131536, -0.13858627, 0.9857157, 0.09569978, 0.98497975, 0.14723966, -0.09019628, 0.0006542206, -1.0410156, 0.6229706)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef40" unique_id=2019430762]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef40" unique_id=193573741]
+transform = Transform3D(0.99468887, 0, -0.10292795, 0, 1, 0, 0.10292795, 0, 0.99468887, 0.199893, 0.21826172, 0.12990761)
+shape = SubResource("RestoredManual_BoxShape3D_680g3")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef40" unique_id=2003798685]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27999997, 0)
 visible = false
-mesh = SubResource("BoxMesh_5o42g")
+mesh = SubResource("BoxMesh_n0fjk")
 metadata/_reef_generated = true
 
 [node name="Reef41" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390041]
@@ -2748,10 +2845,14 @@ size = Vector3(1.53, 3.31, 3.67)
 [node name="Root Scene" parent="Level1/Reefs/Reef41" unique_id=1296700647 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(0.0033265948, 0, -0.9999944, 0, 1, 0, 0.9999944, 0, 0.0033265948, 0, -0.2574463, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef41" unique_id=1401588299]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef41" unique_id=741339259]
+transform = Transform3D(0.9999994, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 0.9999994, -0.006969452, 0.47061157, -0.026727676)
+shape = SubResource("RestoredManual_BoxShape3D_wyj0h")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef41" unique_id=1483313790]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.655, 0)
 visible = false
-mesh = SubResource("BoxMesh_06hq5")
+mesh = SubResource("BoxMesh_u02gm")
 metadata/_reef_generated = true
 
 [node name="Reef42" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390042]
@@ -2762,10 +2863,14 @@ size = Vector3(1.49, 2.85, 2.26)
 [node name="Root Scene" parent="Level1/Reefs/Reef42" unique_id=1787382996 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(-0.0012128763, 0.009716709, 0.9999521, -0.2048189, 0.97875124, -0.009759129, -0.9787992, -0.20482092, 0.00080306455, 0, 0.42499995, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef42" unique_id=208973196]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef42" unique_id=1760206950]
+transform = Transform3D(0.99993604, 0.011225058, 0.0013458729, -0.011224833, 0.9715395, 0.2366126, 0.0013471283, -0.23661414, 0.97161764, 0.017457962, 1.0745687, -0.23793983)
+shape = SubResource("RestoredManual_BoxShape3D_ntyjw")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef42" unique_id=1991468553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42499995, 0)
 visible = false
-mesh = SubResource("BoxMesh_jd78v")
+mesh = SubResource("BoxMesh_256w3")
 metadata/_reef_generated = true
 
 [node name="Reef43" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390043]
@@ -2776,10 +2881,14 @@ size = Vector3(0.83, 3.04, 2.97)
 [node name="RandomFence" parent="Level1/Reefs/Reef43" unique_id=130142051 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, -0.85346246, -2.035351, 0.67386997, 1.9154302, 0, -0.11425781, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef43" unique_id=873297471]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef43" unique_id=1087087733]
+transform = Transform3D(0.6773811, 0.1958606, -0.7090791, -0.29084975, 0.95667183, -0.013597459, 0.6756928, 0.215446, 0.7049972, -0.03577614, 0.7519323, 0.47493362)
+shape = SubResource("RestoredManual_BoxShape3D_2wh32")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef43" unique_id=108663106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
 visible = false
-mesh = SubResource("BoxMesh_meems")
+mesh = SubResource("BoxMesh_uck13")
 metadata/_reef_generated = true
 
 [node name="Reef44" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390044]
@@ -2790,10 +2899,14 @@ size = Vector3(1.6, 2.78, 2.51)
 [node name="Root Scene" parent="Level1/Reefs/Reef44" unique_id=931138228 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(0.03750673, 0, 0.99929637, 0, 1, 0, -0.99929637, 0, 0.03750673, 0, -1.0494995, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef44" unique_id=206786392]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef44" unique_id=748821335]
+transform = Transform3D(0.99957776, 0, -0.029058278, 0, 1, 0, 0.029058278, 0, 0.99957776, -0.0007324219, -0.083343506, 0.009670258)
+shape = SubResource("RestoredManual_BoxShape3D_45crg")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef44" unique_id=745837588]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0)
 visible = false
-mesh = SubResource("BoxMesh_2cphl")
+mesh = SubResource("BoxMesh_hgxsv")
 metadata/_reef_generated = true
 
 [node name="Reef46" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390046]
@@ -2804,10 +2917,14 @@ size = Vector3(0.95, 2.34, 3.05)
 [node name="RandomFence" parent="Level1/Reefs/Reef46" unique_id=2019866304 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, -0.85346246, -2.035351, 0.67386997, 1.9154302, 0, -0.11425781, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef46" unique_id=1833286579]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef46" unique_id=1249742847]
+transform = Transform3D(0.6355366, 0.23890328, -0.734179, -0.34480798, 0.93864745, 0.006957352, 0.69079715, 0.248729, 0.6789206, -0.05835724, 0.6652989, 0.50805664)
+shape = SubResource("RestoredManual_BoxShape3D_hdson")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef46" unique_id=360229175]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16999996, 0)
 visible = false
-mesh = SubResource("BoxMesh_bhdo1")
+mesh = SubResource("BoxMesh_k8jkb")
 metadata/_reef_generated = true
 
 [node name="Reef48" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390048]
@@ -2818,10 +2935,12 @@ size = Vector3(1.52, 2.68, 3.94)
 [node name="RandomFence" parent="Level1/Reefs/Reef48" unique_id=443250914 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(-0.0107547, 0, -1.1499494, 0, 1.15, 0, 1.1499494, 0, -0.0107547, 0, -0.5273144, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef48" unique_id=1682065246]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef48" unique_id=1715597132]
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef48" unique_id=1738548527]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34000003, 0)
 visible = false
-mesh = SubResource("BoxMesh_f3sxs")
+mesh = SubResource("BoxMesh_63svj")
 metadata/_reef_generated = true
 
 [node name="Reef50" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390050]
@@ -2832,10 +2951,14 @@ size = Vector3(1.14, 3.38, 2.81)
 [node name="RandomFence" parent="Level1/Reefs/Reef50" unique_id=1973500356 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(-0.00794912, 0, -0.8499626, 0, 0.85, 0, 0.8499626, 0, -0.00794912, 0, -0.5273144, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef50" unique_id=1069361937]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef50" unique_id=2030012103]
+transform = Transform3D(1, 0, -2.3841858e-07, 0, 1, 0, 2.3841858e-07, 0, 1, 0.0005187988, 0.36743164, 0.0019264221)
+shape = SubResource("RestoredManual_BoxShape3D_k66bb")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef50" unique_id=1353056640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69000006, 0)
 visible = false
-mesh = SubResource("BoxMesh_cydvj")
+mesh = SubResource("BoxMesh_hkau8")
 metadata/_reef_generated = true
 
 [node name="Reef51" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390051]
@@ -2846,10 +2969,14 @@ size = Vector3(1.03, 2.67, 2.77)
 [node name="Rose bush" parent="Level1/Reefs/Reef51" unique_id=1973833083 instance=ExtResource("43_0j5ni")]
 transform = Transform3D(0.11444033, 0.011245204, -0.001395449, -0.011245202, 0.11096071, -0.0280405, -0.0013954826, 0.028040498, 0.111520275, -0.29727173, 0.09814453, -2.594718)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef51" unique_id=1476158391]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef51" unique_id=1164033382]
+transform = Transform3D(0.9984535, 0, -0.055499673, 0, 1, 0, 0.055499673, 0, 0.9984535, 0.09983826, 0.6025543, 2.8291235)
+shape = SubResource("RestoredManual_BoxShape3D_i0clt")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef51" unique_id=1890585827]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33500004, 0)
 visible = false
-mesh = SubResource("BoxMesh_02kgq")
+mesh = SubResource("BoxMesh_pc0i2")
 metadata/_reef_generated = true
 
 [node name="Reef52" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390052]
@@ -2860,10 +2987,14 @@ size = Vector3(1.12, 2.8, 3.41)
 [node name="RandomFence" parent="Level1/Reefs/Reef52" unique_id=789087078 instance=ExtResource("41_2gi4k")]
 transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, -0.85346246, -2.035351, 0.67386997, 1.9154302, 0, -0.11425781, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef52" unique_id=2042274902]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef52" unique_id=1141362036]
+transform = Transform3D(0.6568518, 0.29381716, -0.694461, -0.38385582, 0.9229868, 0.027446702, 0.64903307, 0.2485463, 0.71904606, 0.018112183, 0.75971335, 0.41152096)
+shape = SubResource("RestoredManual_BoxShape3D_idxhk")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef52" unique_id=914913335]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39999998, 0)
 visible = false
-mesh = SubResource("BoxMesh_cmt7r")
+mesh = SubResource("BoxMesh_qive3")
 metadata/_reef_generated = true
 
 [node name="Reef53" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390053]
@@ -2882,16 +3013,20 @@ size = Vector3(1.47, 2.51, 2.89)
 [node name="Root Scene" parent="Level1/Reefs/Reef53/Reef53" unique_id=14950319 instance=ExtResource("40_ai02y")]
 transform = Transform3D(-0.022456795, 0, 0.9997479, 0, 1, 0, -0.9997479, 0, -0.022456795, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53/Reef53" unique_id=1361650917]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53/Reef53" unique_id=1559771836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
 visible = false
-mesh = SubResource("BoxMesh_to8ay")
+mesh = SubResource("BoxMesh_b4s3j")
 metadata/_reef_generated = true
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53" unique_id=878017334]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef53" unique_id=1148465601]
+transform = Transform3D(0.9998108, 0.0017278008, 0.019004464, -0.0017208457, 0.9999952, -0.00039704144, -0.01899989, 0.0003649965, 0.9998074, -0.0007343292, 0.73730373, 0.03774643)
+shape = SubResource("RestoredManual_BoxShape3D_xbb3b")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53" unique_id=277702497]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
 visible = false
-mesh = SubResource("BoxMesh_0aads")
+mesh = SubResource("BoxMesh_0lcnk")
 metadata/_reef_generated = true
 
 [node name="Reef55" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390055]
@@ -2902,10 +3037,14 @@ size = Vector3(1.03, 1.98, 3.59)
 [node name="RandomFence" parent="Level1/Reefs/Reef55" unique_id=1386828936 instance=ExtResource("39_n5cpx")]
 transform = Transform3D(-0.00999207, 0, -1.0684054, 0, 1.0684524, 0, 1.0684054, 0, -0.00999207, 0, -0.5273144, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef55" unique_id=801002634]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef55" unique_id=199123574]
+transform = Transform3D(1.0000007, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1.0000007, -0.00038337708, 0.15698242, -0.012008667)
+shape = SubResource("RestoredManual_BoxShape3D_m5nte")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef55" unique_id=1959469706]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00999999, 0)
 visible = false
-mesh = SubResource("BoxMesh_wr1os")
+mesh = SubResource("BoxMesh_bnaod")
 metadata/_reef_generated = true
 
 [node name="Reef56" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390056]
@@ -2916,10 +3055,14 @@ size = Vector3(1.42, 1.82, 2.97)
 [node name="Root Scene" parent="Level1/Reefs/Reef56" unique_id=1704126861 instance=ExtResource("40_ai02y")]
 transform = Transform3D(0.99818826, 0, -0.06016594, 0, 1, 0, 0.06016594, 0, 0.99818826, 0, -0.673645, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef56" unique_id=1791036619]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef56" unique_id=21053642]
+transform = Transform3D(0.99888545, 0, -0.04719773, 0, 1, 0, 0.04719773, 0, 0.99888545, 0.03845215, -0.4756775, -0.0068511963)
+shape = SubResource("RestoredManual_BoxShape3D_8p2kq")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef56" unique_id=2017006729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.089999974, 0)
 visible = false
-mesh = SubResource("BoxMesh_2xeje")
+mesh = SubResource("BoxMesh_ytpxy")
 metadata/_reef_generated = true
 
 [node name="Reef58" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390058]
@@ -2930,10 +3073,14 @@ size = Vector3(0.89, 2.72, 2.32)
 [node name="RandomFence" parent="Level1/Reefs/Reef58" unique_id=1833764289 instance=ExtResource("41_g3s50")]
 transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0.00965409, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef58" unique_id=444994660]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef58" unique_id=2077125400]
+transform = Transform3D(1.0000015, 0, 1.4901161e-07, 0, 1, 0, -1.4901161e-07, 0, 1.0000015, 0.017097473, -0.18081665, 0.58926964)
+shape = SubResource("RestoredManual_BoxShape3D_ex8gk")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef58" unique_id=407420258]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
 visible = false
-mesh = SubResource("BoxMesh_ye0b6")
+mesh = SubResource("BoxMesh_mmgrh")
 metadata/_reef_generated = true
 
 [node name="Reef59" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390059]
@@ -2944,10 +3091,14 @@ size = Vector3(1.02, 2.46, 2.33)
 [node name="RandomFence" parent="Level1/Reefs/Reef59" unique_id=1290354928 instance=ExtResource("41_g3s50")]
 transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0.00965409, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef59" unique_id=257863294]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef59" unique_id=1370338250]
+transform = Transform3D(1.0000002, 0, 4.4703484e-07, 0, 1, 0, -4.4703484e-07, 0, 1.0000002, -0.0077056885, 0.4493103, 0.59760094)
+shape = SubResource("RestoredManual_BoxShape3D_xxo5k")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef59" unique_id=464585359]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.23000002, 0)
 visible = false
-mesh = SubResource("BoxMesh_wi3wp")
+mesh = SubResource("BoxMesh_ixg6x")
 metadata/_reef_generated = true
 
 [node name="Reef60" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390060]
@@ -2958,10 +3109,14 @@ size = Vector3(0.87, 2.43, 3.26)
 [node name="Thorny Vine" parent="Level1/Reefs/Reef60" unique_id=1716036992 instance=ExtResource("44_2gi4k")]
 transform = Transform3D(0.29425922, 0.23140764, 0.32386288, 0.035176672, 0.38605845, -0.3078093, -0.39648357, 0.20599613, 0.21305281, 0, 0.96936035, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef60" unique_id=1933668031]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef60" unique_id=1996839137]
+transform = Transform3D(0.8564422, 0, -0.5162446, 0, 1, 0, 0.5162446, 0, 0.8564422, -0.09805584, 0.44729614, -0.18724442)
+shape = SubResource("RestoredManual_BoxShape3D_jre5i")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef60" unique_id=1213695839]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21500003, 0)
 visible = false
-mesh = SubResource("BoxMesh_vj77h")
+mesh = SubResource("BoxMesh_xdwc7")
 metadata/_reef_generated = true
 
 [node name="Reef61" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390061]
@@ -2972,10 +3127,14 @@ size = Vector3(0.89, 2.02, 2.64)
 [node name="fence half" parent="Level1/Reefs/Reef61" unique_id=2117322307 instance=ExtResource("42_j7f23")]
 transform = Transform3D(-0.004184544, 0, -0.99999094, 0, 1, 0, 0.99999094, 0, -0.004184544, -0.037916183, 0, 0.64240646)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef61" unique_id=1984425906]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef61" unique_id=146687282]
+transform = Transform3D(0.9999996, -2.3394823e-06, 5.364418e-07, -9.685755e-08, 1.0000019, 9.275973e-07, 1.1920929e-07, -4.656613e-07, 0.99999905, -0.016317368, 0.2960577, -0.2603054)
+shape = SubResource("RestoredManual_BoxShape3D_1xlpn")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef61" unique_id=136640700]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00999999, 0)
 visible = false
-mesh = SubResource("BoxMesh_qdpg2")
+mesh = SubResource("BoxMesh_6fbpr")
 metadata/_reef_generated = true
 
 [node name="Reef64" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390064]
@@ -2986,10 +3145,14 @@ size = Vector3(1.23, 2.44, 3.68)
 [node name="RandomFence" parent="Level1/Reefs/Reef64" unique_id=875018548 instance=ExtResource("40_ai02y")]
 transform = Transform3D(0.0178623, 0, 1.1498612, 0, 1.15, 0, -1.1498612, 0, 0.0178623, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef64" unique_id=1648516219]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef64" unique_id=1166031739]
+transform = Transform3D(1.0000007, 0, -2.0861626e-07, 0, 1, 0, 2.0861626e-07, 0, 1.0000007, 0.024234772, 0.6080322, 0.04811859)
+shape = SubResource("RestoredManual_BoxShape3D_8jovo")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef64" unique_id=479108771]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22000003, 0)
 visible = false
-mesh = SubResource("BoxMesh_8ap2n")
+mesh = SubResource("BoxMesh_5wwfi")
 metadata/_reef_generated = true
 
 [node name="Reef66" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390066]
@@ -3000,10 +3163,14 @@ size = Vector3(1.15, 2.75, 2.22)
 [node name="RandomFence" parent="Level1/Reefs/Reef66" unique_id=1287736647 instance=ExtResource("40_0j5ni")]
 transform = Transform3D(-0.0567302, 0.50371194, -2.0636578, 0.13327478, 2.06117, 0.4994412, 2.1200585, -0.11609413, -0.08661782, 0, -0.58361816, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef66" unique_id=913147290]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef66" unique_id=550518146]
+transform = Transform3D(0.9704648, 0.24055545, 0.018199712, -0.24096422, 0.97020656, 0.025209181, -0.011593372, -0.028850093, 0.99951637, 0.2839222, 0.29428422, -0.08104324)
+shape = SubResource("RestoredManual_BoxShape3D_bjqgx")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef66" unique_id=1820848214]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 visible = false
-mesh = SubResource("BoxMesh_4cgm3")
+mesh = SubResource("BoxMesh_a7p2e")
 metadata/_reef_generated = true
 
 [node name="Reef68" type="StaticBody3D" parent="Level1/Reefs" unique_id=1720390068]
@@ -3014,11 +3181,22 @@ size = Vector3(1.32, 2.2, 3.65)
 [node name="fence half2" parent="Level1/Reefs/Reef68" unique_id=1736100860 instance=ExtResource("41_g3s50")]
 transform = Transform3D(0.9750089, 0.011652686, -0.22186014, -0.012112501, 0.9999264, -0.0007120252, 0.22183545, 0.0033815121, 0.9750783, 0.62280273, -0.37375486, 0.18073273)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef68" unique_id=1038673349]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef68" unique_id=869632677]
+transform = Transform3D(0.9719534, 0.0124253845, -0.23484467, -0.01292467, 0.9999163, -0.00058691343, 0.23481795, 0.003605742, 0.9720327, -0.062122345, 0.5864116, 0.027812004)
+shape = SubResource("RestoredManual_BoxShape3D_uqv50")
+
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef68" unique_id=145582391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000024, 0)
 visible = false
-mesh = SubResource("BoxMesh_bfqix")
+mesh = SubResource("BoxMesh_ju4d6")
 metadata/_reef_generated = true
+
+[node name="Reef54" type="StaticBody3D" parent="Level1/Reefs" unique_id=1792932807]
+transform = Transform3D(0.9068713, 0.019985959, 0.42090893, -0.019044098, 0.9997979, -0.0064412206, -0.42095256, -0.0021754578, 0.9070686, 12.590614, 0.23715535, -2.0187054)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef54" unique_id=146068098]
+transform = Transform3D(1.0000014, 6.604823e-07, 1.4901161e-07, 6.4389315e-07, 1.0000421, 1.5902333e-07, -2.861023e-06, -1.6018748e-07, 1.0000011, -0.014391899, 0.5803361, -0.06823349)
+shape = SubResource("RestoredManual_BoxShape3D_mop80")
 
 [node name="Level2" type="Node3D" parent="." unique_id=1720385021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 25)
@@ -3125,18 +3303,15 @@ script = ExtResource("21_jet")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.395, 0, -6.446)
 script = ExtResource("21_jet")
 
-[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041 node_paths=PackedStringArray("sun", "moon", "house_reveal")]
+[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041 node_paths=PackedStringArray("house_reveal", "sun", "moon")]
 script = ExtResource("24_progress")
 message_text = "Memory fragments found: {found}/{total}"
 message_font = ExtResource("41_earqg")
+house_reveal = NodePath("../MemoryRock4/House & Car")
 sun = NodePath("../Sun")
 sun_stages = Array[Vector3]([Vector3(38, 95, 54), Vector3(0, 94, 52), Vector3(-17, 94, 51), Vector3(-45, 101.6, 40)])
 sun_turn_duration = 4.1
 moon = NodePath("../Moon")
-house_reveal = NodePath("../MemoryRock4/House & Car")
-
-[node name="Merry go \'round" parent="." unique_id=1442212598 instance=ExtResource("69_ln8i8")]
-transform = Transform3D(3.18, 0, 0, 0, 3.18, 0, 0, 0, 3.18, 30.031952, 0.5820923, 24.977533)
 
 [node name="Slide" parent="." unique_id=870549599 instance=ExtResource("70_2gtna")]
 transform = Transform3D(0.8484551, -0.5292674, 0, 0.5292674, 0.8484551, 0, 0, 0, 1, 13.119385, -1.9077148, 35.54248)
@@ -3148,175 +3323,6 @@ transform = Transform3D(0.91100514, -0.4119108, 0.019978153, 0.3626585, 0.777129
 script = ExtResource("76_n8xla")
 triggers = [NodePath("../MemoryRock1/Area3D"), NodePath("../MemoryRock2/Area3D"), NodePath("../MemoryRock3/Area3D")]
 chimes = [NodePath("../MemoryRock1/FmodEventEmitter3D"), NodePath("../MemoryRock2/FmodEventEmitter3D"), NodePath("../MemoryRock3/FmodEventEmitter3D")]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef01" unique_id=210189860]
-transform = Transform3D(1, 0, -1.4901161e-07, 0, 1, 0, 1.4901161e-07, 0, 1, -0.0078125, 0.52124023, -0.018615723)
-shape = SubResource("RestoredManual_BoxShape3D_btfpm")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef02" unique_id=1312081353]
-transform = Transform3D(0.9677155, 0.2518758, -0.009250939, -0.25159475, 0.96752775, 0.024292454, 0.015068978, -0.021179989, 0.9996623, 0.23809433, 0.39840722, -0.015787125)
-shape = SubResource("RestoredManual_BoxShape3D_unnkj")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef05" unique_id=940157049]
-transform = Transform3D(0.9833631, 0.15254952, -0.09871154, -0.15360378, 0.98812747, -0.00312638, 0.097062096, 0.018236645, 0.99511665, 0.2973957, 0.93101287, -0.91832733)
-shape = SubResource("RestoredManual_BoxShape3D_w1wla")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef11" unique_id=1865327040]
-transform = Transform3D(0.67735696, 0.24291843, -0.6943911, -0.28228986, 0.9574764, 0.05958845, 0.6793388, 0.15565711, 0.7171267, 0.011219025, 0.6024932, 0.40176392)
-shape = SubResource("RestoredManual_BoxShape3D_gouir")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=2025598156]
-transform = Transform3D(0.76372105, 0, -0.64554644, 0, 1, 0, 0.64554644, 0, 0.76372105, 0.36757755, 0.21380615, -0.66453743)
-shape = SubResource("RestoredManual_BoxShape3D_midaf")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=1282083653]
-transform = Transform3D(0.6207676, 0.2715008, -0.7354828, -0.5081378, 0.853734, -0.11372937, 0.59702903, 0.44432613, 0.66793054, -17.372753, 2.105697, -16.785385)
-shape = SubResource("RestoredManual_BoxShape3D_fmc0y")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="Level1/Reefs/Reef12" unique_id=1848375917]
-transform = Transform3D(0.9935038, 0, -0.113800734, 0, 1, 0, 0.113800734, 0, 0.9935038, 6.0170326, 0.9291992, -28.321407)
-shape = SubResource("RestoredManual_BoxShape3D_inrm0")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef13" unique_id=14661697]
-transform = Transform3D(0.86641085, 0.49025768, 0.09474057, -0.49928573, 0.84813404, 0.17714994, 0.006496787, -0.20078714, 0.9796126, 0.52082443, 0.5326912, -0.14359093)
-shape = SubResource("RestoredManual_BoxShape3D_ooefh")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef15" unique_id=1010542050]
-transform = Transform3D(0.9754293, 0.21894252, -0.024536133, -0.21864355, 0.97569996, 0.014298156, 0.027070224, -0.008582123, 0.99959683, 0.25889206, 0.46054026, -0.06851196)
-shape = SubResource("RestoredManual_BoxShape3D_xenyc")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef16" unique_id=774726855]
-transform = Transform3D(0.7624533, 0.17243221, -0.6236648, -0.05930073, 0.9784035, 0.1980153, 0.64434004, -0.11399424, 0.75621134, -0.50385284, 1.2656505, 0.6044693)
-shape = SubResource("RestoredManual_BoxShape3D_gism2")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef18" unique_id=259414266]
-transform = Transform3D(0.85138875, -0.007076115, 0.5245018, 0.0281896, 0.999081, -0.03227953, -0.5237914, 0.042267412, 0.8508057, -0.2080555, 0.47955474, -0.16622543)
-shape = SubResource("RestoredManual_BoxShape3D_dew4t")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef20" unique_id=797746690]
-transform = Transform3D(0.99999976, -2.5331974e-07, 0, -8.940697e-08, 1, 2.9802322e-08, -1.1920929e-07, -2.9802322e-08, 0.9999999, 0.074622154, 0.7782593, 0.08182526)
-shape = SubResource("RestoredManual_BoxShape3D_0thhy")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef21" unique_id=267592054]
-transform = Transform3D(0.9992863, 0, -0.037775993, 0, 1, 0, 0.037775993, 0, 0.9992863, -0.030485153, 0.80181885, 0.015727997)
-shape = SubResource("RestoredManual_BoxShape3D_e1414")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef23" unique_id=529199863]
-transform = Transform3D(0.99942786, -0.0047751814, -0.033474565, 0.004579589, 0.9999708, -0.005921647, 0.03350222, 0.005765274, 0.9994216, 0.019496918, 0.69785404, 0.01677227)
-shape = SubResource("RestoredManual_BoxShape3D_ftv8u")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef24" unique_id=914649234]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007461548, 0.76864624, 0.71213436)
-shape = SubResource("RestoredManual_BoxShape3D_kg2av")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef25" unique_id=230658858]
-transform = Transform3D(0.99999934, 0.0010914678, 3.9041042e-06, -0.001091467, 0.9999737, 0.0071942285, 3.9488077e-06, -0.007194236, 0.99997395, 0.007972717, 0.6889038, 0.6016197)
-shape = SubResource("RestoredManual_BoxShape3D_fod30")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef28" unique_id=1163869363]
-transform = Transform3D(0.9999978, 2.8312206e-07, -3.2782555e-07, 1.937151e-07, 0.9999811, -3.0100346e-06, 8.940697e-07, 2.95043e-06, 0.99997544, 0.026519775, 1.2515383, -0.09950638)
-shape = SubResource("RestoredManual_BoxShape3D_3uvog")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef29" unique_id=869215218]
-transform = Transform3D(0.9853393, 0.14031743, -0.09704362, -0.13654822, 0.9896343, 0.044481266, 0.10227923, -0.030577976, 0.9942857, 0.26446152, 0.74514055, -0.80476)
-shape = SubResource("RestoredManual_BoxShape3D_2x0ns")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef30" unique_id=59290032]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0012226105, 0.51464844, -1.0077362)
-shape = SubResource("RestoredManual_BoxShape3D_h33un")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef32" unique_id=606570760]
-transform = Transform3D(0.8939469, 0.018448794, -0.44780824, 0.031212524, 0.99416393, 0.10326693, 0.44709864, -0.10629134, 0.88815486, 0.26250267, 0.84625024, 0.0070972443)
-shape = SubResource("RestoredManual_BoxShape3D_bt7y8")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef35" unique_id=275650518]
-transform = Transform3D(1.0000004, 2.803281e-07, 0, 2.0116568e-07, 1.0000026, 0, -4.61936e-07, -2.30968e-07, 1, 0.076768875, 0.69018936, 0.0515213)
-shape = SubResource("RestoredManual_BoxShape3D_4vts1")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef40" unique_id=193573741]
-transform = Transform3D(0.99468887, 0, -0.10292795, 0, 1, 0, 0.10292795, 0, 0.99468887, 0.199893, 0.21826172, 0.12990761)
-shape = SubResource("RestoredManual_BoxShape3D_680g3")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef41" unique_id=741339259]
-transform = Transform3D(0.9999994, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 0.9999994, -0.006969452, 0.47061157, -0.026727676)
-shape = SubResource("RestoredManual_BoxShape3D_wyj0h")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef42" unique_id=1760206950]
-transform = Transform3D(0.99993604, 0.011225058, 0.0013458729, -0.011224833, 0.9715395, 0.2366126, 0.0013471283, -0.23661414, 0.97161764, 0.017457962, 1.0745687, -0.23793983)
-shape = SubResource("RestoredManual_BoxShape3D_ntyjw")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef43" unique_id=1087087733]
-transform = Transform3D(0.6773811, 0.1958606, -0.7090791, -0.29084975, 0.95667183, -0.013597459, 0.6756928, 0.215446, 0.7049972, -0.03577614, 0.7519323, 0.47493362)
-shape = SubResource("RestoredManual_BoxShape3D_2wh32")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef44" unique_id=748821335]
-transform = Transform3D(0.99957776, 0, -0.029058278, 0, 1, 0, 0.029058278, 0, 0.99957776, -0.0007324219, -0.083343506, 0.009670258)
-shape = SubResource("RestoredManual_BoxShape3D_45crg")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef46" unique_id=1249742847]
-transform = Transform3D(0.6355366, 0.23890328, -0.734179, -0.34480798, 0.93864745, 0.006957352, 0.69079715, 0.248729, 0.6789206, -0.05835724, 0.6652989, 0.50805664)
-shape = SubResource("RestoredManual_BoxShape3D_hdson")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef48" unique_id=1715597132]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef50" unique_id=2030012103]
-transform = Transform3D(1, 0, -2.3841858e-07, 0, 1, 0, 2.3841858e-07, 0, 1, 0.0005187988, 0.36743164, 0.0019264221)
-shape = SubResource("RestoredManual_BoxShape3D_k66bb")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef51" unique_id=1164033382]
-transform = Transform3D(0.9984535, 0, -0.055499673, 0, 1, 0, 0.055499673, 0, 0.9984535, 0.09983826, 0.6025543, 2.8291235)
-shape = SubResource("RestoredManual_BoxShape3D_i0clt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef52" unique_id=1141362036]
-transform = Transform3D(0.6568518, 0.29381716, -0.694461, -0.38385582, 0.9229868, 0.027446702, 0.64903307, 0.2485463, 0.71904606, 0.018112183, 0.75971335, 0.41152096)
-shape = SubResource("RestoredManual_BoxShape3D_idxhk")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef53" unique_id=1148465601]
-transform = Transform3D(0.9998108, 0.0017278008, 0.019004464, -0.0017208457, 0.9999952, -0.00039704144, -0.01899989, 0.0003649965, 0.9998074, -0.0007343292, 0.73730373, 0.03774643)
-shape = SubResource("RestoredManual_BoxShape3D_xbb3b")
-
-[node name="Reef54" type="StaticBody3D" parent="Level1/Reefs"]
-transform = Transform3D(0.9068713, 0.019985959, 0.42090893, -0.019044098, 0.9997979, -0.0064412206, -0.42095256, -0.0021754578, 0.9070686, 12.590614, 0.23715535, -2.0187054)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef54" unique_id=146068098]
-transform = Transform3D(1.0000014, 6.604823e-07, 1.4901161e-07, 6.4389315e-07, 1.0000421, 1.5902333e-07, -2.861023e-06, -1.6018748e-07, 1.0000011, -0.014391899, 0.5803361, -0.06823349)
-shape = SubResource("RestoredManual_BoxShape3D_mop80")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef55" unique_id=199123574]
-transform = Transform3D(1.0000007, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1.0000007, -0.00038337708, 0.15698242, -0.012008667)
-shape = SubResource("RestoredManual_BoxShape3D_m5nte")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef56" unique_id=21053642]
-transform = Transform3D(0.99888545, 0, -0.04719773, 0, 1, 0, 0.04719773, 0, 0.99888545, 0.03845215, -0.4756775, -0.0068511963)
-shape = SubResource("RestoredManual_BoxShape3D_8p2kq")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef58" unique_id=2077125400]
-transform = Transform3D(1.0000015, 0, 1.4901161e-07, 0, 1, 0, -1.4901161e-07, 0, 1.0000015, 0.017097473, -0.18081665, 0.58926964)
-shape = SubResource("RestoredManual_BoxShape3D_ex8gk")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef59" unique_id=1370338250]
-transform = Transform3D(1.0000002, 0, 4.4703484e-07, 0, 1, 0, -4.4703484e-07, 0, 1.0000002, -0.0077056885, 0.4493103, 0.59760094)
-shape = SubResource("RestoredManual_BoxShape3D_xxo5k")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef60" unique_id=1996839137]
-transform = Transform3D(0.8564422, 0, -0.5162446, 0, 1, 0, 0.5162446, 0, 0.8564422, -0.09805584, 0.44729614, -0.18724442)
-shape = SubResource("RestoredManual_BoxShape3D_jre5i")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef61" unique_id=146687282]
-transform = Transform3D(0.9999996, -2.3394823e-06, 5.364418e-07, -9.685755e-08, 1.0000019, 9.275973e-07, 1.1920929e-07, -4.656613e-07, 0.99999905, -0.016317368, 0.2960577, -0.2603054)
-shape = SubResource("RestoredManual_BoxShape3D_1xlpn")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef64" unique_id=1166031739]
-transform = Transform3D(1.0000007, 0, -2.0861626e-07, 0, 1, 0, 2.0861626e-07, 0, 1.0000007, 0.024234772, 0.6080322, 0.04811859)
-shape = SubResource("RestoredManual_BoxShape3D_8jovo")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef66" unique_id=550518146]
-transform = Transform3D(0.9704648, 0.24055545, 0.018199712, -0.24096422, 0.97020656, 0.025209181, -0.011593372, -0.028850093, 0.99951637, 0.2839222, 0.29428422, -0.08104324)
-shape = SubResource("RestoredManual_BoxShape3D_bjqgx")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef68" unique_id=869632677]
-transform = Transform3D(0.9719534, 0.0124253845, -0.23484467, -0.01292467, 0.9999163, -0.00058691343, 0.23481795, 0.003605742, 0.9720327, -0.062122345, 0.5864116, 0.027812004)
-shape = SubResource("RestoredManual_BoxShape3D_uqv50")
 
 [editable path="Boat/RigidBody3D/Model/GhostSeat/ghostwithoutbone"]
 [editable path="MemoryRock1/paw"]
