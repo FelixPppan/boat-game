@@ -175,7 +175,7 @@ void fragment() {
 	vec4 world_position = INV_VIEW_MATRIX * vec4(VERTEX, 1);
 	float height_blend = smoothstep(blend_from, blend_to, world_position.y);
 	vec3 albedo_mix = mix(albedo, albedo_high, height_blend);
-	float alpha_mix = mix(1.0, 0.8, height_blend);
+	// float alpha_mix = mix(1.0, 0.8, height_blend);
 	
 	float foam = texture(foam_map, UV).r;
 	vec3 foam_colour = vec3(1.0);
@@ -186,7 +186,7 @@ void fragment() {
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
 	RIM = 0.2;
-	ALPHA = alpha_mix;
+	ALPHA = 1.0;
 	
 	// Continuous trail: mask intensity only — never gated by wave height.
 	float trail_m = sample_trail_soft(trail_xz);

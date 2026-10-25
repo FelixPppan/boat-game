@@ -6,6 +6,7 @@ extends Node3D
 @export var water: MeshInstance3D
 @export var far_material: ShaderMaterial
 
-
+"""
 func _process(_delta: float) -> void:
 	far_material.set_shader_parameter("time", water.get("time"))
+"""

@@ -329,7 +329,7 @@ func _physics_process(delta: float) -> void:
 	# --- 6. 跟随 Gerstner 波面
 	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
 	# Buoyancy Boat 用的是力;这里只是把 Y 贴/插值到同一个高度场。
-	# _follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
+	_follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
 	_update_hull_tilt(delta)
 
 	#_update_camera_tilt(delta)

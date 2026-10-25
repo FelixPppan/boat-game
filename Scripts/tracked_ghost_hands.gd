@@ -98,4 +98,3 @@ func _update_hand(hand: Dictionary, points: Array[Vector3], delta: float) -> voi
 		var rotation := basis.orthonormalized().get_rotation_quaternion()
 		skeleton.set_bone_pose_rotation(bone, skeleton.get_bone_pose_rotation(bone).slerp(rotation, weight))
 	hand.tracked = true
-
