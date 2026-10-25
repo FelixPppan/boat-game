@@ -1311,11 +1311,17 @@ transform = Transform3D(-0.6196549, 0, 0.7848744, 0, 1, 0, -0.7848744, 0, -0.619
 transform = Transform3D(2.045, 0, 0, 0, 2.045, 0, 0, 0, 2.045, -1.4589539, 0.7876282, -7.6241455)
 visible = false
 
-[node name="House & Car" parent="MemoryRock4" unique_id=321613720 node_paths=PackedStringArray("rumble_sound") instance=ExtResource("18_x5akl")]
+[node name="House & Car" parent="MemoryRock4" unique_id=321613720 node_paths=PackedStringArray("rumble_sound", "reveal_camera", "boat", "camera_start", "camera_via", "camera_end") instance=ExtResource("18_x5akl")]
 transform = Transform3D(0.7391074, 0.15409511, 0, -0.15409511, 0.7391074, 0, 0, 0, 0.755, -3.471405, -4.682953, -5.5317993)
 script = ExtResource("99_house_emerge")
 clearance = 0.15
 rumble_sound = NodePath("FmodEventEmitter3D")
+reveal_camera = NodePath("../../HouseRevealCamera")
+boat = NodePath("../../Boat")
+camera_start = NodePath("../HouseCameraPath/Start")
+camera_via = NodePath("../HouseCameraPath/Via")
+camera_end = NodePath("../HouseCameraPath/End")
+camera_transition = 5.0
 
 [node name="FmodEventEmitter3D" type="FmodEventEmitter3D" parent="MemoryRock4/House & Car" unique_id=995219813]
 event_name = "event:/rumblesound"
@@ -1502,6 +1508,20 @@ white_mist = NodePath("../../MemoryOverlay/WhiteMist")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock7/Area3D" unique_id=753129865]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 1.1145039, 0, -1.8718319)
 shape = SubResource("SphereShape3D_mtfgr")
+
+[node name="HouseCameraPath" type="Node3D" parent="MemoryRock4" unique_id=1548934912]
+
+[node name="Start" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=283478068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 10, 28)
+
+[node name="Via" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=1547444998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 8, 24)
+
+[node name="End" type="Marker3D" parent="MemoryRock4/HouseCameraPath" unique_id=2063100820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 7, 20)
+
+[node name="HouseRevealCamera" type="Camera3D" parent="." unique_id=1240949095]
+fov = 60.0
 
 [node name="MemoryCamera" type="Camera3D" parent="." unique_id=888874951]
 
@@ -2979,7 +2999,7 @@ script = ExtResource("21_jet")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.395, 0, -6.446)
 script = ExtResource("21_jet")
 
-[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041 node_paths=PackedStringArray("sun", "moon")]
+[node name="LevelProgress" type="CanvasLayer" parent="." unique_id=1720385041 node_paths=PackedStringArray("sun", "moon", "house_reveal")]
 script = ExtResource("24_progress")
 message_text = "Memory fragments found: {found}/{total}"
 message_font = ExtResource("41_earqg")
@@ -2987,6 +3007,7 @@ sun = NodePath("../Sun")
 sun_stages = Array[Vector3]([Vector3(38, 95, 54), Vector3(0, 94, 52), Vector3(-17, 94, 51), Vector3(-45, 101.6, 40)])
 sun_turn_duration = 4.1
 moon = NodePath("../Moon")
+house_reveal = NodePath("../MemoryRock4/House & Car")
 
 [node name="Merry go \'round" parent="." unique_id=1442212598 instance=ExtResource("69_ln8i8")]
 transform = Transform3D(3.18, 0, 0, 0, 3.18, 0, 0, 0, 3.18, 30.031952, 0.5820923, 24.977533)
