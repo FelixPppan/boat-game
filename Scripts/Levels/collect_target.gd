@@ -10,9 +10,9 @@ signal collected
 ## retain the original boat pickup behavior.
 @export var memory_trigger: Area3D
 
-## Shown on screen when the goal is collected.
-## 收集到时屏幕上显示的关卡名。
-@export var level_name: String = "Level"
+## Full banner text shown when the goal is collected.
+## 收集到时屏幕上显示的完整文案。
+@export var level_name: String = "Memory fragment collected!"
 ## Sphere radius (m). The pickup area is slightly larger than the visible ball.
 ## 球的半径(米)。拾取范围比看得见的球略大一点。
 @export_range(0.1, 10.0, 0.05) var radius: float = 1.0:
