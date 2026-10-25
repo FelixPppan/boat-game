@@ -40,6 +40,8 @@
 [ext_resource type="Script" uid="uid://b64xwt3mfdh8t" path="res://Scripts/Levels/rotating_ring.gd" id="20_ring"]
 [ext_resource type="Texture2D" uid="uid://0tdrqxaa0awi" path="res://Figure/holdup2.png" id="21_b5ur4"]
 [ext_resource type="Script" uid="uid://5ltoijbgod4p" path="res://Scripts/Levels/water_jet.gd" id="21_jet"]
+[ext_resource type="Script" path="res://Scripts/Levels/rising_memory.gd" id="23_rising"]
+[ext_resource type="Script" path="res://Scripts/Levels/memory_glow.gd" id="24_glow"]
 [ext_resource type="Texture2D" uid="uid://b8b6oupj3js7v" path="res://Figure/toy1.png" id="22_bhdqs"]
 [ext_resource type="Script" uid="uid://dkqtic8vt6dhw" path="res://Scripts/Levels/jet_group.gd" id="22_jet_group"]
 [ext_resource type="PackedScene" uid="uid://dfi0givcwndnh" path="res://model/map_textfragment/textFragment1.glb" id="22_kkbmt"]
@@ -88,6 +90,9 @@
 [ext_resource type="Texture2D" uid="uid://b12corftrabqj" path="res://Figure/memory 2.png" id="101_mem2"]
 [ext_resource type="Texture2D" uid="uid://n8n4vt1fiqry" path="res://Figure/memory 3.png" id="101_mem3"]
 [ext_resource type="Texture2D" uid="uid://bsceikj1n5kr" path="res://Figure/memory 4.png" id="101_mem4"]
+[ext_resource type="VoxelGIData" path="res://Shaders/Map.GI_Level1_data.res" id="gi_local_1"]
+[ext_resource type="VoxelGIData" path="res://Shaders/Map.GI_Level2_data.res" id="gi_local_2"]
+[ext_resource type="VoxelGIData" path="res://Shaders/Map.GI_Level3_data.res" id="gi_local_3"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3ytfl"]
 radius = 0.47613525
@@ -149,6 +154,7 @@ fog_sky_affect = 0.0
 fog_depth_curve = 0.26794425
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
+volumetric_fog_length = 128.0
 volumetric_fog_albedo = Color(0.9, 0.88, 0.95, 1)
 volumetric_fog_emission = Color(0.15, 0.14, 0.18, 1)
 volumetric_fog_detail_spread = 1.5
@@ -1653,9 +1659,31 @@ backface_collision = true
 [node name="Level1" type="Node3D" unique_id=1130590225]
 
 [node name="VoxelGI" type="VoxelGI" parent="." unique_id=826415132]
+visible = false
 subdiv = 2
 size = Vector3(150, 20, 150)
 data = ExtResource("3_ws1hi")
+
+[node name="GI_Level1" type="VoxelGI" parent="." unique_id=1169426199]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 3, -28)
+subdiv = 0
+size = Vector3(24, 10, 24)
+data = ExtResource("gi_local_1")
+
+[node name="GI_Level2" type="VoxelGI" parent="." unique_id=837766572]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 25)
+subdiv = 0
+size = Vector3(24, 10, 24)
+data = ExtResource("gi_local_2")
+
+[node name="GI_Level3" type="VoxelGI" parent="." unique_id=364974621]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 5, -30)
+subdiv = 0
+size = Vector3(20, 14, 20)
+data = ExtResource("gi_local_3")
 
 [node name="WaterPlane" parent="." unique_id=1136176607 instance=ExtResource("1_00287")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4271469, 0.00024414063, 2.893589)
@@ -1838,8 +1866,12 @@ event_name = "event:/chimes"
 event_guid = "{a86c967e-de9c-4d9f-9483-c6967b9fc09a}"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3878899, 0, -7.9540825)
 
-[node name="MemoryRock3" type="StaticBody3D" parent="." unique_id=379064858]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.403433, 5.646966, -22.74115)
+[node name="MemoryRock3" type="StaticBody3D" parent="." unique_id=379064858 node_paths=PackedStringArray("level_center", "interaction_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.20986, 8.802069, -22.72756)
+script = ExtResource("23_rising")
+sink_depth = 5.0
+level_center = NodePath("../Level3")
+interaction_area = NodePath("Area3D")
 
 [node name="balloon" parent="MemoryRock3" unique_id=1207074755 instance=ExtResource("20_l6pei")]
 transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, -3.3560467, -1.6950693, -7.6604576)
@@ -1850,8 +1882,17 @@ transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.190
 shape = SubResource("CylinderShape3D_8q6pl")
 disabled = true
 
+[node name="TargetLight" type="OmniLight3D" parent="MemoryRock3" unique_id=1078951330 node_paths=PackedStringArray("glow_root")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2098649, -0.9220693, -7.2452636)
+script = ExtResource("24_glow")
+glow_root = NodePath("../balloon")
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 4.0
+omni_range = 8.0
+omni_attenuation = 1.5
+
 [node name="FogVolume" type="FogVolume" parent="MemoryRock3" unique_id=2098338150]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2098649, -1.8020693, -7.2452636)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
 shape = 0
 material = SubResource("ShaderMaterial_8q6pl")
@@ -1939,6 +1980,15 @@ material_override = ExtResource("23_0hvk1")
 transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
 
+[node name="GlowLight" type="OmniLight3D" parent="MemoryRock5" unique_id=1503927461 node_paths=PackedStringArray("glow_root")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.365031, 1.371078, -7.833294)
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 3.0
+omni_range = 6.0
+omni_attenuation = 1.5
+script = ExtResource("24_glow")
+glow_root = NodePath("../textFragment1")
+
 [node name="FogVolume" type="FogVolume" parent="MemoryRock5" unique_id=1988175774]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
@@ -1980,6 +2030,15 @@ material_override = ExtResource("23_0hvk1")
 transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
 
+[node name="GlowLight" type="OmniLight3D" parent="MemoryRock6" unique_id=692318547 node_paths=PackedStringArray("glow_root")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.423094, 1.91544, -7.45513)
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 3.0
+omni_range = 6.0
+omni_attenuation = 1.5
+script = ExtResource("24_glow")
+glow_root = NodePath("../textFragment2")
+
 [node name="FogVolume" type="FogVolume" parent="MemoryRock6" unique_id=2062465989]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
 size = Vector3(3.4447556, 4.4262466, 4.316284)
@@ -2020,6 +2079,15 @@ material_override = ExtResource("23_0hvk1")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock7" unique_id=1779151001]
 transform = Transform3D(1.625, 0, 0, 0, 1.625, 0, 0, 0, 1.625, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="GlowLight" type="OmniLight3D" parent="MemoryRock7" unique_id=1884210733 node_paths=PackedStringArray("glow_root")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.206844, 1.42854, -7.541018)
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 3.0
+omni_range = 6.0
+omni_attenuation = 1.5
+script = ExtResource("24_glow")
+glow_root = NodePath("../textFragment3")
 
 [node name="FogVolume" type="FogVolume" parent="MemoryRock7" unique_id=458732765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2053394, 0.50575995, -8.563072)
@@ -2773,6 +2841,13 @@ stretch_mode = 5
 
 [node name="Level1" type="Node3D" parent="." unique_id=1720385011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -28)
+
+[node name="TargetLight" type="OmniLight3D" parent="Level1" unique_id=426163157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 4.0
+omni_range = 8.0
+omni_attenuation = 1.5
 
 [node name="Target" type="Area3D" parent="Level1" unique_id=1720385012 node_paths=PackedStringArray("memory_trigger")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -4444,6 +4519,13 @@ metadata/_reef_generated = true
 [node name="Level2" type="Node3D" parent="." unique_id=1720385021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 25)
 
+[node name="TargetLight" type="OmniLight3D" parent="Level2" unique_id=1240569970]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(1, 0.82, 0.2, 1)
+light_energy = 4.0
+omni_range = 8.0
+omni_attenuation = 1.5
+
 [node name="Target" type="Area3D" parent="Level2" unique_id=1720385022 node_paths=PackedStringArray("memory_trigger")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("18_target")
@@ -4472,7 +4554,7 @@ transform = Transform3D(1.705, 0, 0, 0, 1.705, 0, 0, 0, 1.705, 0, 0.5237427, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, -30)
 
 [node name="Target" type="Area3D" parent="Level3" unique_id=1720385032 node_paths=PackedStringArray("memory_trigger")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
 script = ExtResource("18_target")
 memory_trigger = NodePath("../../MemoryRock3/Area3D")
 level_name = "Third memory fragment collected!"
