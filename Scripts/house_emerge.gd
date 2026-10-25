@@ -14,6 +14,7 @@ signal reveal_finished
 @export var camera_transition: float = 1.0
 @export var camera_hold: float = 1.0
 @export var fade_duration: float = 0.35
+@export var rumble_sound: FmodEventEmitter3D
 
 var _emerged := false
 var _fade: ColorRect
@@ -67,6 +68,7 @@ func _on_level_completed() -> void:
 	var move := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	move.tween_method(_move_camera.bind(start, via, end, focus), 0.0, 1.0, camera_transition)
 	await move.finished
+	rumble_sound.play()
 	var tween := create_tween().set_parallel(true)
 	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(self, "rotation_degrees", upright_rotation, rise_duration)
