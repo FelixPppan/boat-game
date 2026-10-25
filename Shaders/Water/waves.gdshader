@@ -1,9 +1,4 @@
 /*
-TODO:
-	- Implement foam using Jacobian
-	- Implement sub-surface scattering
-	- Get buoyancy working properly
-
 Sources used:
 	https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-1-effective-water-simulation-physical-models
 	https://catlikecoding.com/unity/tutorials/flow/waves/
@@ -11,6 +6,8 @@ Sources used:
 */
 
 shader_type spatial;
+render_mode blend_mix, depth_draw_opaque;
+stencil_mode read, compare_not_equal, 1;
 
 // Colour and texture
 uniform vec3 albedo : source_color;
@@ -18,14 +15,19 @@ uniform vec3 albedo_high : source_color;
 uniform float blend_from : hint_range(-1.0, 0.0) = -0.1;
 uniform float blend_to : hint_range(0.0, 1.0) = 0.1;
 uniform float metallic : hint_range(0.0, 1.0) = 0;
-uniform float roughness : hint_range(0.0, 1.0) = 0;
+uniform float roughness : hint_range(0.0, 1.0) = 0.2;
 
 // Noise map
 uniform sampler2D noise;
 uniform float noise_intensity: hint_range(0,1) = 0.2;
 
-// Gerstner settings
-uniform vec4 gerstner_wave = vec4(1.0, 1.0, 1.0, 1.0);
+// Wave displacement map (taken from DisplacementViewport)
+uniform sampler2D displacement_map: repeat_disable;
+
+// Foam map (from FoamViewport)
+uniform sampler2D foam_map: repeat_disable;
+
+uniform float size_of_plane = 10.0;
 
 // For use by water.gd script when synching buoyancy physics
 uniform float time; // Change to TIME to unbind from script
@@ -137,58 +139,33 @@ vec3 combine_aurora(vec3 a, vec3 b, vec3 c) {
 	return m + (a + b + c - m) * 0.28;
 }
 
-// Function for creating Gerstner waves
-vec3 gerstner(
-	float wavelength, 
-	float steepness, 
-	vec2 dir, 
-	vec3 p,
-	inout vec3 tangent, 
-	inout vec3 binormal) {
-	
-	float k = (2.0 * PI) / wavelength; // Wave number 
-	float g = 9.8337; // Gravity constant
-	float c = sqrt(g/k); // Phase speed
-	
-	vec2 d = normalize(dir); // Direction
-	
-	float f = k * dot(d, p.xz) - c * time; // Function inside sin/cos wave	
-	float a = steepness / k;
-	
-	float wave_noise = texture(noise, p.xz / 100.0 + dir * time * -0.0025).r * noise_intensity - noise_intensity / 2.0;
-	
-	tangent += vec3(
-		-d.x * d.x * (steepness * sin(f)),
-		d.x * (steepness * cos(f)) + wave_noise,
-		-d.x * d.y * (steepness * sin(f))
-		);
-		
-	binormal += vec3(
-		-d.x * d.y * (steepness * sin(f)),
-		d.y * (steepness * cos(f)) + wave_noise,
-		-d.y * d.y * (steepness * sin(f))
-	);
-	
-	float x = d.x * (a * cos(f));
-	float y = a * sin(f) + wave_noise;
-	float z = d.y * (a * cos(f));
-	
-	return vec3(x, y, z);
-}
-
-void create_wave(inout vec3 p, inout vec3 tangent, inout vec3 binormal) {
-	p += gerstner(gerstner_wave.x, gerstner_wave.y, vec2(gerstner_wave.z, gerstner_wave.w), p, tangent, binormal);
+vec3 get_displacement(vec2 uv) {
+	vec3 uv_displacement = texture(displacement_map, uv).xyz;
+	vec3 displacement = uv_displacement;
+	return displacement;
 }
 
 void vertex() {
 	vec3 point = VERTEX.xyz;
-	vec3 tangent = vec3(1, 0, 0);
-	vec3 binormal = vec3(0, 0, 1);
-	create_wave(point, tangent, binormal);
+	
+	// Camera to vertex distance & level of detail
+	/* Disabled: Levels of detail
+	float camera_distance = distance(CAMERA_POSITION_WORLD, (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz);
+	float level_of_detail = 1.0 - 0.9 * smoothstep(1.0, 80.0, camera_distance);
+	*/
+	float level_of_detail = 1.0;
+	
+	VERTEX.xyz = point + get_displacement(point.xz / size_of_plane + 0.5) * level_of_detail;
+	
+	// Approximating tangents in x and z directions
+	vec3 forward_point = point + vec3(1,0,0) * 0.2;
+	vec3 right_point = point + vec3(0,0,1) * 0.2;
+	
+	vec3 tangent_x = forward_point + get_displacement(forward_point.xz / size_of_plane + 0.5) * level_of_detail - VERTEX.xyz;
+	vec3 tangent_z = right_point + get_displacement(right_point.xz / size_of_plane + 0.5) * level_of_detail - VERTEX.xyz;
+	
+	NORMAL = normalize(cross(tangent_z, tangent_x));
 
-	vec3 normal = normalize(cross(binormal, tangent));
-	VERTEX.xyz = point;
-	NORMAL = normal;
 	// History mask is painted in world XZ — sample the surface's current world XZ
 	// (after Gerstner), not rest-pose, or troughs sample empty mask cells.
 	trail_xz = (MODEL_MATRIX * vec4(point, 1.0)).xz;
@@ -198,12 +175,19 @@ void fragment() {
 	vec4 world_position = INV_VIEW_MATRIX * vec4(VERTEX, 1);
 	float height_blend = smoothstep(blend_from, blend_to, world_position.y);
 	vec3 albedo_mix = mix(albedo, albedo_high, height_blend);
+	// float alpha_mix = mix(1.0, 0.8, height_blend);
+	
+	float foam = texture(foam_map, UV).r;
+	vec3 foam_colour = vec3(1.0);
+	
+	vec3 albedo_foam_mix = mix(albedo_mix, foam_colour, foam);
 
-	ALBEDO = albedo_mix;
+	ALBEDO = albedo_foam_mix;
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
-	RIM = 0.5;
-
+	RIM = 0.2;
+	ALPHA = 1.0;
+	
 	// Continuous trail: mask intensity only — never gated by wave height.
 	float trail_m = sample_trail_soft(trail_xz);
 	EMISSION = vec3(0.0);
@@ -223,6 +207,8 @@ void fragment() {
 	}
 }
 
+
+/*
 void light() {
     if (LIGHT_IS_AREA) {
         // Area light GGX shading.
@@ -233,3 +219,4 @@ void light() {
         DIFFUSE_LIGHT += clamp(dot(NORMAL, LIGHT), 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;
     }
 }
+*/

@@ -141,6 +141,10 @@ func _physics_process(delta: float) -> void:
 	_set_column(_current_height)
 
 	if on_jet and _boat.has_method("add_lift"):
+		# Duct tape solution to fix incompatibilites between water jet system and buoyancy.gd
+		get_node("/root/Map/Boat/RigidBody3D").base_water_height = _current_height 
+		# ---
+		
 		_boat.add_lift(_current_height)
 		_boat.add_brake(brake_strength)
 

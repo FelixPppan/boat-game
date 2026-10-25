@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bopnrnt34f76d"]
 
-[ext_resource type="Material" uid="uid://cipaepuetlh6q" path="res://Shaders/Water.tres" id="1_66nk0"]
+[ext_resource type="Material" uid="uid://cipaepuetlh6q" path="res://Shaders/Water/Water.tres" id="1_66nk0"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_3ytfl"]
 size = Vector2(150, 150)

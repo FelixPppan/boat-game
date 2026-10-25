@@ -66,10 +66,13 @@ var _rowing_animation: StringName = &"idle"
 ## How fast the bank follows (larger = snappier).
 ## 倾斜跟随的快慢(越大越跟手)。
 @export var camera_tilt_smoothing: float = 6.0
+## Speed of camera movement when following RigidBody3D buoyancy movement
+@export var camera_speed: float = 5.0
 ## If true, the camera follows the boat on XZ/yaw but stays at calm-water
 ## height so wave bobbing does not bounce the view.
 ## 开启后镜头仍跟随船的平移和转向,但高度锁在平静水面,不随浪上下晃。
 @export var camera_ignore_waves: bool = true
+
 
 @export_group("Wave following")
 ## Rest height of the boat origin above calm water (y = 0).
@@ -129,7 +132,8 @@ const StrokeRecorderScript := preload("res://Scripts/stroke_recorder.gd")
 const TrailScript := preload("res://Scripts/trail.gd")
 
 @onready var camera: Camera3D = $Camera3D
-@onready var _water: Node = get_node_or_null("../WaterPlane")
+@onready var _water: Node = get_node_or_null("/root/Map/WaterPlane")
+@onready var rigidBody = get_node("/root/Map/Boat/RigidBody3D")
 
 ## Planar velocity in world space (only x/z are used).
 ## 世界坐标下的平面速度(只用 x/z)。
@@ -165,6 +169,13 @@ var _oar
 var _trail
 var _recorder
 
+# Used for rotating camera in circle with RigidBody3D buoyancy movements
+var dif_pos_camera
+var dif_rot_camera
+
+# Used for keeping track of changes in rotation/position caused by buoyancy
+var dif_pos_boat
+var old_rot_boat 
 
 func _ready() -> void:
 	# The boat floats: there is no notion of ground, so use floating mode
@@ -207,6 +218,12 @@ func _ready() -> void:
 	_recorder = StrokeRecorderScript.new()
 	_recorder.name = "StrokeRecorder"
 	add_child(_recorder)
+	
+	# Used for rotating camera in circle with RigidBody3D buoyancy movements
+	dif_pos_camera = camera.position - rigidBody.position # dif_pos.z = Radius of circle
+	dif_rot_camera = camera.rotation - rigidBody.rotation # dif_rot.y = Rotation angle
+	
+	old_rot_boat = rigidBody.rotation
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -312,11 +329,11 @@ func _physics_process(delta: float) -> void:
 	# --- 6. 跟随 Gerstner 波面
 	# Buoyancy Boat uses forces; we just snap/lerp Y to the same height field.
 	# Buoyancy Boat 用的是力;这里只是把 Y 贴/插值到同一个高度场。
-	_follow_wave_height(delta)
-	_update_hull_tilt(delta)
+	_follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
+	#_update_hull_tilt(delta)
 
-	_update_camera_tilt(delta)
-	_stabilize_camera_height()
+	#_update_camera_tilt(delta)
+	#_stabilize_camera_height()
 
 	if _trail != null:
 		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
@@ -388,6 +405,9 @@ func _start_fall() -> void:
 	spin *= clampf(_lift / 3.0, 0.0, 1.0)
 	var axis := Vector2.from_angle(randf() * TAU)
 	_tilt_vel += Vector3(axis.x, 0.0, axis.y) * spin
+	
+	# Duct tape solution to fix incompatibilites between water jet system and buoyancy.gd
+	get_node("/root/Map/Boat/RigidBody3D").base_water_height = 0.0 
 
 
 func _land() -> void:
@@ -441,6 +461,12 @@ func _update_hull_tilt(delta: float) -> void:
 	for i in _hull_nodes.size():
 		_hull_nodes[i].transform = hull_xf * _hull_rest[i]
 
+func _process(delta: float) -> void:	
+	# Rotation & movement of camera to follow buoyancy movements
+	var angle = rigidBody.rotation.y
+	camera.position.x = lerp(camera.position.x, dif_pos_camera.z * sin(angle), camera_speed * delta)
+	camera.position.z = lerp(camera.position.z, dif_pos_camera.z * cos(angle), camera_speed * delta)
+	camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_camera.y + rigidBody.rotation.y, camera_speed * delta)
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
 ## the wave offset on its local Y so the view does not bob.
