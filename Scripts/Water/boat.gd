@@ -1,4 +1,19 @@
-extends CharacterBody3D
+extends RigidBody3D
+
+@onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+@onready var water = get_node("/root/Map/Water/WaterPlane")
+# @onready var water = get_node_or_null("../WaterPlane")
+@onready var buoyancyPoints = $BuoyancyPoints.get_children()
+
+@export var float_force: float = 1.0
+@export var water_drag: float = 0.05
+@export var water_drag_angular: float = 0.05
+@export var allowed_angle_change: float = 180.0;
+
+@export var base_water_height: float = 0.0;
+
+var submerged: bool = false
+var accum_delta: float = 0.0; # Accumulated delta
 
 signal rowing_animation_changed(action: StringName)
 
@@ -28,7 +43,7 @@ var _rowing_animation: StringName = &"idle"
 ## Total mass of boat + paddler (kg). Heavier = slower to accelerate, longer
 ## to coast.
 ## 船 + 人的总质量(kg)。越大越「重」,加速越慢、滑行越久。
-@export_range(1.0, 2000.0, 1.0) var mass: float = 220.0
+@export_range(1.0, 2000.0, 1.0) var boat_mass: float = 220.0
 ## Thrust produced by one full-power stroke (N).
 ## 一记满力划桨产生的推进力(N)。想整体更快就调大。
 @export_range(0.0, 5000.0, 10.0) var max_thrust: float = 900.0
@@ -133,7 +148,7 @@ const TrailScript := preload("res://Scripts/trail.gd")
 
 @onready var camera: Camera3D = $Camera3D
 @onready var _water: Node = get_node_or_null("/root/Map/WaterPlane")
-@onready var rigidBody = get_node("/root/Map/Boat/RigidBody3D")
+# @onready var rigidBody = get_node("/root/Map/Boat/RigidBody3D")
 
 ## Planar velocity in world space (only x/z are used).
 ## 世界坐标下的平面速度(只用 x/z)。
@@ -175,13 +190,17 @@ var dif_rot_camera
 
 # Used for keeping track of changes in rotation/position caused by buoyancy
 var dif_pos_boat
-var old_rot_boat 
+var dif_rot_boat 
 
 func _ready() -> void:
+	if water == null or not water.has_method("get_height"):
+		push_error("Buoyancy requires a sibling WaterPlane with get_height().")
+		set_physics_process(false)
+	
 	# The boat floats: there is no notion of ground, so use floating mode
 	# (no gravity, no snapping to a floor).
 	# 船是漂着的:没有地面这个概念,所以用 floating 模式(无重力、不吸到地面)。
-	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
+	# motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
 	add_to_group("player_boat")
 	_camera_rest_local_y = camera.position.y
 	for path in hull_visuals:
@@ -220,10 +239,11 @@ func _ready() -> void:
 	add_child(_recorder)
 	
 	# Used for rotating camera in circle with RigidBody3D buoyancy movements
-	dif_pos_camera = camera.position - rigidBody.position # dif_pos.z = Radius of circle
-	dif_rot_camera = camera.rotation - rigidBody.rotation # dif_rot.y = Rotation angle
+	dif_pos_camera = camera.position - position # dif_pos.z = Radius of circle
+	dif_rot_camera = camera.rotation - rotation # dif_rot.y = Rotation angle
 	
-	old_rot_boat = rigidBody.rotation
+	pos_camera = camera.position
+	rot_camera = camera.rotation
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -236,8 +256,38 @@ func _unhandled_input(event: InputEvent) -> void:
 			and event.keycode == KEY_ESCAPE:
 		get_tree().quit()
 
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	if submerged:
+		state.linear_velocity *= 1 - water_drag
+		state.angular_velocity *= 1 - water_drag_angular
 
 func _physics_process(delta: float) -> void:
+	submerged = false
+	for point in buoyancyPoints:
+		var water_height: float = base_water_height + water.get_height(point.global_position);
+		var depth: float = water_height - point.global_position.y;
+		if  depth > 0:
+			submerged = true
+			var force = Vector3.UP * float_force * gravity * depth
+			apply_force(force, point.global_position - global_position) # Position is offset from body origin in global coordinates
+	
+	# Rotation & movement of boat to follow buoyancy movements of the rigid body
+	#var angle = rigidBody.rotation.y
+	#camera.position.x = lerp(camera.position.x, dif_pos_camera.z * sin(angle), camera_speed * delta)
+	#camera.position.z = lerp(camera.position.z, dif_pos_camera.z * cos(angle), camera_speed * delta)
+	#camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_camera.y + rigidBody.rotation.y, camera_speed * delta)
+	"""
+	var angle = rigidBody.rotation.y
+	#var rot = rigidBody.rotation
+	#var pos= rigidBody.position
+	
+	position.x = lerp(position.x, dif_pos_boat.z * sin(angle), camera_speed * delta)
+	position.z = lerp(position.z, dif_pos_boat.z * cos(angle), camera_speed * delta)
+	rotation.y = lerp_angle(rotation.y, dif_rot_boat.y + rigidBody.rotation.y, camera_speed * delta)
+	
+	#rigidBody.rotation = rot
+	#rigidBody.position = pos
+	"""
 	_oar.update(delta)
 
 	# --- 1. Collect force and torque (boat frame: x right, z back) --------
@@ -282,7 +332,7 @@ func _physics_process(delta: float) -> void:
 	# --- 3. 直线:惯性 + 水阻
 	# Force -> acceleration -> change in velocity. This step is the inertia.
 	# 力 -> 加速度 -> 速度的变化。这一步就是惯性。
-	_vel += thrust_world / mass * delta
+	_vel += thrust_world / boat_mass * delta
 
 	var speed := _vel.length()
 	if _falling:
@@ -296,7 +346,7 @@ func _physics_process(delta: float) -> void:
 		# 阻力 = 线性项 + 二次项,永远与速度反向。这就是船自然有最高速度的原因:
 		# 推力和阻力打平之后就不再加速。
 		var drag_mag := linear_drag * speed + quadratic_drag * speed * speed
-		_vel -= _vel / speed * (drag_mag / mass) * delta
+		_vel -= _vel / speed * (drag_mag / boat_mass) * delta
 		_vel *= exp(-_brake_request * delta)
 	else:
 		_vel = Vector3.ZERO
@@ -313,11 +363,12 @@ func _physics_process(delta: float) -> void:
 
 	# --- 5. Hand it to the physics engine --------------------------------
 	# --- 5. 交给物理引擎
-	velocity = _vel
+	var velocity = _vel
 	# Obstacle triangles can redirect horizontal sliding downward. Vertical
 	# motion belongs to wave/lift following, not to obstacle contact normals.
 	var height_before_collision := global_position.y
-	move_and_slide()
+	#move_and_slide()
+	apply_central_force(velocity * 10)
 	global_position.y = height_before_collision
 	# Hitting an island or rock makes the engine rewrite velocity; sync it
 	# back so the boat cannot keep banking speed while stuck in an obstacle.
@@ -332,8 +383,8 @@ func _physics_process(delta: float) -> void:
 	_follow_wave_height(delta) # Using buoyancy.gd logic instead // A 
 	#_update_hull_tilt(delta)
 
-	#_update_camera_tilt(delta)
-	#_stabilize_camera_height()
+	_update_camera_tilt(delta)
+	# _stabilize_camera_height()
 
 	if _trail != null:
 		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
@@ -463,10 +514,10 @@ func _update_hull_tilt(delta: float) -> void:
 
 func _process(delta: float) -> void:	
 	# Rotation & movement of camera to follow buoyancy movements
-	var angle = rigidBody.rotation.y
-	camera.position.x = lerp(camera.position.x, dif_pos_camera.z * sin(angle), camera_speed * delta)
-	camera.position.z = lerp(camera.position.z, dif_pos_camera.z * cos(angle), camera_speed * delta)
-	camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_camera.y + rigidBody.rotation.y, camera_speed * delta)
+	var angle = rotation.y
+	camera.position.x = dif_pos_camera.z * sin(angle) + position.x
+	camera.position.z = dif_pos_camera.z * cos(angle) + position.z
+	camera.rotation.y = dif_rot_camera.y + rotation.y
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
 ## the wave offset on its local Y so the view does not bob.
