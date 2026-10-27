@@ -3,7 +3,7 @@ extends Node
 ## Space skips the current subtitle only (during dive, finishes the intro).
 
 @export_group("Nodes")
-@export var boat: CharacterBody3D
+@export var boat: RigidBody3D
 @export var boat_camera: Camera3D
 @export var intro_camera: Camera3D
 @export var mist_rect: ColorRect

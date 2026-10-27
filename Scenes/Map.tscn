@@ -1322,13 +1322,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock1" unique_id=1378155850]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock1" unique_id=894490227 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4409672, 1.1001959, -7.671814)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/SubViewportContainer/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/SubViewportContainer")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1366,13 +1367,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock2" unique_id=64721071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock2" unique_id=1116070251 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock2" unique_id=1116070251 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.203392, 0.675969, -7.9060345)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/SecondMemory/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/SecondMemory")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1421,13 +1423,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock3" unique_id=838525271]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595409, -2.6265545, -2.668127)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock3" unique_id=2092863899 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock3" unique_id=2092863899 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2098649, -1.8020693, -7.2452636)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/ThirdMemory/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/ThirdMemory")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1477,13 +1480,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock4" unique_id=855456378]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.016527, 0.6116042, 3.059616)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock4" unique_id=1239911234 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock4" unique_id=1239911234 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, -1.6969743, -0.6813779, -7.2563467)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/FourthMemory/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/FourthMemory")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1539,13 +1543,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock5" unique_id=1232754776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock5" unique_id=1165007136 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock5" unique_id=1165007136 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3650308, 1.3710778, -7.833294)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/TextMemory/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/TextMemory")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1589,13 +1594,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock6" unique_id=1037162156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock6" unique_id=2002420321 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock6" unique_id=2002420321 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3744407, 0.50575995, -7.738307)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/TextMemory2/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/TextMemory2")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1639,13 +1645,14 @@ material = SubResource("ShaderMaterial_8q6pl")
 [node name="ViewPoint" type="Marker3D" parent="MemoryRock7" unique_id=1179778607]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3595405, 0.6116042, -4.7814074)
 
-[node name="Area3D" type="Area3D" parent="MemoryRock7" unique_id=275943975 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
+[node name="Area3D" type="Area3D" parent="MemoryRock7" unique_id=275943975 node_paths=PackedStringArray("memory_fog_volume", "memory_content", "overlay", "hand_skeleton", "boat", "boat_camera", "closeup_camera", "view_point", "first_person_hands", "white_mist")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.50575995, -7.5236483)
 script = ExtResource("7_xicox")
 memory_fog_volume = NodePath("../FogVolume")
 memory_content = NodePath("../../MemoryOverlay/TextMemory3/SubViewport/MemoryContent")
 overlay = NodePath("../../MemoryOverlay/TextMemory3")
 hand_skeleton = NodePath("../../HandSkeletonHUD")
+boat = NodePath("../../Boat")
 boat_camera = NodePath("../../Boat/Camera3D")
 closeup_camera = NodePath("../../MemoryCamera")
 view_point = NodePath("../ViewPoint")
@@ -1661,8 +1668,9 @@ fov = 60.0
 
 [node name="MemoryCamera" type="Camera3D" parent="." unique_id=888874951]
 
-[node name="IntroCutscene" type="Node" parent="." unique_id=1260358448 node_paths=PackedStringArray("boat_camera", "intro_camera", "mist_rect", "subtitle", "intro_ui")]
+[node name="IntroCutscene" type="Node" parent="." unique_id=1260358448 node_paths=PackedStringArray("boat", "boat_camera", "intro_camera", "mist_rect", "subtitle", "intro_ui")]
 script = ExtResource("100_intro")
+boat = NodePath("../Boat")
 boat_camera = NodePath("../Boat/Camera3D")
 intro_camera = NodePath("IntroCamera")
 mist_rect = NodePath("IntroUI/MistRect")
@@ -1713,8 +1721,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="EndingManager" type="Node" parent="." unique_id=485570083 node_paths=PackedStringArray("boat_camera", "cutscene_camera", "ending_ui", "overlay", "photo_root", "photo_mask", "photo_image", "photo_background", "subtitle", "end_label", "trigger", "ending_music_player")]
+[node name="EndingManager" type="Node" parent="." unique_id=485570083 node_paths=PackedStringArray("boat", "boat_camera", "cutscene_camera", "ending_ui", "overlay", "photo_root", "photo_mask", "photo_image", "photo_background", "subtitle", "end_label", "trigger", "ending_music_player")]
 script = ExtResource("101_ending")
+boat = NodePath("../Boat")
 boat_camera = NodePath("../Boat/Camera3D")
 cutscene_camera = NodePath("../IntroCutscene/IntroCamera")
 ending_ui = NodePath("EndingUI")
@@ -2257,7 +2266,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2790642, 3.0316772, -8.553
 shape = SubResource("BoxShape3D_vanes")
 
 [node name="FogVolume" type="FogVolume" parent="." unique_id=1293038478]
-visible = false
 size = Vector3(100, 5, 100)
 material = SubResource("ShaderMaterial_3ytfl")
 

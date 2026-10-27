@@ -4,7 +4,7 @@ extends Node
 ## Soft edges: memory_soft_mask.png as an enlarged clip mask (center kept, edges fade).
 
 @export_group("Nodes")
-@export var boat: CharacterBody3D
+@export var boat: RigidBody3D
 @export var boat_camera: Camera3D
 @export var cutscene_camera: Camera3D
 @export var ending_ui: CanvasLayer
