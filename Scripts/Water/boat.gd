@@ -187,6 +187,7 @@ var _recorder
 # Used for rotating camera in circle with RigidBody3D buoyancy movements
 var dif_pos_camera
 var dif_rot_camera
+var base_camera_height
 
 # Used for keeping track of changes in rotation/position caused by buoyancy
 var dif_pos_boat
@@ -241,6 +242,8 @@ func _ready() -> void:
 	# Used for rotating camera in circle with RigidBody3D buoyancy movements
 	dif_pos_camera = camera.position - position # dif_pos.z = Radius of circle
 	dif_rot_camera = camera.rotation - rotation # dif_rot.y = Rotation angle
+	
+	base_camera_height = camera.position.y
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -439,7 +442,7 @@ func _start_fall() -> void:
 	_tilt_vel += Vector3(axis.x, 0.0, axis.y) * spin
 	
 	# Duct tape solution to fix incompatibilites between water jet system and buoyancy.gd
-	get_node("/root/Map/Boat/RigidBody3D").base_water_height = 0.0 
+	get_node("/root/Map/Boat").base_water_height = 0.0 
 
 
 func _land() -> void:
@@ -499,6 +502,9 @@ func _process(delta: float) -> void:
 	camera.position.x = dif_pos_camera.z * sin(angle) + position.x
 	camera.position.z = dif_pos_camera.z * cos(angle) + position.z
 	camera.rotation.y = dif_rot_camera.y + rotation.y
+	
+	camera.position.y = lerp(camera.position.y, base_camera_height + base_water_height, (camera_speed / 2) * delta)
+	
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
 ## the wave offset on its local Y so the view does not bob.
