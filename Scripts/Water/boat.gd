@@ -241,9 +241,6 @@ func _ready() -> void:
 	# Used for rotating camera in circle with RigidBody3D buoyancy movements
 	dif_pos_camera = camera.position - position # dif_pos.z = Radius of circle
 	dif_rot_camera = camera.rotation - rotation # dif_rot.y = Rotation angle
-	
-	pos_camera = camera.position
-	rot_camera = camera.rotation
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -262,6 +259,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		state.angular_velocity *= 1 - water_drag_angular
 
 func _physics_process(delta: float) -> void:
+	# Water buoyancy simulation
 	submerged = false
 	for point in buoyancyPoints:
 		var water_height: float = base_water_height + water.get_height(point.global_position);
@@ -271,23 +269,6 @@ func _physics_process(delta: float) -> void:
 			var force = Vector3.UP * float_force * gravity * depth
 			apply_force(force, point.global_position - global_position) # Position is offset from body origin in global coordinates
 	
-	# Rotation & movement of boat to follow buoyancy movements of the rigid body
-	#var angle = rigidBody.rotation.y
-	#camera.position.x = lerp(camera.position.x, dif_pos_camera.z * sin(angle), camera_speed * delta)
-	#camera.position.z = lerp(camera.position.z, dif_pos_camera.z * cos(angle), camera_speed * delta)
-	#camera.rotation.y = lerp_angle(camera.rotation.y, dif_rot_camera.y + rigidBody.rotation.y, camera_speed * delta)
-	"""
-	var angle = rigidBody.rotation.y
-	#var rot = rigidBody.rotation
-	#var pos= rigidBody.position
-	
-	position.x = lerp(position.x, dif_pos_boat.z * sin(angle), camera_speed * delta)
-	position.z = lerp(position.z, dif_pos_boat.z * cos(angle), camera_speed * delta)
-	rotation.y = lerp_angle(rotation.y, dif_rot_boat.y + rigidBody.rotation.y, camera_speed * delta)
-	
-	#rigidBody.rotation = rot
-	#rigidBody.position = pos
-	"""
 	_oar.update(delta)
 
 	# --- 1. Collect force and torque (boat frame: x right, z back) --------
