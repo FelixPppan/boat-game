@@ -549,6 +549,9 @@ radius = 0.69970703
 height = 33.30359
 radius = 22.165527
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_vanes"]
+size = Vector3(8.849945, 7.0633545, 4.131134)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ytfl"]
 shader = ExtResource("7_5t7yc")
 shader_parameter/base_density = 1.0
@@ -2240,6 +2243,10 @@ transform = Transform3D(0.8155684, 0.085136466, 0, -0.085136466, 0.8155684, 0, 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="buildingApartment" unique_id=2013914371]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="buildingApartment" unique_id=743744372]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2790642, 3.0316772, -8.553882)
+shape = SubResource("BoxShape3D_vanes")
 
 [node name="FogVolume" type="FogVolume" parent="." unique_id=1293038478]
 size = Vector3(100, 5, 100)
