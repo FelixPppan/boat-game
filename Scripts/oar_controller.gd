@@ -383,7 +383,7 @@ func _input(event: InputEvent) -> void:
 	if key == null or not key.pressed:
 		return
 	var code := key.keycode
-	if code == KEY_F2:
+	if code == KEY_F1:
 		if key.echo:
 			return
 		_overlay_visible = not _overlay_visible

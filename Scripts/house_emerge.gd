@@ -55,9 +55,9 @@ func _on_level_completed() -> void:
 	bounds = bounds.merge(_mesh_bounds(self, final_transform))
 	var focus := bounds.get_center()
 	var previous_camera := get_viewport().get_camera_3d()
-	var boat_mode := boat.process_mode
+	# var boat_mode := boat.process_mode
 	add_to_group("memory_cinematic")
-	boat.process_mode = Node.PROCESS_MODE_DISABLED
+	# boat.process_mode = Node.PROCESS_MODE_DISABLED
 	await _fade_to(1.0)
 	var start := camera_start.global_position
 	var via := camera_via.global_position
@@ -78,7 +78,7 @@ func _on_level_completed() -> void:
 	await _fade_to(1.0)
 	previous_camera.make_current()
 	await _fade_to(0.0)
-	boat.process_mode = boat_mode
+	# boat.process_mode = boat_mode
 	remove_from_group("memory_cinematic")
 	reveal_finished.emit()
 

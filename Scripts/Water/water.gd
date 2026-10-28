@@ -52,13 +52,13 @@ func gerstner(wavelength: float, steepness: float, dir: Vector2, p: Vector3):
 	return Vector3(x, y, z)
 
 # Re-implementation of create_wave function in GDScript
-func create_wave(p: Vector3):
-	return gerstner(gerstner_wave.x, gerstner_wave.y, Vector2(gerstner_wave.z, gerstner_wave.w), p)
-
 func get_height(point: Vector3):
 	# var x: float = point.x
 	# var z: float = point.z
 	point = gerstner(gerstner_wave.x, gerstner_wave.y, Vector2(gerstner_wave.z, gerstner_wave.w), point)
+	# point += gerstner(gerstner_wave.x * 0.8, gerstner_wave.y * 0.5, Vector2(gerstner_wave.z * 0.5, gerstner_wave.w *1.5), point);
+	# point += gerstner(gerstner_wave.x * 0.5, gerstner_wave.y * 1.5, Vector2(gerstner_wave.z * 0.5, gerstner_wave.w *1.5), point);
+	# point += gerstner(gerstner_wave.x * 0.5, gerstner_wave.y * 1.5, Vector2(gerstner_wave.z * 0.5, gerstner_wave.w), point);
 	return point.y;
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

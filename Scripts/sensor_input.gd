@@ -890,6 +890,7 @@ func _build_overlay() -> void:
 	_overlay = CanvasLayer.new()
 	_overlay.visible = _overlay_visible
 	_overlay.layer = 100
+	_overlay.visible = _overlay_visible
 	add_child(_overlay)
 
 	_label = Label.new()

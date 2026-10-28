@@ -1,5 +1,6 @@
 extends Area3D
 
+signal interaction_started
 signal interaction_finished
 
 @export var memory_fog_volume: FogVolume
@@ -103,6 +104,7 @@ func _engage() -> void:
 		if trigger != self and trigger._engaged:
 			return
 	_engaged = true
+	interaction_started.emit()
 	_boat_process_mode = boat.process_mode
 	# GhostSeat is a child of the boat, so hiding the boat hides both models.
 	# First-person hands live outside this hierarchy and remain visible.
