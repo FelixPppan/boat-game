@@ -1,5 +1,6 @@
 shader_type canvas_item;
 uniform sampler2D displacement_map;
+uniform float foam_quantity: hint_range(0.0, 1.0) = 0.7;
 
 vec3 get_displacement(vec2 uv) {
 	// Returns the displacement at the specified position in the displacement map
@@ -25,7 +26,7 @@ void fragment() {
 	
 	// Compares the size of the sample area before with the sample area after displacement
 	float jacobian_determinant = compressed_area / initial_area; // How "compressed" the water is
-	float compression = 1.0 - smoothstep(0.0, 0.9, jacobian_determinant); // 0.0 = no compression, 1.0 = maximum compression
+	float compression = 1.0 - smoothstep(0.0, foam_quantity, jacobian_determinant); // 0.0 = no compression, 1.0 = maximum compression
 	
 	COLOR = vec4(vec3(compression), 1);
 }
