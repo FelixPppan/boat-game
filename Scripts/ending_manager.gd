@@ -3,6 +3,8 @@ extends Node
 ## Space skips the current beat (same idea as IntroCutscene).
 ## Soft edges: memory_soft_mask.png as an enlarged clip mask (center kept, edges fade).
 
+signal ending_started
+
 @export_group("Nodes")
 @export var boat: RigidBody3D
 @export var boat_camera: Camera3D
@@ -125,6 +127,7 @@ func play_ending() -> void:
 	_phase = Phase.RISE
 	_carousel_index = -1
 	_subtitle_index = -1
+	ending_started.emit()
 
 	_boat_process_mode = boat.process_mode
 	boat.process_mode = Node.PROCESS_MODE_DISABLED

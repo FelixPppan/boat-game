@@ -300,7 +300,7 @@ var _tuned := 0.0
 var _tuned_knob := KNOB_NONE
 
 var _overlay: CanvasLayer
-var _overlay_visible := true
+var _overlay_visible := false
 var _label: Label
 var _panel: Panel
 var _title: Label
@@ -383,7 +383,7 @@ func _input(event: InputEvent) -> void:
 	if key == null or not key.pressed:
 		return
 	var code := key.keycode
-	if code == KEY_F2:
+	if code == KEY_F1:
 		if key.echo:
 			return
 		_overlay_visible = not _overlay_visible

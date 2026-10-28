@@ -2,6 +2,8 @@ extends Node
 ## Opening cutscene: aerial mist shot + subtitles, then dive to the play camera.
 ## Space skips the current subtitle only (during dive, finishes the intro).
 
+signal intro_finished
+
 @export_group("Nodes")
 @export var boat: RigidBody3D
 @export var boat_camera: Camera3D
@@ -181,6 +183,7 @@ func _on_intro_finished() -> void:
 	intro_camera.global_transform = boat_camera.global_transform
 	boat_camera.make_current()
 	boat.process_mode = _boat_process_mode
+	intro_finished.emit()
 
 
 func _match_intro_camera_lens() -> void:
