@@ -52,9 +52,11 @@ extends Node3D
 		_queue_rebuild()
 
 const ZONE_Y := 0.15
+const UPDRAFT_SHADER := preload("res://Shaders/Water/jet_updraft.gdshader")
 
 var _container: Node3D
 var _column: MeshInstance3D
+var _updraft: MeshInstance3D
 var _pending := false
 var _boat: Node3D
 var _current_height := 0.0
@@ -101,6 +103,32 @@ func _rebuild() -> void:
 	_column = MeshInstance3D.new()
 	_column.mesh = col_mesh
 	_container.add_child(_column)
+	# One low-poly shell per jet; the shader animates it without particles or CPU updates.
+	var wind_mesh := CylinderMesh.new()
+	wind_mesh.top_radius = radius * 1.15
+	wind_mesh.bottom_radius = radius * 1.3
+	wind_mesh.height = 1.0
+	wind_mesh.radial_segments = 24
+	wind_mesh.rings = 1
+	wind_mesh.cap_top = false
+	wind_mesh.cap_bottom = false
+	var wind_material := ShaderMaterial.new()
+	wind_material.shader = UPDRAFT_SHADER
+	wind_mesh.material = wind_material
+	_updraft = MeshInstance3D.new()
+	_updraft.name = "Updraft"
+	_updraft.mesh = wind_mesh
+	_updraft.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Stop drawing distant transparent effects to limit overdraw.
+	_updraft.visibility_range_end = 90.0
+	_container.add_child(_updraft)
+	# Stable per-jet variation keeps previews and rebuilds from changing the height.
+	var wind_rng := RandomNumberGenerator.new()
+	wind_rng.seed = hash(str(get_path()))
+	var wind_height := jet_height * wind_rng.randf_range(0.75, 1.25)
+	# Show the updraft before activation without changing the physical lift height.
+	_updraft.scale = Vector3(1.0, wind_height, 1.0)
+	_updraft.position.y = wind_height * 0.5
 	# Preview the full jet in the editor so its height can be tuned by eye.
 	# 编辑器里预览完整水柱,方便目测调高度。
 	_set_column(jet_height if Engine.is_editor_hint() else _current_height)
