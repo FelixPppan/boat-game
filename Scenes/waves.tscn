@@ -30,10 +30,13 @@ shader_parameter/blend_from = -0.31799996760500004
 shader_parameter/blend_to = 0.91200004332
 shader_parameter/metallic = 0.0
 shader_parameter/roughness = 0.010000000475
+shader_parameter/near = 0.5
+shader_parameter/far = 100.0
+shader_parameter/edge_scale = 0.1
+shader_parameter/edge_colour = Color(0.7581918, 0.7581918, 0.7581917, 1)
 shader_parameter/noise = SubResource("NoiseTexture2D_rqboq")
 shader_parameter/noise_intensity = 0.250000011875
 shader_parameter/displacement_map = SubResource("ViewportTexture_cga03")
-shader_parameter/gerstner_wave = Vector4(8.905, 0.655, 1, 1)
 shader_parameter/size_of_plane = 100.0
 shader_parameter/time = 0.0
 shader_parameter/trail_world_center = Vector2(0, 0)
@@ -77,8 +80,10 @@ noise = SubResource("FastNoiseLite_5t7yc")
 resource_local_to_scene = true
 shader = ExtResource("4_cga03")
 shader_parameter/noise = SubResource("NoiseTexture2D_5t7yc")
-shader_parameter/noise_intensity = 0.0
-shader_parameter/gerstner_wave = Vector4(2, 1.445, 1, 1)
+shader_parameter/noise_intensity = 0.400000019
+shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
+shader_parameter/time = 0.0
+shader_parameter/speed = 1.0
 shader_parameter/size_of_plane = 100.0
 
 [node name="Node3D" type="Node3D" unique_id=1617840124]
@@ -98,8 +103,7 @@ environment = SubResource("Environment_08pfp")
 transform = Transform3D(1, 0, 0, 0, 0.7745205, 0.6325488, 0, -0.6325488, 0.7745205, 0, 2.2020974, 6.915177)
 
 [node name="Sail Boat" parent="." unique_id=1389022062 instance=ExtResource("2_umuii")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.134, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007631004, 0)
 
 [node name="DisplacementViewport" type="SubViewport" parent="." unique_id=1761630929]
 size = Vector2i(1024, 1024)

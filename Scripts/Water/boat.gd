@@ -1,8 +1,8 @@
 extends RigidBody3D
 
+# For buoyancy physics
 @onready var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var water = get_node("/root/Map/Water/WaterPlane")
-# @onready var water = get_node_or_null("../WaterPlane")
 @onready var buoyancyPoints = $BuoyancyPoints.get_children()
 
 @export var float_force: float = 1.0

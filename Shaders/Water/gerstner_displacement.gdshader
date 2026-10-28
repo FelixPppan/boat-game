@@ -5,7 +5,10 @@ uniform sampler2D noise: repeat_enable;
 uniform float noise_intensity: hint_range(0,1) = 0.2;
 
 // Gerstner settings
-uniform vec4 gerstner_wave = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 gerstner_wave_1 = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 gerstner_wave_2 = vec4(1.0, 0.0, 1.0, 0.0);
+uniform vec4 gerstner_wave_3 = vec4(1.0, 0.0, 1.0, 0.0);
+uniform vec4 gerstner_wave_4 = vec4(1.0, 0.0, 1.0, 0.0);
 
 // For use by water.gd script when synching buoyancy physics
 uniform float time; // Change to TIME to unbind from script
@@ -17,7 +20,7 @@ uniform float size_of_plane = 10.0;
 // Function for creating Gerstner waves
 vec3 gerstner(
 	float wavelength, 
-	float steepness, 
+	float wavevector, 
 	vec2 dir, 
 	vec2 point,
 	bool noise_on) {
@@ -29,7 +32,7 @@ vec3 gerstner(
 	vec2 d = normalize(dir); // Direction
 	
 	float f = k * dot(d, point) - c * time * speed; // Function inside sin/cos wave	
-	float a = steepness / k;
+	float a = wavevector / k;
 	
 	float wave_noise = 0.0;
 	if (noise_on) {
@@ -44,10 +47,25 @@ vec3 gerstner(
 }
 
 vec3 create_wave(vec2 point) {
-	vec3 displacement = gerstner(gerstner_wave.x, gerstner_wave.y, vec2(gerstner_wave.z, gerstner_wave.w), point, true);
-	displacement += gerstner(gerstner_wave.x * 0.8, gerstner_wave.y * 0.5, vec2(gerstner_wave.z * 0.5, gerstner_wave.w *1.5), point, false);
-	displacement += gerstner(gerstner_wave.x * 0.5, gerstner_wave.y * 1.5, vec2(gerstner_wave.z * 0.5, gerstner_wave.w *1.5), point, false);
-	displacement += gerstner(gerstner_wave.x * 0.5, gerstner_wave.y * 1.5, vec2(gerstner_wave.z * 0.5, gerstner_wave.w), point, false);
+	vec3 displacement = gerstner(gerstner_wave_1.x, gerstner_wave_1.y, vec2(gerstner_wave_1.z, gerstner_wave_1.w), point, true);
+	displacement += gerstner(gerstner_wave_1.x * 0.8, gerstner_wave_1.y * 0.5, vec2(gerstner_wave_1.z * 0.5, gerstner_wave_1.w *1.5), point, false);
+	displacement += gerstner(gerstner_wave_1.x * 0.5, gerstner_wave_1.y * 1.5, vec2(gerstner_wave_1.z * 0.5, gerstner_wave_1.w *1.5), point, false);
+	displacement += gerstner(gerstner_wave_1.x * 0.5, gerstner_wave_1.y * 1.5, vec2(gerstner_wave_1.z * 0.5, gerstner_wave_1.w), point, false);
+	
+	// vec4 gerstner_wave_2 = vec4(7.0, 0.1, 1.0, 0.5);
+	displacement += gerstner(gerstner_wave_2.x, gerstner_wave_2.y, vec2(gerstner_wave_2.z, gerstner_wave_2.w), point, false);
+	displacement += gerstner(gerstner_wave_2.x * 0.5, gerstner_wave_2.y * 1.5, vec2(gerstner_wave_2.z * 0.5, gerstner_wave_2.w *1.5), point, false);
+	displacement += gerstner(gerstner_wave_2.x * 0.8, gerstner_wave_2.y * 0.5, vec2(gerstner_wave_2.z * 0.5, gerstner_wave_2.w *1.5), point, false);
+	
+	// vec4 gerstner_wave_3 = vec4(2.0, 0.1, -0.5, -1.0);
+	displacement += gerstner(gerstner_wave_3.x, gerstner_wave_3.y, vec2(gerstner_wave_3.z, gerstner_wave_3.w), point, false);
+	displacement += gerstner(gerstner_wave_3.x * 0.5, gerstner_wave_3.y * 1.5, vec2(gerstner_wave_3.z * 0.5, gerstner_wave_3.w *1.5), point, false);
+	displacement += gerstner(gerstner_wave_3.x * 0.8, gerstner_wave_3.y * 0.5, vec2(gerstner_wave_3.z * 0.5, gerstner_wave_3.w *1.5), point, false);
+	
+	// vec4 gerstner_wave_4 = vec4(1.0, 0.1, -0.5, -1.0);
+	displacement += gerstner(gerstner_wave_4.x, gerstner_wave_4.y, vec2(gerstner_wave_4.z, gerstner_wave_4.w), point, false);
+	displacement += gerstner(gerstner_wave_4.x * 0.5, gerstner_wave_4.y * 1.5, vec2(gerstner_wave_4.z * 0.5, gerstner_wave_4.w *1.5), point, false);
+	displacement += gerstner(gerstner_wave_4.x * 0.8, gerstner_wave_4.y * 0.5, vec2(gerstner_wave_4.z * 1.5, gerstner_wave_4.w *0.5), point, false);
 	
 	return displacement;
 }

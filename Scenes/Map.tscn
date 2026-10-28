@@ -135,6 +135,10 @@ shader_parameter/blend_from = -0.24399996409
 shader_parameter/blend_to = 0.73600003496
 shader_parameter/metallic = 0.0
 shader_parameter/roughness = 0.10000000475
+shader_parameter/near = 0.5
+shader_parameter/far = 100.0
+shader_parameter/edge_scale = 0.1
+shader_parameter/edge_colour = Color(0, 0, 0, 1)
 shader_parameter/noise = SubResource("NoiseTexture2D_uylqo")
 shader_parameter/noise_intensity = 0.400000019
 shader_parameter/displacement_map = SubResource("ViewportTexture_wngbx")
@@ -160,7 +164,10 @@ resource_local_to_scene = true
 shader = ExtResource("2_ejakq")
 shader_parameter/noise = SubResource("NoiseTexture2D_uylqo")
 shader_parameter/noise_intensity = 0.50000002375
-shader_parameter/gerstner_wave = Vector4(4, 0.2, 1, 1)
+shader_parameter/gerstner_wave_1 = Vector4(4, 0.2, 1, 1)
+shader_parameter/gerstner_wave_2 = Vector4(7, 0.05, -0.6, 0.5)
+shader_parameter/gerstner_wave_3 = Vector4(2, 0.1, -0.5, -1)
+shader_parameter/gerstner_wave_4 = Vector4(1, 0.1, -0.5, -1)
 shader_parameter/time = 0.0
 shader_parameter/speed = 1.0
 shader_parameter/size_of_plane = 150.0
@@ -172,6 +179,7 @@ viewport_path = NodePath("Water/DisplacementViewport")
 resource_local_to_scene = true
 shader = ExtResource("5_6kno7")
 shader_parameter/displacement_map = SubResource("ViewportTexture_r7pbr")
+shader_parameter/foam_quantity = 0.50000002375
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_25gan"]
 resource_name = "DarkWood"
@@ -348,6 +356,7 @@ glow_intensity = 0.35
 glow_strength = 0.7
 glow_bloom = 0.06
 glow_hdr_threshold = 0.85
+fog_enabled = true
 fog_mode = 1
 fog_light_color = Color(0.7137255, 0.69411767, 0.8117647, 1)
 fog_sun_scatter = 0.15
@@ -1170,7 +1179,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6336703, 0.43897676, 20.37
 disable_mode = 1
 collision_layer = 3
 collision_mask = 3
-lock_rotation = true
 linear_damp = 5.696
 script = ExtResource("6_0j2y5")
 metadata/Camera = false
@@ -1189,14 +1197,14 @@ script = ExtResource("15_passenger")
 [node name="ghostwithoutbone" parent="Boat/Model/GhostSeat" unique_id=1352133115 instance=ExtResource("9_uylqo")]
 transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
 
-[node name="left_hand" parent="Boat/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 672248459) index="1" unique_id=146559431]
+[node name="left_hand" parent="Boat/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 1770877031) index="1" unique_id=117643734]
 material_override = ExtResource("9_bjq7f")
 
-[node name="white_body" parent="Boat/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 672248459) index="2" unique_id=1688189662]
+[node name="white_body" parent="Boat/Model/GhostSeat/ghostwithoutbone/骨架/Skeleton3D" parent_id_path=PackedInt32Array(1352133115, 1770877031) index="2" unique_id=572450861]
 material_override = ExtResource("9_bjq7f")
 mesh = SubResource("ArrayMesh_0j2y5")
 
-[node name="right_hand" parent="Boat/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=867505476]
+[node name="right_hand" parent="Boat/Model/GhostSeat/ghostwithoutbone" index="1" unique_id=2126417965]
 material_override = ExtResource("9_bjq7f")
 
 [node name="Collision Cube" type="CollisionShape3D" parent="Boat" unique_id=312301187]
@@ -1382,7 +1390,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.198837, 0.1830988, 32.9227
 transform = Transform3D(0.605, 0, 0, 0, 0.605, 0, 0, 0, 0.605, -1.203392, 0, -7.9060345)
 script = ExtResource("15_nr4qj")
 
-[node name="Tennis_Ball" parent="MemoryRock2/Tennis Ball" index="0" unique_id=1380859345]
+[node name="Tennis_Ball" parent="MemoryRock2/Tennis Ball" index="0" unique_id=705171066]
 material_override = ExtResource("19_t5mar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock2" unique_id=586251355]
@@ -1548,7 +1556,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.017066956, 0.1830988, -27.7
 transform = Transform3D(7.9615397, -2.1624942, 0, 2.1624942, 7.9615397, 0, 0, 0, 8.25, -1.535, 0.25, -7.836)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube" parent="MemoryRock5/textFragment1" index="0" unique_id=1664762645]
+[node name="Cube" parent="MemoryRock5/textFragment1" index="0" unique_id=152349557]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock5" unique_id=1198924378]
@@ -1599,7 +1607,7 @@ transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.
 transform = Transform3D(8.5, 0, 0, 0, 8.5, 0, 0, 0, 8.5, -1.5079994, 2.126709, -7.453)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube_001" parent="MemoryRock6/textFragment2" index="0" unique_id=1850156094]
+[node name="Cube_001" parent="MemoryRock6/textFragment2" index="0" unique_id=142460512]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock6" unique_id=1240784343]
@@ -1650,7 +1658,7 @@ transform = Transform3D(0.99997544, 0, -0.007006368, 0, 1, 0, 0.007006368, 0, 0.
 transform = Transform3D(8.250009, 0, 2.9802322e-08, 0, 8.25, 0, -2.9802322e-08, 0, 8.250009, -2.2490215, 1.4048767, -7.641428)
 script = ExtResource("15_nr4qj")
 
-[node name="Cube_005" parent="MemoryRock7/textFragment3" index="0" unique_id=1479293]
+[node name="Cube_005" parent="MemoryRock7/textFragment3" index="0" unique_id=511780973]
 material_override = ExtResource("23_0hvk1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock7" unique_id=1779151001]
@@ -2476,7 +2484,7 @@ transform = Transform3D(-0.009351909, 0, -0.999956, 0, 1, 0, 0.999956, 0, -0.009
 transform = Transform3D(1, 0, -1.4901161e-07, 0, 1, 0, 1.4901161e-07, 0, 1, -0.0078125, 0.52124023, -0.018615723)
 shape = SubResource("RestoredManual_BoxShape3D_btfpm")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef01" unique_id=1199977167]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef01" unique_id=41407123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34500003, 0)
 visible = false
 mesh = SubResource("BoxMesh_nhu4q")
@@ -2494,7 +2502,7 @@ transform = Transform3D(-0.06674141, 0.5926023, -2.4278326, 0.15679386, 2.424906
 transform = Transform3D(0.9677155, 0.2518758, -0.009250939, -0.25159475, 0.96752775, 0.024292454, 0.015068978, -0.021179989, 0.9996623, 0.23809433, 0.39840722, -0.015787125)
 shape = SubResource("RestoredManual_BoxShape3D_unnkj")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef02" unique_id=1815950692]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef02" unique_id=1332617466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54999995, 0)
 visible = false
 mesh = SubResource("BoxMesh_n2qkd")
@@ -2512,7 +2520,7 @@ transform = Transform3D(-0.12174639, 0.24499346, -1.1169852, 0.08321399, 1.12221
 transform = Transform3D(0.9833631, 0.15254952, -0.09871154, -0.15360378, 0.98812747, -0.00312638, 0.097062096, 0.018236645, 0.99511665, 0.2973957, 0.93101287, -0.91832733)
 shape = SubResource("RestoredManual_BoxShape3D_w1wla")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef05" unique_id=1387754612]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef05" unique_id=265968547]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
 visible = false
 mesh = SubResource("BoxMesh_0a12v")
@@ -2530,7 +2538,7 @@ transform = Transform3D(1.7632937, 0.46450233, 1.710273, 0.091401786, 2.3855548,
 transform = Transform3D(0.67735696, 0.24291843, -0.6943911, -0.28228986, 0.9574764, 0.05958845, 0.6793388, 0.15565711, 0.7171267, 0.011219025, 0.6024932, 0.40176392)
 shape = SubResource("RestoredManual_BoxShape3D_gouir")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef11" unique_id=940713152]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef11" unique_id=104706706]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08500004, 0)
 visible = false
 mesh = SubResource("BoxMesh_cur1b")
@@ -2562,7 +2570,7 @@ shape = SubResource("RestoredManual_BoxShape3D_fmc0y")
 transform = Transform3D(0.9935038, 0, -0.113800734, 0, 1, 0, 0.113800734, 0, 0.9935038, 6.0170326, 0.9291992, -28.321407)
 shape = SubResource("RestoredManual_BoxShape3D_inrm0")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef12" unique_id=706603603]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef12" unique_id=346976262]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 visible = false
 mesh = SubResource("BoxMesh_mdnuw")
@@ -2580,7 +2588,7 @@ transform = Transform3D(0.026516676, 0.48717034, -0.8729043, 0.05167086, 0.87137
 transform = Transform3D(0.86641085, 0.49025768, 0.09474057, -0.49928573, 0.84813404, 0.17714994, 0.006496787, -0.20078714, 0.9796126, 0.52082443, 0.5326912, -0.14359093)
 shape = SubResource("RestoredManual_BoxShape3D_ooefh")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef13" unique_id=1166342819]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef13" unique_id=1449539682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)
 visible = false
 mesh = SubResource("BoxMesh_ihybg")
@@ -2598,7 +2606,7 @@ transform = Transform3D(-0.0567302, 0.50371194, -2.0636578, 0.13327478, 2.06117,
 transform = Transform3D(0.9754293, 0.21894252, -0.024536133, -0.21864355, 0.97569996, 0.014298156, 0.027070224, -0.008582123, 0.99959683, 0.25889206, 0.46054026, -0.06851196)
 shape = SubResource("RestoredManual_BoxShape3D_xenyc")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef15" unique_id=529970199]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef15" unique_id=631553038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.050000012, 0)
 visible = false
 mesh = SubResource("BoxMesh_gwm47")
@@ -2616,7 +2624,7 @@ transform = Transform3D(-1.7724425, 0.5280769, 1.6821362, 0.7643985, 2.3795552, 
 transform = Transform3D(0.7624533, 0.17243221, -0.6236648, -0.05930073, 0.9784035, 0.1980153, 0.64434004, -0.11399424, 0.75621134, -0.50385284, 1.2656505, 0.6044693)
 shape = SubResource("RestoredManual_BoxShape3D_gism2")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef16" unique_id=158677914]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef16" unique_id=729127142]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
 visible = false
 mesh = SubResource("BoxMesh_c6ixj")
@@ -2634,7 +2642,7 @@ transform = Transform3D(1.1842407, -0.21688882, -2.1910129, -0.0477293, 2.484727
 transform = Transform3D(0.85138875, -0.007076115, 0.5245018, 0.0281896, 0.999081, -0.03227953, -0.5237914, 0.042267412, 0.8508057, -0.2080555, 0.47955474, -0.16622543)
 shape = SubResource("RestoredManual_BoxShape3D_dew4t")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef18" unique_id=1663199891]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef18" unique_id=696494942]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0)
 visible = false
 mesh = SubResource("BoxMesh_fdxpn")
@@ -2648,7 +2656,7 @@ size = Vector3(1.22, 1.93, 1.78)
 [node name="Rose bush" parent="Level1/Reefs/Reef19" unique_id=613359892 instance=ExtResource("43_0j5ni")]
 transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0.08035278, 0, -0.03824997)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef19" unique_id=679841248]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef19" unique_id=1216806573]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035000026, 0)
 visible = false
 mesh = SubResource("BoxMesh_iaoaq")
@@ -2666,7 +2674,7 @@ transform = Transform3D(0.015532434, 0, 0.99987936, 0, 1, 0, -0.99987936, 0, 0.0
 transform = Transform3D(0.99999976, -2.5331974e-07, 0, -8.940697e-08, 1, 2.9802322e-08, -1.1920929e-07, -2.9802322e-08, 0.9999999, 0.074622154, 0.7782593, 0.08182526)
 shape = SubResource("RestoredManual_BoxShape3D_0thhy")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef20" unique_id=679753490]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef20" unique_id=2096219105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55499995, 0)
 visible = false
 mesh = SubResource("BoxMesh_2o871")
@@ -2684,7 +2692,7 @@ transform = Transform3D(-0.04867518, 0, -0.9988146, 0, 1, 0, 0.9988146, 0, -0.04
 transform = Transform3D(0.9992863, 0, -0.037775993, 0, 1, 0, 0.037775993, 0, 0.9992863, -0.030485153, 0.80181885, 0.015727997)
 shape = SubResource("RestoredManual_BoxShape3D_e1414")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef21" unique_id=1861696147]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef21" unique_id=1874925117]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.485, 0)
 visible = false
 mesh = SubResource("BoxMesh_ba86g")
@@ -2702,7 +2710,7 @@ transform = Transform3D(0.025913686, 0, 0.99966425, 0, 1, 0, -0.99966425, 0, 0.0
 transform = Transform3D(0.99942786, -0.0047751814, -0.033474565, 0.004579589, 0.9999708, -0.005921647, 0.03350222, 0.005765274, 0.9994216, 0.019496918, 0.69785404, 0.01677227)
 shape = SubResource("RestoredManual_BoxShape3D_ftv8u")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef23" unique_id=2059634356]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef23" unique_id=1154689143]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06999999, 0)
 visible = false
 mesh = SubResource("BoxMesh_0g3gy")
@@ -2720,7 +2728,7 @@ transform = Transform3D(-0.0113577545, 0, 0.9999355, 0, 1, 0, -0.9999355, 0, -0.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007461548, 0.76864624, 0.71213436)
 shape = SubResource("RestoredManual_BoxShape3D_kg2av")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef24" unique_id=492152516]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef24" unique_id=186410833]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21500003, 0)
 visible = false
 mesh = SubResource("BoxMesh_v12m4")
@@ -2738,7 +2746,7 @@ transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0
 transform = Transform3D(0.99999934, 0.0010914678, 3.9041042e-06, -0.001091467, 0.9999737, 0.0071942285, 3.9488077e-06, -0.007194236, 0.99997395, 0.007972717, 0.6889038, 0.6016197)
 shape = SubResource("RestoredManual_BoxShape3D_fod30")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef25" unique_id=2057847560]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef25" unique_id=1759354609]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
 visible = false
 mesh = SubResource("BoxMesh_1evi2")
@@ -2752,7 +2760,7 @@ size = Vector3(0.85, 3.3, 2)
 [node name="Thorny Vine" parent="Level1/Reefs/Reef26" unique_id=1880726697 instance=ExtResource("44_2gi4k")]
 transform = Transform3D(0.54, 0, -1.4901161e-08, 0, 0.54, 0, 1.4901161e-08, 0, 0.54, 0, 0.5534668, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef26" unique_id=1443026681]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef26" unique_id=669213753]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 visible = false
 mesh = SubResource("BoxMesh_igx3h")
@@ -2770,7 +2778,7 @@ transform = Transform3D(0.009116739, 0, -0.99995834, 0, 1, 0, 0.99995834, 0, 0.0
 transform = Transform3D(0.9999978, 2.8312206e-07, -3.2782555e-07, 1.937151e-07, 0.9999811, -3.0100346e-06, 8.940697e-07, 2.95043e-06, 0.99997544, 0.026519775, 1.2515383, -0.09950638)
 shape = SubResource("RestoredManual_BoxShape3D_3uvog")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef28" unique_id=440586895]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef28" unique_id=1614093363]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 visible = false
 mesh = SubResource("BoxMesh_omsev")
@@ -2788,7 +2796,7 @@ transform = Transform3D(-0.10586643, 0.2130378, -0.9712915, 0.07235999, 0.975841
 transform = Transform3D(0.9853393, 0.14031743, -0.09704362, -0.13654822, 0.9896343, 0.044481266, 0.10227923, -0.030577976, 0.9942857, 0.26446152, 0.74514055, -0.80476)
 shape = SubResource("RestoredManual_BoxShape3D_2x0ns")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef29" unique_id=1749002396]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef29" unique_id=1395143021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000024, 0)
 visible = false
 mesh = SubResource("BoxMesh_c1qnu")
@@ -2806,7 +2814,7 @@ transform = Transform3D(0.0030616522, -9.88555e-09, -0.9999953, -9.778887e-09, 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0012226105, 0.51464844, -1.0077362)
 shape = SubResource("RestoredManual_BoxShape3D_h33un")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef30" unique_id=1494464008]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef30" unique_id=1864610678]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45500004, 0)
 visible = false
 mesh = SubResource("BoxMesh_620kk")
@@ -2824,7 +2832,7 @@ transform = Transform3D(2.2454848, 0.43275538, -1.0102106, -0.3562389, 2.4605565
 transform = Transform3D(0.8939469, 0.018448794, -0.44780824, 0.031212524, 0.99416393, 0.10326693, 0.44709864, -0.10629134, 0.88815486, 0.26250267, 0.84625024, 0.0070972443)
 shape = SubResource("RestoredManual_BoxShape3D_bt7y8")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef32" unique_id=440416768]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef32" unique_id=703775652]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03999996, 0)
 visible = false
 mesh = SubResource("BoxMesh_k1x2i")
@@ -2842,7 +2850,7 @@ transform = Transform3D(0.027571082, 0, -0.9996197, 0, 1, 0, 0.9996197, 0, 0.027
 transform = Transform3D(1.0000004, 2.803281e-07, 0, 2.0116568e-07, 1.0000026, 0, -4.61936e-07, -2.30968e-07, 1, 0.076768875, 0.69018936, 0.0515213)
 shape = SubResource("RestoredManual_BoxShape3D_4vts1")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef35" unique_id=1759590799]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef35" unique_id=883366663]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17999995, 0)
 visible = false
 mesh = SubResource("BoxMesh_5o42g")
@@ -2856,7 +2864,7 @@ size = Vector3(1.36, 2.11, 2.83)
 [node name="Rose bush" parent="Level1/Reefs/Reef37" unique_id=1484352856 instance=ExtResource("43_0j5ni")]
 transform = Transform3D(0.12398578, 0.01589081, -4.283758e-05, -0.015890809, 0.123983994, -0.0006711962, -4.283758e-05, 0.00067119626, 0.12499817, -0.010662079, 0.013916016, 0.25239563)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef37" unique_id=1400538937]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef37" unique_id=452005191]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.054999948, 0)
 visible = false
 mesh = SubResource("BoxMesh_06hq5")
@@ -2871,7 +2879,7 @@ size = Vector3(1.16, 2.09, 3.82)
 [node name="RandomFence" parent="Level1/Reefs/Reef38" unique_id=504695590 instance=ExtResource("40_ai02y")]
 transform = Transform3D(0.0178623, 0, 1.1498612, 0, 1.15, 0, -1.1498612, 0, 0.0178623, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef38" unique_id=623055304]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef38" unique_id=605203146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044999957, 0)
 visible = false
 mesh = SubResource("BoxMesh_jd78v")
@@ -2889,7 +2897,7 @@ transform = Transform3D(-0.102998674, 0.08176239, -0.99131536, -0.13858627, 0.98
 transform = Transform3D(0.99468887, 0, -0.10292795, 0, 1, 0, 0.10292795, 0, 0.99468887, 0.199893, 0.21826172, 0.12990761)
 shape = SubResource("RestoredManual_BoxShape3D_680g3")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef40" unique_id=2283489]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef40" unique_id=393158422]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27999997, 0)
 visible = false
 mesh = SubResource("BoxMesh_meems")
@@ -2907,7 +2915,7 @@ transform = Transform3D(0.0033265948, 0, -0.9999944, 0, 1, 0, 0.9999944, 0, 0.00
 transform = Transform3D(0.9999994, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 0.9999994, -0.006969452, 0.47061157, -0.026727676)
 shape = SubResource("RestoredManual_BoxShape3D_wyj0h")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef41" unique_id=418730309]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef41" unique_id=2047254354]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.655, 0)
 visible = false
 mesh = SubResource("BoxMesh_2cphl")
@@ -2925,7 +2933,7 @@ transform = Transform3D(-0.0012128763, 0.009716709, 0.9999521, -0.2048189, 0.978
 transform = Transform3D(0.99993604, 0.011225058, 0.0013458729, -0.011224833, 0.9715395, 0.2366126, 0.0013471283, -0.23661414, 0.97161764, 0.017457962, 1.0745687, -0.23793983)
 shape = SubResource("RestoredManual_BoxShape3D_ntyjw")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef42" unique_id=784294055]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef42" unique_id=597849811]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42499995, 0)
 visible = false
 mesh = SubResource("BoxMesh_bhdo1")
@@ -2943,7 +2951,7 @@ transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, 
 transform = Transform3D(0.6773811, 0.1958606, -0.7090791, -0.29084975, 0.95667183, -0.013597459, 0.6756928, 0.215446, 0.7049972, -0.03577614, 0.7519323, 0.47493362)
 shape = SubResource("RestoredManual_BoxShape3D_2wh32")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef43" unique_id=658449748]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef43" unique_id=433274487]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
 visible = false
 mesh = SubResource("BoxMesh_f3sxs")
@@ -2961,7 +2969,7 @@ transform = Transform3D(0.03750673, 0, 0.99929637, 0, 1, 0, -0.99929637, 0, 0.03
 transform = Transform3D(0.99957776, 0, -0.029058278, 0, 1, 0, 0.029058278, 0, 0.99957776, -0.0007324219, -0.083343506, 0.009670258)
 shape = SubResource("RestoredManual_BoxShape3D_45crg")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef44" unique_id=1775195413]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef44" unique_id=1326842865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0)
 visible = false
 mesh = SubResource("BoxMesh_cydvj")
@@ -2979,7 +2987,7 @@ transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, 
 transform = Transform3D(0.6355366, 0.23890328, -0.734179, -0.34480798, 0.93864745, 0.006957352, 0.69079715, 0.248729, 0.6789206, -0.05835724, 0.6652989, 0.50805664)
 shape = SubResource("RestoredManual_BoxShape3D_hdson")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef46" unique_id=1961673419]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef46" unique_id=822697208]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16999996, 0)
 visible = false
 mesh = SubResource("BoxMesh_02kgq")
@@ -2995,7 +3003,7 @@ transform = Transform3D(-0.0107547, 0, -1.1499494, 0, 1.15, 0, 1.1499494, 0, -0.
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level1/Reefs/Reef48" unique_id=1715597132]
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef48" unique_id=95203630]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef48" unique_id=1865209439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34000003, 0)
 visible = false
 mesh = SubResource("BoxMesh_cmt7r")
@@ -3013,7 +3021,7 @@ transform = Transform3D(-0.00794912, 0, -0.8499626, 0, 0.85, 0, 0.8499626, 0, -0
 transform = Transform3D(1, 0, -2.3841858e-07, 0, 1, 0, 2.3841858e-07, 0, 1, 0.0005187988, 0.36743164, 0.0019264221)
 shape = SubResource("RestoredManual_BoxShape3D_k66bb")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef50" unique_id=2052557836]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef50" unique_id=1382129110]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69000006, 0)
 visible = false
 mesh = SubResource("BoxMesh_to8ay")
@@ -3031,7 +3039,7 @@ transform = Transform3D(0.11444033, 0.011245204, -0.001395449, -0.011245202, 0.1
 transform = Transform3D(0.9984535, 0, -0.055499673, 0, 1, 0, 0.055499673, 0, 0.9984535, 0.09983826, 0.6025543, 2.8291235)
 shape = SubResource("RestoredManual_BoxShape3D_i0clt")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef51" unique_id=1513694389]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef51" unique_id=1164515736]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33500004, 0)
 visible = false
 mesh = SubResource("BoxMesh_0aads")
@@ -3049,7 +3057,7 @@ transform = Transform3D(2.0277877, 0.53417766, 1.9668139, 0.10511205, 2.743388, 
 transform = Transform3D(0.6568518, 0.29381716, -0.694461, -0.38385582, 0.9229868, 0.027446702, 0.64903307, 0.2485463, 0.71904606, 0.018112183, 0.75971335, 0.41152096)
 shape = SubResource("RestoredManual_BoxShape3D_idxhk")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef52" unique_id=2080953407]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef52" unique_id=1175943784]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39999998, 0)
 visible = false
 mesh = SubResource("BoxMesh_wr1os")
@@ -3063,7 +3071,7 @@ size = Vector3(1.47, 2.51, 2.89)
 [node name="Root Scene" parent="Level1/Reefs/Reef57" unique_id=14950319 instance=ExtResource("40_ai02y")]
 transform = Transform3D(-0.022456795, 0, 0.9997479, 0, 1, 0, -0.9997479, 0, -0.022456795, 0, 0, 0)
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef57" unique_id=1354140101]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef57" unique_id=296975699]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
 visible = false
 mesh = SubResource("BoxMesh_2xeje")
@@ -3081,7 +3089,7 @@ transform = Transform3D(-0.022456795, 0, 0.9997479, 0, 1, 0, -0.9997479, 0, -0.0
 transform = Transform3D(0.9998108, 0.0017278008, 0.019004464, -0.0017208457, 0.9999952, -0.00039704144, -0.01899989, 0.0003649965, 0.9998074, -0.0007343292, 0.73730373, 0.03774643)
 shape = SubResource("RestoredManual_BoxShape3D_xbb3b")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53" unique_id=1826579934]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef53" unique_id=1115060728]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, 0)
 visible = false
 mesh = SubResource("BoxMesh_ye0b6")
@@ -3099,7 +3107,7 @@ transform = Transform3D(0.7477657, 0, -0.7631755, 0, 1.0684525, 0, 0.7631755, 0,
 transform = Transform3D(1.0000007, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1.0000007, -0.00038337708, 0.15698242, -0.012008667)
 shape = SubResource("RestoredManual_BoxShape3D_m5nte")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef55" unique_id=1666309362]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef55" unique_id=719363521]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00999999, 0)
 visible = false
 mesh = SubResource("BoxMesh_wi3wp")
@@ -3117,7 +3125,7 @@ transform = Transform3D(0.99818826, 0, -0.06016594, 0, 1, 0, 0.06016594, 0, 0.99
 transform = Transform3D(0.99888545, 0, -0.04719773, 0, 1, 0, 0.04719773, 0, 0.99888545, 0.03845215, -0.4756775, -0.0068511963)
 shape = SubResource("RestoredManual_BoxShape3D_8p2kq")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef56" unique_id=1669069997]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef56" unique_id=614030473]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.089999974, 0)
 visible = false
 mesh = SubResource("BoxMesh_vj77h")
@@ -3135,7 +3143,7 @@ transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0
 transform = Transform3D(1.0000015, 0, 1.4901161e-07, 0, 1, 0, -1.4901161e-07, 0, 1.0000015, 0.017097473, -0.18081665, 0.58926964)
 shape = SubResource("RestoredManual_BoxShape3D_ex8gk")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef58" unique_id=1979530243]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef58" unique_id=1051395506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
 visible = false
 mesh = SubResource("BoxMesh_qdpg2")
@@ -3153,7 +3161,7 @@ transform = Transform3D(-0.00965409, 0, 0.8499452, 0, 0.85, 0, -0.8499452, 0, -0
 transform = Transform3D(1.0000002, 0, 4.4703484e-07, 0, 1, 0, -4.4703484e-07, 0, 1.0000002, -0.0077056885, 0.4493103, 0.59760094)
 shape = SubResource("RestoredManual_BoxShape3D_xxo5k")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef59" unique_id=1372703926]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef59" unique_id=52136031]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.23000002, 0)
 visible = false
 mesh = SubResource("BoxMesh_8ap2n")
@@ -3171,7 +3179,7 @@ transform = Transform3D(0.29425922, 0.23140764, 0.32386288, 0.035176672, 0.38605
 transform = Transform3D(0.8564422, 0, -0.5162446, 0, 1, 0, 0.5162446, 0, 0.8564422, -0.09805584, 0.44729614, -0.18724442)
 shape = SubResource("RestoredManual_BoxShape3D_jre5i")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef60" unique_id=1124346724]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef60" unique_id=1597767479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21500003, 0)
 visible = false
 mesh = SubResource("BoxMesh_4cgm3")
@@ -3189,7 +3197,7 @@ transform = Transform3D(-0.004184544, 0, -0.99999094, 0, 1, 0, 0.99999094, 0, -0
 transform = Transform3D(0.9999996, -2.3394823e-06, 5.364418e-07, -9.685755e-08, 1.0000019, 9.275973e-07, 1.1920929e-07, -4.656613e-07, 0.99999905, -0.016317368, 0.2960577, -0.2603054)
 shape = SubResource("RestoredManual_BoxShape3D_1xlpn")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef61" unique_id=2087016757]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef61" unique_id=1634210297]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00999999, 0)
 visible = false
 mesh = SubResource("BoxMesh_bfqix")
@@ -3207,7 +3215,7 @@ transform = Transform3D(0.0178623, 0, 1.1498612, 0, 1.15, 0, -1.1498612, 0, 0.01
 transform = Transform3D(1.0000007, 0, -2.0861626e-07, 0, 1, 0, 2.0861626e-07, 0, 1.0000007, 0.024234772, 0.6080322, 0.04811859)
 shape = SubResource("RestoredManual_BoxShape3D_8jovo")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef64" unique_id=467970408]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef64" unique_id=1327600506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22000003, 0)
 visible = false
 mesh = SubResource("BoxMesh_yr1rn")
@@ -3225,7 +3233,7 @@ transform = Transform3D(-0.0567302, 0.50371194, -2.0636578, 0.13327478, 2.06117,
 transform = Transform3D(0.9704648, 0.24055545, 0.018199712, -0.24096422, 0.97020656, 0.025209181, -0.011593372, -0.028850093, 0.99951637, 0.2839222, 0.29428422, -0.08104324)
 shape = SubResource("RestoredManual_BoxShape3D_bjqgx")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef66" unique_id=1030209039]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef66" unique_id=1766005705]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 visible = false
 mesh = SubResource("BoxMesh_cnuud")
@@ -3243,7 +3251,7 @@ transform = Transform3D(0.94694614, 0.011699436, 0.32117975, -0.0121125, 0.99992
 transform = Transform3D(0.9719534, 0.0124253845, -0.23484467, -0.01292467, 0.9999163, -0.00058691343, 0.23481795, 0.003605742, 0.9720327, -0.062122345, 0.5864116, 0.027812004)
 shape = SubResource("RestoredManual_BoxShape3D_uqv50")
 
-[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef68" unique_id=1425016347]
+[node name="ReefPreview" type="MeshInstance3D" parent="Level1/Reefs/Reef68" unique_id=470078643]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000024, 0)
 visible = false
 mesh = SubResource("BoxMesh_147hx")
@@ -3323,7 +3331,7 @@ radius = 2.2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.886, 0, -4.316)
 script = ExtResource("21_jet")
 jet_height = 6.0
-radius = 1.8499999999999999
+radius = 1.85
 
 [node name="Jet06" type="Node3D" parent="Level3/Jets" unique_id=1720390076]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.047382, 0, -1.6480007)
