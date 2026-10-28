@@ -43,3 +43,5 @@ python hand_tracking.py
 It may take a
 moment before the camera window appears. After that, an OpenCV window shows
 your webcam feed with the tracked hand landmarks drawn on it. **Press `q` in that window to quit.**
+The script tries webcam indices 1 and 0, in that order. If neither can be
+opened, it reports an error; check that your webcam is connected and available.

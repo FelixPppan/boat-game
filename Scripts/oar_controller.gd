@@ -300,7 +300,7 @@ var _tuned := 0.0
 var _tuned_knob := KNOB_NONE
 
 var _overlay: CanvasLayer
-var _overlay_visible := true
+var _overlay_visible := false
 var _label: Label
 var _panel: Panel
 var _title: Label

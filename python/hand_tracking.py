@@ -100,7 +100,18 @@ def run_hand_tracking_server(server_ip: str, server_port: int) -> None:
     """Run the hand tracking and send the hand coordinates via UDP."""
     ensure_model()
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    cap = cv2.VideoCapture(1)
+    cap = None
+    for camera_index in (1, 0):
+        candidate = cv2.VideoCapture(camera_index)
+        if candidate.isOpened():
+            cap = candidate
+            print(f"Using webcam at camera index {camera_index}.")
+            break
+        candidate.release()
+
+    if cap is None:
+        client_socket.close()
+        raise RuntimeError("Could not open a webcam at camera index 1 or 0.")
 
     with create_landmarker() as landmarker:
         while cap.isOpened():

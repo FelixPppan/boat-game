@@ -304,7 +304,7 @@ var _manager = null
 var _port: String = ""
 var _overlay: CanvasLayer
 var _label: Label
-var _overlay_visible := true
+var _overlay_visible := false
 var _status: String = "starting…"
 var _hz_accum: float = 0.0
 var _hz_mark: int = 0
@@ -888,6 +888,7 @@ func _on_disconnected(port: String) -> void:
 # ----------------------------------------------------------------- 读数 --
 func _build_overlay() -> void:
 	_overlay = CanvasLayer.new()
+	_overlay.visible = _overlay_visible
 	_overlay.layer = 100
 	add_child(_overlay)
 
