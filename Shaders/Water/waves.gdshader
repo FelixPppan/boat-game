@@ -3,6 +3,7 @@ Sources used:
 	https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-1-effective-water-simulation-physical-models
 	https://catlikecoding.com/unity/tutorials/flow/waves/
 	https://en.wikipedia.org/wiki/Trochoidal_wave
+	https://learnopengl.com/Advanced-OpenGL/Depth-testing
 */
 
 shader_type spatial;
@@ -16,6 +17,11 @@ uniform float blend_from : hint_range(-1.0, 0.0) = -0.1;
 uniform float blend_to : hint_range(0.0, 1.0) = 0.1;
 uniform float metallic : hint_range(0.0, 1.0) = 0;
 uniform float roughness : hint_range(0.0, 1.0) = 0.2;
+
+// Edge foam
+uniform float edge_start = 0.1;
+uniform float edge_end = 0.1;
+uniform vec3 edge_colour: source_color;
 
 // Noise map
 uniform sampler2D noise;
@@ -31,6 +37,9 @@ uniform float size_of_plane = 10.0;
 
 // For use by water.gd script when synching buoyancy physics
 uniform float time; // Change to TIME to unbind from script
+
+// Get depth texture
+uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 
 // --- Aurora mist trail (sparse large-scale filaments) -------------------
 uniform sampler2D trail_mask : hint_default_black, filter_linear, repeat_disable;
@@ -148,11 +157,6 @@ vec3 get_displacement(vec2 uv) {
 void vertex() {
 	vec3 point = VERTEX.xyz;
 	
-	// Camera to vertex distance & level of detail
-	/* Disabled: Levels of detail
-	float camera_distance = distance(CAMERA_POSITION_WORLD, (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz);
-	float level_of_detail = 1.0 - 0.9 * smoothstep(1.0, 80.0, camera_distance);
-	*/
 	float level_of_detail = 1.0;
 	
 	VERTEX.xyz = point + get_displacement(point.xz / size_of_plane + 0.5) * level_of_detail;
@@ -174,15 +178,28 @@ void vertex() {
 void fragment() {
 	vec4 world_position = INV_VIEW_MATRIX * vec4(VERTEX, 1);
 	float height_blend = smoothstep(blend_from, blend_to, world_position.y);
-	vec3 albedo_mix = mix(albedo, albedo_high, height_blend);
-	// float alpha_mix = mix(1.0, 0.8, height_blend);
 	
+	// Get foam level
 	float foam = texture(foam_map, UV).r;
 	vec3 foam_colour = vec3(1.0);
 	
-	vec3 albedo_foam_mix = mix(albedo_mix, foam_colour, foam);
-
-	ALBEDO = albedo_foam_mix;
+    // Depth texture edge foam
+	// I don't really get it to be honest
+	// https://forum.godotengine.org/t/edge-detection-for-a-water-shader-is-getting-applyied-indescriminetly-across-the-whole-mesh/84968/6
+    float depth = texture(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
+    vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, depth);
+    vec4 world = INV_VIEW_MATRIX * INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
+    float depth_texture_y = world.y / world.w;
+    float vertex_y = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).y;
+    float vertical_depth = vertex_y - depth_texture_y;
+	
+	float edge_foam = smoothstep(edge_start, edge_end, vertical_depth);
+	
+	vec3 albedo_height_mix = mix(albedo, albedo_high, height_blend);
+	vec3 albedo_foam_mix = mix(albedo_height_mix, foam_colour, foam);
+	vec3 albedo_edge_mix = mix(edge_colour, albedo_foam_mix, edge_foam);
+	
+	ALBEDO = albedo_edge_mix;	
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
 	RIM = 0.2;
@@ -206,17 +223,3 @@ void fragment() {
 		EMISSION = aurora * fade * trail_strength;
 	}
 }
-
-
-/*
-void light() {
-    if (LIGHT_IS_AREA) {
-        // Area light GGX shading.
-        DIFFUSE_LIGHT += LIGHT_AREA_DIFFUSE_MULTIPLIER * ATTENUATION * LIGHT_COLOR;
-        SPECULAR_LIGHT += LIGHT_AREA_SPECULAR_MULTIPLIER * ATTENUATION * LIGHT_COLOR * SPECULAR_AMOUNT;
-    } else {
-        // Used for all other light types (directional, omni, spot).
-        DIFFUSE_LIGHT += clamp(dot(NORMAL, LIGHT), 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;
-    }
-}
-*/
