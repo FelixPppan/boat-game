@@ -18,6 +18,7 @@ var accum_delta: float = 0.0; # Accumulated delta
 signal rowing_animation_changed(action: StringName)
 
 var _rowing_animation: StringName = &"idle"
+var _row_drive := 0.0
 ## The boat's motion. Two input paths:
 ##   1. sensor   -- OarController works out this stroke's thrust and yaw torque (default)
 ##   2. keyboard -- takes over automatically when no sensor is connected (WASD), so the
@@ -183,6 +184,10 @@ var _hull_rest: Array[Transform3D] = []
 var _oar
 var _trail
 var _recorder
+## Oar side implied by the last keyboard turn, kept after the key is released:
+## +1 port (left), -1 starboard (right), 0 not turned yet.
+## 键盘上一次转向对应的桨侧,松开按键后保持:+1 左舷,-1 右舷,0 还没转过。
+var _keyboard_side := 0.0
 
 # Used for rotating camera in circle with RigidBody3D buoyancy movements
 var dif_pos_camera
@@ -298,6 +303,12 @@ func _physics_process(delta: float) -> void:
 		if Input.is_key_pressed(KEY_D):
 			turn_input -= 1.0
 		yaw_torque = turn_input * keyboard_turn * max_thrust
+		# A single oar swings the bow away from its own side (see
+		# oar_controller.gd yaw_torque), so turning left means rowing on the right.
+		# 单桨会把船头推离自己那一侧(见 oar_controller.gd 的 yaw_torque),
+		# 所以向左转等于在右舷划。
+		if turn_input != 0.0:
+			_keyboard_side = -signf(turn_input)
 
 	# No paddling in mid-air or while capsized.
 	# 空中或翻船时划不了桨。
@@ -384,13 +395,14 @@ func add_lift(height: float) -> void:
 	_lift_request = maxf(_lift_request, height)
 
 
-## Which side the oar is on: +1 port (left), -1 starboard (right), 0 unknown
-## (no sensor yet, or keyboard play).
-## 桨在哪一舷:+1 左舷,-1 右舷,0 未知(还没有传感器数据或在用键盘)。
+## Which side the oar is on: +1 port (left), -1 starboard (right), 0 unknown.
+## With no sensor it follows the last keyboard turn (A = right oar, D = left oar).
+## 桨在哪一舷:+1 左舷,-1 右舷,0 未知。没有传感器时跟随键盘上一次转向
+## (A = 右舷桨,D = 左舷桨)。
 func oar_side() -> float:
-	if _oar == null or not _oar.sensor_ready:
-		return 0.0
-	return _oar.side
+	if _oar != null and _oar.sensor_ready:
+		return _oar.side
+	return _keyboard_side
 
 
 ## Extra exponential slowing (1/s) for this physics frame, e.g. from a zone
@@ -529,7 +541,20 @@ func _update_camera_tilt(delta: float) -> void:
 		1.0 - exp(-camera_tilt_smoothing * delta))
 	camera.rotation.z = _camera_tilt
 
+## Which way the player is rowing right now: +1 forward, -1 backward, 0 not rowing.
+## A turn with no thrust is a forward stroke on one side.
+## 玩家此刻的划桨方向:+1 向前,-1 向后,0 没在划。只有转向没有推力时算一侧向前划。
+func rowing_drive() -> float:
+	return _row_drive
+
+
 func _update_rowing_animation(thrust: Vector3, torque: float) -> void:
+	if absf(thrust.z) > 0.1:
+		_row_drive = -signf(thrust.z)
+	elif absf(torque) > 0.01:
+		_row_drive = 1.0
+	else:
+		_row_drive = 0.0
 	var action: StringName = &"idle"
 	if thrust.length_squared() > 0.01:
 		action = &"forward"

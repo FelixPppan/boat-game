@@ -1182,9 +1182,10 @@ transform = Transform3D(-3.934025e-08, 0, 0.9, 0, 0.9, 0, -0.9, 0, -3.934025e-08
 transform = Transform3D(-1.7558206e-05, -147.28891, -1.7558204e-05, 8.779103e-06, -1.7558206e-05, 147.28891, -147.28891, 1.7558206e-05, 8.779105e-06, -0.0056943893, -0.29482403, -0.0055007935)
 mesh = SubResource("ArrayMesh_6hulr")
 
-[node name="GhostSeat" type="Node3D" parent="Boat/Model" unique_id=1925062636]
+[node name="GhostSeat" type="Node3D" parent="Boat/Model" unique_id=1925062636 node_paths=PackedStringArray("model")]
 transform = Transform3D(-0.7222222, 0, -2.2956925e-08, 0, 0.7222222, 0, 2.2956925e-08, 0, -0.7222222, -0.44569874, 0.015290141, 0.022258997)
 script = ExtResource("15_passenger")
+model = NodePath("ghostwithoutbone")
 
 [node name="ghostwithoutbone" parent="Boat/Model/GhostSeat" unique_id=1352133115 instance=ExtResource("9_uylqo")]
 transform = Transform3D(-1, 0, -8.742275e-08, 0, 1, 0, 8.742275e-08, 0, -1, -0.51073265, -0.11150186, -0.096184015)
