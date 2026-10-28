@@ -1340,9 +1340,6 @@ visible = false
 transform = Transform3D(0.375, 0, 0, 0, 0.375, 0, 0, 0, 0.375, -1.3963623, 0.27441406, -7.654358)
 script = ExtResource("15_nr4qj")
 
-[node name="ColorMaterial" parent="MemoryRock1/paw" index="0" unique_id=1081280659]
-material_override = ExtResource("23_0hvk1")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MemoryRock1" unique_id=1364764406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5432777, 0.19086695, -7.5236483)
 shape = SubResource("CylinderShape3D_8q6pl")
