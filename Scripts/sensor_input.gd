@@ -80,8 +80,21 @@ const PORT_NAME := ""
 const BAUD_RATE := 115200
 ## Read timeout in milliseconds. Only affects how long a read blocks when
 ## there is nothing to read; it does not affect the sample rate.
+##
+## It also sets how long close() freezes the game: close() waits for gdserial's
+## reader thread to finish its current read, and that read only gives up after
+## this timeout when nothing is arriving. Measured on 2026-10-29 against a silent
+## port: 200 -> close() blocked 180 ms, 20 -> 20 ms. The silence watchdog and
+## every reconnect go through close(), so this is kept small. close() cannot be
+## moved to a worker thread instead: gdserial panics when called off the main
+## thread.
 ## 读超时(毫秒)。只影响读不到数据时多久返回,不影响采样频率。
-const READ_TIMEOUT_MS := 200
+##
+## 它同时决定 close() 会让游戏卡多久:close() 要等 gdserial 的读线程把手上这次读做完,
+## 而没数据时这次读要等满这个超时才放弃。2026-10-29 对一个静默端口实测:200 -> close()
+## 卡 180 ms,20 -> 20 ms。沉默看门狗和每次重连都要走 close(),所以这里取小值。
+## 也不能把 close() 挪到工作线程:gdserial 在非主线程调用会直接 panic。
+const READ_TIMEOUT_MS := 20
 ## Key that shows/hides the readout.
 ## 显示/隐藏左上角读数的按键。
 const TOGGLE_KEY := KEY_F1
@@ -354,8 +367,10 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if _manager != null and _port != "":
-		_manager.close(_port)
+	var port := _port
+	_port = ""
+	if _manager != null and port != "":
+		_manager.close(port)
 
 
 func _process(delta: float) -> void:
@@ -603,10 +618,18 @@ func _schedule_retry() -> void:
 ## 放弃当前端口并排一次重开。所有「丢失端口」的路径都走这里 —— gdserial 的掉线信号,
 ## 以及沉默看门狗 —— 这样没有任何一条能把传感器置于死地而不排重试。
 func _lose_port(reason: String, warn: bool) -> void:
-	if _manager != null and _port != "":
-		_manager.close(_port)
+	# _port is cleared BEFORE close(): close() emits port_disconnected from inside
+	# itself, and _on_disconnected must see that the port is already let go, or it
+	# re-enters here and calls close() on the same port while the first close() is
+	# still running.
+	# 先清空 _port 再 close():close() 会在自己内部发出 port_disconnected,
+	# _on_disconnected 必须看到端口已经放掉了,否则它会重入这里,在第一个 close()
+	# 还没返回时对同一个端口再 close() 一次。
+	var port := _port
 	_port = ""
 	port_open = false
+	if _manager != null and port != "":
+		_manager.close(port)
 	_status = reason + ", retrying…"
 	_schedule_retry()
 	if warn:
@@ -671,9 +694,15 @@ func _pick_port() -> String:
 		if _looks_usb(pname):
 			return pname
 
-	# Nothing suitable, so fall back to the first one.
-	# 没有合适的,就退回第一个。
-	return names[0]
+	# No fallback to whatever else is listed: on a Mac that is Bluetooth headphones
+	# and the like, which never send a line, so the silence watchdog closes and
+	# reopens them forever -- and opening a Bluetooth port makes macOS try to reach
+	# the device, which blocks the game for seconds when it is out of range. A board
+	# on an unusual port name goes in PORT_NAME.
+	# 不退回列表里的其他端口:在 Mac 上那是蓝牙耳机之类的东西,它们永远不发一行,沉默看门狗
+	# 会没完没了地关了又开 —— 而打开蓝牙端口会让 macOS 去连那个设备,设备不在附近时游戏
+	# 会卡好几秒。端口名不寻常的板子,填到 PORT_NAME 里。
+	return ""
 
 
 func _list_port_names() -> Array[String]:
@@ -792,6 +821,15 @@ func _ingest(text: String, from_wifi: bool) -> void:
 ## "Gyro(deg/s)")里没有数字,所以无论分隔符是什么,数字顺序一定是加速度 x,y,z
 ## 然后陀螺仪 x,y,z —— 固件改格式(比如去掉「|」或改空格)也还能解析。
 func _parse_imu(text: String) -> bool:
+	# A failing IMU makes the firmware's %.3f print "nan" / "inf". Those are not
+	# valid floats to _numbers_in, so it would skip them and every later number
+	# would shift one place: gyro into the wrong axis, the packet counter into gz,
+	# the timestamp into `seq`. The whole line is bad instead.
+	# IMU 出错时固件的 %.3f 会打出 "nan" / "inf"。_numbers_in 不认它们,会跳过,后面每个数
+	# 都往前错一位:陀螺仪落到错的轴、包序号落进 gz、时间戳落进 `seq`。所以整行算坏行。
+	var lower := text.to_lower()
+	if lower.contains("nan") or lower.contains("inf"):
+		return false
 	var nums := _numbers_in(text)
 	if nums.size() < 6:
 		return false
@@ -881,6 +919,10 @@ func _on_disconnected(port: String) -> void:
 	# reopened 60 times a second.
 	# 抢走端口的东西可能已经走了,所以这里很快就重试 —— 但不是下一帧,
 	# 否则一个真的不在的端口会被每秒重新打开 60 次。
+	# A port that is not the one held is our own close() echoing back.
+	# 不是当前持有的端口,就是我们自己的 close() 发回来的回声。
+	if port != _port:
+		return
 	_lose_port("disconnected (" + port + ")", true)
 
 
