@@ -14,6 +14,7 @@ extends RigidBody3D
 
 var submerged: bool = false
 var accum_delta: float = 0.0; # Accumulated delta
+var cooldown = 0.0
 
 signal rowing_animation_changed(action: StringName)
 
@@ -199,6 +200,9 @@ var dif_pos_boat
 var dif_rot_boat 
 
 func _ready() -> void:
+	contact_monitor = true
+	max_contacts_reported = 5
+	
 	if water == null or not water.has_method("get_height"):
 		push_error("Buoyancy requires a sibling WaterPlane with get_height().")
 		set_physics_process(false)
@@ -249,6 +253,8 @@ func _ready() -> void:
 	dif_rot_camera = camera.rotation - rotation # dif_rot.y = Rotation angle
 	
 	base_camera_height = camera.position.y
+	
+	cooldown = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -265,6 +271,14 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if submerged:
 		state.linear_velocity *= 1 - water_drag
 		state.angular_velocity *= 1 - water_drag_angular
+	
+	var contact_count = state.get_contact_count()
+	if contact_count > 0:
+		for i in range(contact_count):
+			var collider = state.get_contact_collider(i)
+			var repulsion = state.get_contact_local_normal(i)
+			repulsion.y = 0
+			apply_central_impulse(repulsion)
 
 func _physics_process(delta: float) -> void:
 	# Water buoyancy simulation
@@ -315,6 +329,11 @@ func _physics_process(delta: float) -> void:
 	if _falling or _capsized:
 		thrust_local = Vector3.ZERO
 		yaw_torque = 0.0
+	
+	# Rotation reset in case of emergency
+	if Input.is_key_pressed(KEY_R):
+		rotation.x = 0
+		rotation.z = 0
 
 	_update_rowing_animation(thrust_local, yaw_torque)
 
@@ -380,7 +399,34 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera_tilt(delta)
 	# _stabilize_camera_height()
-
+	
+	# Boat stabilisation mechanics
+	var angle_x = PI/2.0
+	var angle_y = PI
+	var angle_z = PI/2.0
+	
+	var force = 2.0
+	cooldown += delta
+	
+	if cooldown >= 1.0:
+		cooldown = 0.0
+		
+		if rotation.x > angle_x:
+			apply_torque(Vector3(force, 0, 0))
+		elif rotation.x < -angle_x:
+			apply_torque(Vector3(-force, 0, 0))
+			pass
+			
+		if rotation.y > angle_y:
+			apply_torque(Vector3(0, force, 0))
+		elif rotation.y < -angle_y:
+			apply_torque(Vector3(0, -force, 0))
+			
+		if rotation.z > angle_z:
+			apply_torque(Vector3(0, 0, force))
+		elif rotation.z < -angle_z:
+			apply_torque(Vector3(0, 0, -force))
+	
 	if _trail != null:
 		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
 
@@ -517,6 +563,9 @@ func _process(delta: float) -> void:
 	
 	camera.position.y = lerp(camera.position.y, base_camera_height + base_water_height, (camera_speed / 2) * delta)
 	
+	# Reset scene button for exhibit
+	if Input.is_key_pressed(KEY_ENTER):
+		get_tree().reload_current_scene()
 
 ## Keep the camera child of the boat (so XZ + yaw still follow), but cancel
 ## the wave offset on its local Y so the view does not bob.
