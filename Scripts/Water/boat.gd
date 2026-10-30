@@ -14,7 +14,6 @@ extends RigidBody3D
 
 var submerged: bool = false
 var accum_delta: float = 0.0; # Accumulated delta
-var cooldown = 0.0
 
 signal rowing_animation_changed(action: StringName)
 
@@ -254,7 +253,6 @@ func _ready() -> void:
 	
 	base_camera_height = camera.position.y
 	
-	cooldown = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -272,13 +270,17 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		state.linear_velocity *= 1 - water_drag
 		state.angular_velocity *= 1 - water_drag_angular
 	
-	var contact_count = state.get_contact_count()
-	if contact_count > 0:
-		for i in range(contact_count):
-			var collider = state.get_contact_collider(i)
-			var repulsion = state.get_contact_local_normal(i)
-			repulsion.y = 0
-			apply_central_impulse(repulsion)
+	# Let the solver separate contacts instead of adding an impulse every tick.
+	# Only damp collision spin; ordinary wave motion is left alone off-contact.
+	if state.get_contact_count() > 0:
+		state.angular_velocity *= exp(-4.0 * state.step)
+		state.angular_velocity = state.angular_velocity.limit_length(max_yaw_rate)
+
+	# Beyond 90 degrees, push toward world up, continuously and in world space.
+	# Do not correct heading: yaw belongs to the player's steering.
+	var hull_up := state.transform.basis.y.normalized()
+	if hull_up.dot(Vector3.UP) < 0.0:
+		state.apply_torque(hull_up.cross(Vector3.UP) * 2.0)
 
 func _physics_process(delta: float) -> void:
 	# Water buoyancy simulation
@@ -399,33 +401,6 @@ func _physics_process(delta: float) -> void:
 
 	_update_camera_tilt(delta)
 	# _stabilize_camera_height()
-	
-	# Boat stabilisation mechanics
-	var angle_x = PI/2.0
-	var angle_y = PI
-	var angle_z = PI/2.0
-	
-	var force = 2.0
-	cooldown += delta
-	
-	if cooldown >= 1.0:
-		cooldown = 0.0
-		
-		if rotation.x > angle_x:
-			apply_torque(Vector3(force, 0, 0))
-		elif rotation.x < -angle_x:
-			apply_torque(Vector3(-force, 0, 0))
-			pass
-			
-		if rotation.y > angle_y:
-			apply_torque(Vector3(0, force, 0))
-		elif rotation.y < -angle_y:
-			apply_torque(Vector3(0, -force, 0))
-			
-		if rotation.z > angle_z:
-			apply_torque(Vector3(0, 0, force))
-		elif rotation.z < -angle_z:
-			apply_torque(Vector3(0, 0, -force))
 	
 	if _trail != null:
 		_trail.external_speed = Vector2(_vel.x, _vel.z).length()
