@@ -270,12 +270,16 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		state.linear_velocity *= 1 - water_drag
 		state.angular_velocity *= 1 - water_drag_angular
 	
-	# Let the solver separate contacts instead of adding an impulse every tick.
-	# Only damp collision spin; ordinary wave motion is left alone off-contact.
-	if state.get_contact_count() > 0:
+	var contact_count = state.get_contact_count()
+	if contact_count > 0:
 		state.angular_velocity *= exp(-4.0 * state.step)
 		state.angular_velocity = state.angular_velocity.limit_length(max_yaw_rate)
-
+		
+		for i in range(contact_count):
+			var repulsion = state.get_contact_local_normal(i)
+			repulsion.y = 0
+			apply_central_impulse(repulsion)
+	
 	# Beyond 90 degrees, push toward world up, continuously and in world space.
 	# Do not correct heading: yaw belongs to the player's steering.
 	var hull_up := state.transform.basis.y.normalized()
