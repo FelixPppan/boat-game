@@ -40,6 +40,7 @@ signal intro_finished
 @export_range(0, 20, 1) var subtitle_space_spacing: int = 2
 
 @export_group("Copy")
+"""
 @export_multiline var text_1: String = (
 	"I do not remember who I am,\n"
 	+ "nor how I came to be in this forgotten ocean.\n"
@@ -52,6 +53,20 @@ signal intro_finished
 @export_multiline var text_3: String = (
 	"If I gather them, piece by piece…\n"
 	+ "Perhaps I will remember everything."
+)
+"""
+@export_multiline var text_1: String = (
+	"Jag minns inte vem jag är,\n"
+	+ "och heller inte hur jag kom till detta hav,\n"
+	+ "fullt av dimma."
+)
+@export_multiline var text_2: String = (
+	"Genom dimman lyser svaga ljus,\n"
+	+ "kanske är detta nyckeln för att få tillbaka mina minnen?"
+)
+@export_multiline var text_3: String = (
+	"Om jag hittar dem alla,\n"
+	+ "kanske jag äntligen kan minnas vem jag är."
 )
 
 var _playing: bool = false

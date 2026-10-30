@@ -585,6 +585,7 @@ func _open_port() -> void:
 	# still parses when the GdSerialManager class is absent.
 	const MODE_LINE_BUFFERED := 1
 	var tried: Array[String] = []
+	"""
 	for cand in candidates:
 		if _manager.open(cand, BAUD_RATE, READ_TIMEOUT_MS, MODE_LINE_BUFFERED):
 			_port = cand
@@ -602,7 +603,7 @@ func _open_port() -> void:
 		_open_failure_reported = true
 		push_error("[SensorInput] Could not open any of: " + ", ".join(PackedStringArray(tried)))
 		push_error("[SensorInput] Check in this order: (1) close the Arduino IDE Serial Monitor (or the whole IDE); (2) run `lsof | grep -i usb` in a terminal to see what is holding the port; (3) try another cable (some are power-only); (4) unplug and replug the USB. (Retrying every %d s.)" % int(RECONNECT_INTERVAL_SEC))
-
+	"""
 
 ## Pushes the next open attempt out by RECONNECT_INTERVAL_SEC. Called from every
 ## failure path so that no path can leave the sensor dead without a retry queued.
